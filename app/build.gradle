@@ -1,0 +1,29 @@
+apply from: './../config.gradle'
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdk buidConfig.compileSdkVersion
+    defaultConfig {
+        applicationId "com.iwdael.dblite.example"
+        minSdk buidConfig.minSdkVersion
+        targetSdk buidConfig.targetSdkVersion
+        versionCode buidConfig.versionCode
+        versionName buidConfig.versionName
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+}
+
+dependencies {
+    implementation dep.coreKtx
+    implementation dep.appcompat
+    implementation dep.room
+    kapt dep.roomCompiler
+    kapt project(path: ':compiler')
+}
