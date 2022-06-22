@@ -1,0 +1,26 @@
+apply from: './../config.gradle'
+apply plugin: 'com.android.library'
+
+android {
+    compileSdk buildConfig.compileSdkVersion
+    defaultConfig {
+        minSdk buildConfig.minSdkVersion
+        targetSdk buildConfig.targetSdkVersion
+        versionCode buildConfig.versionCode
+        versionName buildConfig.versionName
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    dataBinding {
+        enabled = true
+    }
+}
+
+dependencies {
+    implementation dep.coreKtx
+    implementation dep.appcompat
+    implementation dep.room
+    api project(":annotation")
+}
