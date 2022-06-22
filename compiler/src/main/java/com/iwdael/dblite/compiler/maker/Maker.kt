@@ -1,5 +1,9 @@
 package com.iwdael.dblite.compiler.maker
 
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.TypeSpec
+import javax.annotation.processing.Filer
+
 /**
  * author : 段泽全(hacknife)
  * e-mail : hacknife@outlook.com
@@ -11,5 +15,5 @@ interface Maker {
     fun classFull(): String
     fun className(): String
     fun packageName(): String
-    fun make(): String
+    fun make(filer: Filer)
 }

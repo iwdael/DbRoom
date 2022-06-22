@@ -1,5 +1,6 @@
 package com.iwdael.dblite.compiler.e
 
+import androidx.room.ColumnInfo
 import javax.lang.model.element.Element
 
 /**
@@ -18,5 +19,10 @@ class EVariable(val element: Element) {
 
     fun type() = "${element.asType()}"
     fun name() = "${element.simpleName}"
+    fun colName(): String {
+        val info: ColumnInfo = element.getAnnotation(ColumnInfo::class.java) ?: return name()
+        if (info.name == ColumnInfo.INHERIT_FIELD_NAME) return name()
+        return info.name
+    }
 
 }

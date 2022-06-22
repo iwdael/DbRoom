@@ -5,7 +5,6 @@ import com.iwdael.dblite.compiler.e.EClass
 import com.iwdael.dblite.compiler.maker.DbLiteMaker
 import com.iwdael.dblite.compiler.maker.RoomMaker
 import java.io.File
-import java.io.FileWriter
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.RoundEnvironment
@@ -17,6 +16,7 @@ class AnnotationProcessor : AbstractProcessor() {
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
     }
+
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
         return mutableSetOf(Entity::class.java.canonicalName)
     }
@@ -28,45 +28,11 @@ class AnnotationProcessor : AbstractProcessor() {
             .map { DTA(EClass(it)) }
             .apply {
                 if (isNotEmpty()) {
-                    val writer = FileWriter(createContentProvider(this[0]))
-                    writer.write(DbLiteMaker(this).make())
-                    writer.flush()
-                    writer.close()
+                    DbLiteMaker(this).make(processingEnv.filer)
                 }
             }
-            .forEach {
-                val writer = FileWriter(findGenerateFile(it))
-                writer.write(RoomMaker(it).make())
-                writer.flush()
-                writer.close()
-            }
+            .forEach { RoomMaker(it).make(processingEnv.filer) }
+
         return false
-    }
-
-    private fun createContentProvider(element: DTA): File {
-        val generateFile = File(
-            processingEnv.filer.createSourceFile(
-                "com.iwdael.dblite.DbLite",
-                element.eClass.element
-            ).toUri()
-        ).apply {
-            parentFile.mkdirs()
-        }.let { it.parentFile }
-        return File(generateFile, "DbLite.kt")
-    }
-
-    private fun findGenerateFile(DTA: DTA): File {
-        val generateFile = File(
-            processingEnv.filer.createSourceFile(
-                DTA.generatedFullClassName,
-                DTA.eClass.element
-            ).toUri()
-        ).apply { parentFile.mkdirs() }
-        return if (DTA.eClass.sourceFileIsKotlin()) {
-            File(
-                generateFile.parentFile,
-                "${DTA.generatedClassName}.kt"
-            ).apply { parentFile.mkdirs() }
-        } else generateFile
     }
 }
