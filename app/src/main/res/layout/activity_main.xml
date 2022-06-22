@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="entity1"
+            type="com.iwdael.dbroom.example.entity.Music" />
+
+        <variable
+            name="entity2"
+            type="com.iwdael.dbroom.example.entity.Music" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_entity1"
+            android:layout_marginTop="30dp"
+            android:text="@{entity1.name}"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="------"
+            android:layout_centerHorizontal="true" />
+
+
+        <TextView
+            android:layout_below="@id/tv_entity1"
+            android:layout_marginTop="30dp"
+            android:text="@{entity2.name}"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="------"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+</layout>

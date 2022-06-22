@@ -1,0 +1,29 @@
+ext {
+    buildConfig = [
+            'compileSdkVersion': 32,
+            'targetSdkVersion' : 32,
+            'minSdkVersion'    : 19,
+            'versionCode'      : 1,
+            'versionName'      : "1.0.0",
+            'buildToolsVersion': "30.0.3",
+    ]
+
+    dep = [
+            'kotlinStdlibJdk7'         : 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.21',
+            'kotlinStdlib'             : 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21',
+            'coreKtx'                  : 'androidx.core:core-ktx:1.6.0',
+            'appcompat'                : 'androidx.appcompat:appcompat:1.0.0',
+            'constraintlayout'         : 'androidx.constraintlayout:constraintlayout:2.1.3',
+            'kotlinxMetadata'          : 'org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.3.0',
+            'autoService'              : 'com.google.auto.service:auto-service:1.0-rc4',
+            'room'                     : 'androidx.room:room-runtime:2.4.2',
+            'roomKtx'                  : 'androidx.room:room-ktx:2.4.2',
+            'roomCommon'               : 'androidx.room:room-common:2.4.2',
+            'bindingCommon'            : 'androidx.databinding:databinding-common:7.1.2',
+            'roomCompiler'             : 'androidx.room:room-compiler:2.4.2',
+            'javaparser'               : 'com.github.javaparser:javaparser-core:3.7.0',
+            'annotationprocessorparser': 'com.iwdael:annotationprocessorparser:0.0.11',
+            'coroutinesAndroid'        : 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0',
+            'coroutinesCore'           : 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8'
+    ]
+}
