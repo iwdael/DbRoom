@@ -13,8 +13,8 @@ import com.iwdael.dbroom.compiler.e.EClass
 class Generator(val eClass: EClass) {
     val packageName = eClass.getPackage()
     val packageNameGenerator = eClass.getPackage() + ".room"
-    val targetClassName = eClass.getClassName()
-    val generatedClassName = targetClassName + "Room"
+    val className = eClass.getClassName()
+    val classNameGenerator = className + "Room"
     val tableName = eClass.element.annotationMirrors
         .firstOrNull { it.annotationType.toString().contains(Entity::class.java.name) }
         ?.elementValues
@@ -22,5 +22,5 @@ class Generator(val eClass: EClass) {
         ?.firstOrNull { it.first.contains("tableName") }
         ?.second
         ?.trim { it == '\"' }
-        ?: targetClassName
+        ?: className
 }

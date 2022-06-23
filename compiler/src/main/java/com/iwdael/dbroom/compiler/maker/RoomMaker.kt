@@ -11,7 +11,7 @@ import javax.lang.model.element.Modifier
 
 class RoomMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
-    override fun className() = "${generator.targetClassName}Room"
+    override fun className() = "${generator.className}Room"
     override fun packageName() = generator.packageNameGenerator
     override fun make(filer: Filer) {
         val find = MethodSpec.methodBuilder("find")
@@ -30,7 +30,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .apply {
@@ -57,7 +57,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .apply {
@@ -89,7 +89,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .apply {
@@ -111,7 +111,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .addStatement("return asc ? " +
@@ -132,7 +132,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                 addParameter(
                     ParameterSpec.builder(
                         ClassName.get(
-                            "${generator.packageNameGenerator}.${generator.targetClassName}Db",
+                            "${generator.packageNameGenerator}.${generator.className}Db",
                             "Column"
                         ), "columnName"
                     )
@@ -161,7 +161,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .apply {
@@ -190,7 +190,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .apply {
@@ -225,7 +225,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .apply {
@@ -249,7 +249,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .apply {
@@ -260,7 +260,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                 addParameter(
                     ParameterSpec.builder(
                         ClassName.get(
-                            "${generator.packageNameGenerator}.${generator.targetClassName}Db",
+                            "${generator.packageNameGenerator}.${generator.className}Db",
                             "Column"
                         ), "columnName"
                     )
@@ -293,11 +293,11 @@ class RoomMaker(private val generator: Generator) : Maker {
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Insert::class.java)
-                    .addMember("entity", "${generator.targetClassName}.class")
+                    .addMember("entity", "${generator.className}.class")
                     .build()
             )
             .addParameter(
-                ArrayTypeName.of(ClassName.get(generator.packageName, generator.targetClassName)),
+                ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
                 "entity"
             )
             .varargs(true)
@@ -307,11 +307,11 @@ class RoomMaker(private val generator: Generator) : Maker {
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Update::class.java)
-                    .addMember("entity", "${generator.targetClassName}.class")
+                    .addMember("entity", "${generator.className}.class")
                     .build()
             )
             .addParameter(
-                ArrayTypeName.of(ClassName.get(generator.packageName, generator.targetClassName)),
+                ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
                 "entity"
             )
             .varargs(true)
@@ -321,11 +321,11 @@ class RoomMaker(private val generator: Generator) : Maker {
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Delete::class.java)
-                    .addMember("entity", "${generator.targetClassName}.class")
+                    .addMember("entity", "${generator.className}.class")
                     .build()
             )
             .addParameter(
-                ArrayTypeName.of(ClassName.get(generator.packageName, generator.targetClassName)),
+                ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
                 "entity"
             )
             .varargs(true)
@@ -342,7 +342,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .build()
@@ -354,7 +354,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.targetClassName)
+                    ClassName.get(generator.packageName, generator.className)
                 )
             )
             .build()

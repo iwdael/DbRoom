@@ -73,7 +73,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                                     fmt,
                                     *entities
                                         .map {
-                                            ClassName.get(it.packageName, it.targetClassName)
+                                            ClassName.get(it.packageName, it.className)
                                         }
                                         .toTypedArray()
                                 )
@@ -98,31 +98,31 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
             .apply {
                 entities.forEach {
                     addMethod(
-                        MethodSpec.methodBuilder(it.targetClassName.firstLetterLowercase())
+                        MethodSpec.methodBuilder(it.className.firstLetterLowercase())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.packageNameGenerator, it.generatedClassName))
-                            .addStatement("return instance()._${it.targetClassName.firstLetterLowercase()}()")
+                            .returns(ClassName.get(it.packageNameGenerator, it.classNameGenerator))
+                            .addStatement("return instance()._${it.className.firstLetterLowercase()}()")
                             .build()
                     )
                     addMethod(
-                        MethodSpec.methodBuilder("_" + it.targetClassName.firstLetterLowercase())
+                        MethodSpec.methodBuilder("_" + it.className.firstLetterLowercase())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.packageNameGenerator, it.generatedClassName))
+                            .returns(ClassName.get(it.packageNameGenerator, it.classNameGenerator))
                             .build()
                     )
                 }
                 dao.forEach {
                     addMethod(
-                        MethodSpec.methodBuilder(it.targetClassName.firstLetterLowercase())
+                        MethodSpec.methodBuilder(it.className.firstLetterLowercase())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.packageName, it.targetClassName))
-                            .addStatement("return instance()._${it.targetClassName.firstLetterLowercase()}()")
+                            .returns(ClassName.get(it.packageName, it.className))
+                            .addStatement("return instance()._${it.className.firstLetterLowercase()}()")
                             .build()
                     )
                     addMethod(
-                        MethodSpec.methodBuilder("_" + it.targetClassName.firstLetterLowercase())
+                        MethodSpec.methodBuilder("_" + it.className.firstLetterLowercase())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.packageName, it.targetClassName))
+                            .returns(ClassName.get(it.packageName, it.className))
                             .build()
                     )
                 }
