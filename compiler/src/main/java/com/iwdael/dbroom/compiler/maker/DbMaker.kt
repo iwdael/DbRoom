@@ -1,7 +1,7 @@
-package com.iwdael.dblite.compiler.maker
+package com.iwdael.dbroom.compiler.maker
 
-import androidx.room.Dao
-import com.iwdael.dblite.compiler.DTA
+import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
@@ -13,12 +13,12 @@ import javax.lang.model.element.Modifier
  * desc   : MVVM
  * version: 1.0
  */
-class RoomDbMaker(private val dta: DTA) : Maker {
+class DbMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
 
-    override fun className() = "${dta.targetClassName}Db"
+    override fun className() = "${generator.targetClassName}Db"
 
-    override fun packageName() = Maker.ROOT_PACKAGE
+    override fun packageName() = generator.packageName
 
     override fun make(filer: Filer) {
 
@@ -33,7 +33,7 @@ class RoomDbMaker(private val dta: DTA) : Maker {
                     .build()
             )
             .build()
-        val staticFields = dta.eClass.getVariable().map {
+        val staticFields = generator.eClass.getVariable().map {
             FieldSpec.builder(ClassName.get(classFull(),"Column"), it.name() , Modifier.PUBLIC,Modifier.STATIC,Modifier.FINAL)
                 .initializer("new Column(\"${it.colName()}\")")
                 .build()
@@ -49,6 +49,6 @@ class RoomDbMaker(private val dta: DTA) : Maker {
             )
             .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
             .build()
-            .writeTo(filer)
+            .write(filer)
     }
 }

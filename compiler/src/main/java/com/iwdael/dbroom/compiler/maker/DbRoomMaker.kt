@@ -1,20 +1,19 @@
-package com.iwdael.dblite.compiler.maker
+package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.Database
-import com.iwdael.dblite.compiler.DTA
-import com.iwdael.dblite.compiler.compat.firstLetterLowercase
-import com.iwdael.dblite.compiler.maker.Maker.Companion.ROOT_PACKAGE
+import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.compat.firstLetterLowercase
+import com.iwdael.dbroom.compiler.compat.write
+import com.iwdael.dbroom.compiler.maker.Maker.Companion.ROOT_PACKAGE
 import com.squareup.javapoet.*
-import java.lang.Exception
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
 
-class DbLiteMaker(private val entities: List<DTA>) : Maker {
+class DbRoomMaker(private val entities: List<Generator>, private val dao: List<Generator>) : Maker {
 
-
-    override fun classFull() = "com.iwdael.dblite.DbLite"
-    override fun className() = "DbLite"
+    override fun classFull() = "$ROOT_PACKAGE.${className()}"
+    override fun className() = "DbRoom"
     override fun packageName() = ROOT_PACKAGE
     override fun make(filer: Filer) {
         val init = MethodSpec.methodBuilder("init")
@@ -24,13 +23,13 @@ class DbLiteMaker(private val entities: List<DTA>) : Maker {
             .addStatement("if (instance != null) return")
             .addCode(
                 CodeBlock.builder()
-                    .beginControlFlow("synchronized (DbLite.class)")
+                    .beginControlFlow("synchronized (DbRoom.class)")
                     .addStatement(CodeBlock.of("if (instance != null) return"))
                     .addStatement(
                         CodeBlock
                             .builder()
                             .add(
-                                "instance = \$T.databaseBuilder(context.getApplicationContext(),DbLite.class,\"lite.db\").build()",
+                                "instance = \$T.databaseBuilder(context.getApplicationContext(),DbRoom.class,\"lite.db\").build()",
                                 ClassName.get("androidx.room", "Room")
                             )
                             .build()
@@ -44,8 +43,15 @@ class DbLiteMaker(private val entities: List<DTA>) : Maker {
         val instance = MethodSpec.methodBuilder("instance")
             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
             .returns(ClassName.get(packageName(), className()))
-            .addStatement("if (instance == null) throw new RuntimeException(\"Please initialize DbLite first\")")
+            .addStatement("if (instance == null) throw new RuntimeException(\"Please initialize DbRoom first\")")
             .addStatement("return instance")
+            .build()
+
+        val store = MethodSpec.methodBuilder("store")
+            .addModifiers(Modifier.PUBLIC,Modifier.STATIC)
+            .addParameter(String::class.java,"name")
+            .addParameter(Object::class.java,"value")
+            .addStatement("instance().holder().store(new Holder(name, HolderConverter.converterString(value)))")
             .build()
 
         val classTypeSpec = TypeSpec.classBuilder(className())
@@ -60,7 +66,7 @@ class DbLiteMaker(private val entities: List<DTA>) : Maker {
                                 val fmt = entities.joinToString(
                                     separator = ",",
                                     transform = { "\$T.class" },
-                                    postfix = "}",
+                                    postfix = ",Holder.class}",
                                     prefix = "{"
                                 )
                                 add(
@@ -88,29 +94,54 @@ class DbLiteMaker(private val entities: List<DTA>) : Maker {
             .superclass(ClassName.get("androidx.room", "RoomDatabase"))
             .addMethod(init)
             .addMethod(instance)
+            .addMethod(store)
             .apply {
                 entities.forEach {
                     addMethod(
-                        MethodSpec.methodBuilder("r${it.targetClassName}")
+                        MethodSpec.methodBuilder(it.targetClassName.firstLetterLowercase())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(ROOT_PACKAGE, it.generatedClassName))
-                            .addStatement("return instance().${it.targetClassName.firstLetterLowercase()}()")
+                            .returns(ClassName.get(it.packageName, it.generatedClassName))
+                            .addStatement("return instance()._${it.targetClassName.firstLetterLowercase()}()")
                             .build()
                     )
                     addMethod(
-                        MethodSpec.methodBuilder(it.targetClassName.firstLetterLowercase())
-                            .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                            .returns(ClassName.get(ROOT_PACKAGE, it.generatedClassName))
+                        MethodSpec.methodBuilder("_" + it.targetClassName.firstLetterLowercase())
+                            .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
+                            .returns(ClassName.get(it.packageName, it.generatedClassName))
                             .build()
                     )
                 }
+                dao.forEach {
+                    addMethod(
+                        MethodSpec.methodBuilder(it.targetClassName.firstLetterLowercase())
+                            .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                            .returns(ClassName.get(it.packageName, it.targetClassName))
+                            .addStatement("return instance()._${it.targetClassName.firstLetterLowercase()}()")
+                            .build()
+                    )
+                    addMethod(
+                        MethodSpec.methodBuilder("_" + it.targetClassName.firstLetterLowercase())
+                            .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
+                            .returns(ClassName.get(it.packageName, it.targetClassName))
+                            .build()
+                    )
+                }
+            }
+            .apply {
+                addMethod(
+                    MethodSpec.methodBuilder("holder")
+                        .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
+                        .returns(ClassName.get(ROOT_PACKAGE, "HolderRoom"))
+                        .build()
+                )
             }
             .build()
         JavaFile
             .builder(packageName(), classTypeSpec)
             .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
             .build()
-            .writeTo(filer)
+            .write(filer)
+
     }
 
 

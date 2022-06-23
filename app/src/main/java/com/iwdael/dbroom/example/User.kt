@@ -1,7 +1,6 @@
-package com.iwdael.dblite.example
+package com.iwdael.dbroom.example
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "TB_USER")

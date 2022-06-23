@@ -1,10 +1,10 @@
-package com.iwdael.dblite.example
+package com.iwdael.dbroom.example
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.PrimaryKey 
 
 @Entity
-data class Post(
+data class Firmware(
     @PrimaryKey
     var id: Int? = null,
 

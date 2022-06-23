@@ -1,4 +1,4 @@
-package com.iwdael.dblite.compiler.compat
+package com.iwdael.dbroom.compiler.compat
 
 
 fun String.firstLetterLowercase(): String {

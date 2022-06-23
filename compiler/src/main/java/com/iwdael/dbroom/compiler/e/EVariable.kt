@@ -1,4 +1,4 @@
-package com.iwdael.dblite.compiler.e
+package com.iwdael.dbroom.compiler.e
 
 import androidx.room.ColumnInfo
 import javax.lang.model.element.Element

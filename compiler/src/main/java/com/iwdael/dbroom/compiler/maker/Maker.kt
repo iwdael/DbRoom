@@ -1,7 +1,5 @@
-package com.iwdael.dblite.compiler.maker
+package com.iwdael.dbroom.compiler.maker
 
-import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.TypeSpec
 import javax.annotation.processing.Filer
 
 /**
