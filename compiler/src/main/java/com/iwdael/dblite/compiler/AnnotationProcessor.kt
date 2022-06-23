@@ -3,6 +3,7 @@ package com.iwdael.dblite.compiler
 import androidx.room.Entity
 import com.iwdael.dblite.compiler.e.EClass
 import com.iwdael.dblite.compiler.maker.DbLiteMaker
+import com.iwdael.dblite.compiler.maker.RoomDbMaker
 import com.iwdael.dblite.compiler.maker.RoomMaker
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
@@ -24,14 +25,14 @@ class AnnotationProcessor : AbstractProcessor() {
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latestSupported()
 
     override fun process(annos: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
-        env.getElementsAnnotatedWith(Entity::class.java)!!
-            .map { DTA(EClass(it)) }
-            .apply {
-                if (isNotEmpty()) {
-                    DbLiteMaker(this).make(processingEnv.filer)
-                }
+        val entities = env.getElementsAnnotatedWith(Entity::class.java) ?: return false
+        if (entities.isEmpty()) return false
+        entities.map { DTA(EClass(it)) }
+            .apply { DbLiteMaker(this).make(processingEnv.filer) }
+            .forEach {
+                RoomDbMaker(it).make(processingEnv.filer)
+                RoomMaker(it).make(processingEnv.filer)
             }
-            .forEach { RoomMaker(it).make(processingEnv.filer) }
 
         return false
     }

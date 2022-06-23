@@ -1,5 +1,6 @@
 package com.iwdael.dblite.compiler.e
 
+import androidx.room.Ignore
 import javax.lang.model.element.Element
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
@@ -16,9 +17,10 @@ class EClass(val element: Element) {
         it.kind == ElementKind.METHOD
     }.map { EMethod(it as ExecutableElement) }
 
-    fun getVariable() = element.enclosedElements.filter {
-        it.kind == ElementKind.FIELD
-    }.map { EVariable(it) }
+    fun getVariable() = element.enclosedElements
+        .filter { it.kind == ElementKind.FIELD }
+        .filter { it.getAnnotation(Ignore::class.java) == null }
+        .map { EVariable(it) }
 
     fun sourceFileIsKotlin() = element.getAnnotation(Metadata::class.java) != null
 

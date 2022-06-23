@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 rootProject.name = "DbRoom"
 include ':app'
 include ':compiler'
-include ':annotation'

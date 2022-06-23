@@ -1,11 +1,10 @@
 package com.iwdael.dblite.example
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "TB_USER")
-data class User(
+@Entity
+data class Post(
     @PrimaryKey
     var id: Int? = null,
 

@@ -3,15 +3,15 @@ package com.iwdael.dblite.compiler.maker
 import androidx.room.Database
 import com.iwdael.dblite.compiler.DTA
 import com.iwdael.dblite.compiler.compat.firstLetterLowercase
+import com.iwdael.dblite.compiler.maker.Maker.Companion.ROOT_PACKAGE
 import com.squareup.javapoet.*
+import java.lang.Exception
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
 
 class DbLiteMaker(private val entities: List<DTA>) : Maker {
-    companion object {
-        const val ROOT_PACKAGE = "com.iwdael.dblite"
-    }
+
 
     override fun classFull() = "com.iwdael.dblite.DbLite"
     override fun className() = "DbLite"
