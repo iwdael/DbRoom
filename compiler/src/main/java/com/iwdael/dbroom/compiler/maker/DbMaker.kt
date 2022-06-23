@@ -18,7 +18,7 @@ class DbMaker(private val generator: Generator) : Maker {
 
     override fun className() = "${generator.targetClassName}Db"
 
-    override fun packageName() = generator.packageName
+    override fun packageName() = generator.packageNameGenerator
 
     override fun make(filer: Filer) {
 

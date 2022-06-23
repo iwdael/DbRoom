@@ -12,6 +12,7 @@ import com.iwdael.dbroom.compiler.e.EClass
  */
 class Generator(val eClass: EClass) {
     val packageName = eClass.getPackage()
+    val packageNameGenerator = eClass.getPackage() + ".room"
     val targetClassName = eClass.getClassName()
     val generatedClassName = targetClassName + "Room"
     val tableName = eClass.element.annotationMirrors

@@ -12,7 +12,7 @@ import javax.lang.model.element.Modifier
 class RoomMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
     override fun className() = "${generator.targetClassName}Room"
-    override fun packageName() = generator.packageName
+    override fun packageName() = generator.packageNameGenerator
     override fun make(filer: Filer) {
         val find = MethodSpec.methodBuilder("find")
             .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
@@ -132,7 +132,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                 addParameter(
                     ParameterSpec.builder(
                         ClassName.get(
-                            "${generator.packageName}.${generator.targetClassName}Db",
+                            "${generator.packageNameGenerator}.${generator.targetClassName}Db",
                             "Column"
                         ), "columnName"
                     )
@@ -260,7 +260,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                 addParameter(
                     ParameterSpec.builder(
                         ClassName.get(
-                            "${generator.packageName}.${generator.targetClassName}Db",
+                            "${generator.packageNameGenerator}.${generator.targetClassName}Db",
                             "Column"
                         ), "columnName"
                     )

@@ -100,14 +100,14 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                     addMethod(
                         MethodSpec.methodBuilder(it.targetClassName.firstLetterLowercase())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.packageName, it.generatedClassName))
+                            .returns(ClassName.get(it.packageNameGenerator, it.generatedClassName))
                             .addStatement("return instance()._${it.targetClassName.firstLetterLowercase()}()")
                             .build()
                     )
                     addMethod(
                         MethodSpec.methodBuilder("_" + it.targetClassName.firstLetterLowercase())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.packageName, it.generatedClassName))
+                            .returns(ClassName.get(it.packageNameGenerator, it.generatedClassName))
                             .build()
                     )
                 }
