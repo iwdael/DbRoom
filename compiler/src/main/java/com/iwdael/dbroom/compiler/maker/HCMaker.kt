@@ -31,6 +31,9 @@ class HCMaker(private val generator: List<Method>) : Maker {
                             .beginControlFlow("if (value == null)")
                             .addStatement("return null")
 
+                            .nextControlFlow("else if (value instanceof String)")
+                            .addStatement("return String.valueOf(value)")
+
                             .nextControlFlow("else if (value instanceof Boolean)")
                             .addStatement("return String.valueOf(value)")
 
@@ -90,6 +93,9 @@ class HCMaker(private val generator: List<Method>) : Maker {
                             )
                             .beginControlFlow("if (str == null)")
                             .addStatement("return null")
+
+                            .nextControlFlow("else if (clazz == String.class)")
+                            .addStatement("return str")
 
                             .nextControlFlow("else if (clazz == Boolean.class)")
                             .addStatement("return Boolean.parseBoolean(str)")

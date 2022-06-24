@@ -32,6 +32,7 @@ class HolderRoomMaker : Maker {
                             .addAnnotation(
                                 AnnotationSpec.builder(Insert::class.java)
                                     .addMember("entity", "Holder.class")
+                                    .addMember("onConflict", "\$T.REPLACE",ClassName.get("androidx.room","OnConflictStrategy"))
                                     .build()
                             )
                             .build()

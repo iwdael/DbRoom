@@ -6,18 +6,22 @@ import android.util.Log
 import com.iwdael.dbroom.DbRoom
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val DB_KEY = "DB_KEY"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         DbRoom.init(this)
 
         Thread {
-            DbRoom.user()
-                .insert(User(1, "jack", "china"))
-            Log.v("dzq-1", DbRoom.user().all().joinToString(separator = ","))
-            DbRoom.user()
-                .update(User(1, "jack"))
-            Log.v("dzq-2", DbRoom.user().all().joinToString(separator = ","))
+            Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) +"-")
+            Log.v("dzq", DbRoom.obtain(DB_KEY, "12312312"))
+            DbRoom.store(DB_KEY, "Android")
+            Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java))
+            DbRoom.store(DB_KEY, null)
+            Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java))
         }.start()
     }
 }
