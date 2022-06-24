@@ -11,7 +11,7 @@ import javax.annotation.processing.Filer
  */
 interface Maker {
     companion object {
-        const val ROOT_PACKAGE = "com.iwdael.dblite"
+        const val ROOT_PACKAGE = "com.iwdael.dbroom"
     }
     fun classFull(): String
     fun className(): String

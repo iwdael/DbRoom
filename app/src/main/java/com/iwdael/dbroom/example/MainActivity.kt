@@ -3,9 +3,7 @@ package com.iwdael.dbroom.example
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.iwdael.dblite.DbRoom
-import com.iwdael.dbroom.example.room.FirmwareDb
-import kotlin.concurrent.thread
+import com.iwdael.dbroom.DbRoom
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
