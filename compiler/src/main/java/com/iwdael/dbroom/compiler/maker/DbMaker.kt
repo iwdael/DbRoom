@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
@@ -33,8 +34,14 @@ class DbMaker(private val generator: Generator) : Maker {
                     .build()
             )
             .build()
-        val staticFields = generator.eClass.getVariable().map {
-            FieldSpec.builder(ClassName.get(classFull(),"Column"), it.name() , Modifier.PUBLIC,Modifier.STATIC,Modifier.FINAL)
+        val staticFields = generator.clazz.fields.map {
+            FieldSpec.builder(
+                ClassName.get(classFull(), "Column"),
+                it.name,
+                Modifier.PUBLIC,
+                Modifier.STATIC,
+                Modifier.FINAL
+            )
                 .initializer("new Column(\"${it.colName()}\")")
                 .build()
         }

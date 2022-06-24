@@ -2,8 +2,10 @@ package com.iwdael.dbroom.compiler
 
 import androidx.room.Dao
 import androidx.room.Entity
-import com.iwdael.dbroom.compiler.e.EClass
+import androidx.room.TypeConverter
 import com.iwdael.dbroom.compiler.maker.*
+import com.iwdael.dbroom.compiler.element.Class
+import com.iwdael.dbroom.compiler.element.Method
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
@@ -17,13 +19,18 @@ class AnnotationProcessor : AbstractProcessor() {
     override fun process(annos: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
         if (processed) return false
         HolderRoomMaker().make(processingEnv.filer)
-        HolderConvertMaker().make(processingEnv.filer)
+        (env.getElementsAnnotatedWith(TypeConverter::class.java) ?: arrayListOf())
+            .map { Method(it) }
+            .apply {
+                HCMaker(this).make(processingEnv.filer)
+            }
         HolderMaker().make(processingEnv.filer)
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
-            .map { Generator(EClass(it)) }
+
+            .map { Generator(Class(it)) }
             .apply {
                 val dao = env.getElementsAnnotatedWith(Dao::class.java)
-                    ?.map { Generator(EClass(it)) }
+                    ?.map { Generator(Class(it)) }
                     ?: arrayListOf()
                 DbRoomMaker(this, dao).make(processingEnv.filer)
             }

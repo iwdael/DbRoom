@@ -11,4 +11,14 @@ data class User(
     var name: String? = null,
 
     var address: String? = null,
-)
+
+
+){
+    override fun toString(): String {
+        return "User(" +
+                "id=$id, " +
+                "name=$name, " +
+                "address=$address" +
+                ")"
+    }
+}

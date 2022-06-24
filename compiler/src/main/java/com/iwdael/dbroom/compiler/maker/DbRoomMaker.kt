@@ -6,6 +6,7 @@ import com.iwdael.dbroom.compiler.compat.firstLetterLowercase
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.maker.Maker.Companion.ROOT_PACKAGE
 import com.squareup.javapoet.*
+import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
@@ -41,17 +42,69 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
 
 
         val instance = MethodSpec.methodBuilder("instance")
-            .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+            .addModifiers(Modifier.STATIC, Modifier.PRIVATE)
             .returns(ClassName.get(packageName(), className()))
             .addStatement("if (instance == null) throw new RuntimeException(\"Please initialize DbRoom first\")")
             .addStatement("return instance")
             .build()
 
         val store = MethodSpec.methodBuilder("store")
-            .addModifiers(Modifier.PUBLIC,Modifier.STATIC)
-            .addParameter(String::class.java,"name")
-            .addParameter(Object::class.java,"value")
-            .addStatement("instance().holder().store(new Holder(name, HolderConverter.converterString(value)))")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addParameter(
+                ParameterSpec.builder(String::class.java, "name")
+                    .addAnnotation(NotNull::class.java)
+                    .build()
+            )
+            .addParameter(Object::class.java, "value")
+            .addStatement("instance().holder().store(new Holder(name, HC.ctString(value)))")
+            .build()
+
+        val obtain = MethodSpec.methodBuilder("obtain")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addParameter(
+                ParameterSpec.builder(String::class.java, "name")
+                    .addAnnotation(NotNull::class.java)
+                    .build()
+            )
+            .addTypeVariable(TypeVariableName.get("T"))
+            .addParameter(
+                TypeVariableName.get("T")
+                    .annotated(
+                        AnnotationSpec.builder(NotNull::class.java)
+                            .build()
+                    ),
+                "_default"
+            )
+            .returns(TypeVariableName.get("T"))
+            .addStatement("Holder holder = instance().holder().obtain(name)")
+            .addStatement("if (holder == null) return _default")
+            .addStatement("T val = (T)HC.ctObject(holder.value, _default.getClass())")
+            .addStatement("if (val == null) return _default")
+            .addStatement("return val")
+            .build()
+
+        val obtain2 = MethodSpec.methodBuilder("obtain")
+            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+            .addParameter(
+                ParameterSpec.builder(String::class.java, "name")
+                    .addAnnotation(NotNull::class.java)
+                    .build()
+            )
+            .addTypeVariable(TypeVariableName.get("T"))
+            .addParameter(
+                TypeVariableName.get("Class<T>")
+                    .annotated(
+                        AnnotationSpec.builder(NotNull::class.java)
+                            .build()
+                    ),
+                "clazz"
+            )
+            .returns(TypeVariableName.get("T"))
+            .addStatement("Holder holder = instance().holder().obtain(name)")
+            .addStatement("if (holder == null) return null")
+            .addStatement("T val = (T)HC.ctObject(holder.value, clazz)")
+            .addStatement("if (val == null) return null")
+            .addStatement("return val")
             .build()
 
         val classTypeSpec = TypeSpec.classBuilder(className())
@@ -95,6 +148,8 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
             .addMethod(init)
             .addMethod(instance)
             .addMethod(store)
+            .addMethod(obtain)
+            .addMethod(obtain2)
             .apply {
                 entities.forEach {
                     addMethod(

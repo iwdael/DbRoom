@@ -2,6 +2,7 @@ package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.*
 import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
@@ -20,8 +21,8 @@ class RoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value", "\"SELECT * FROM ${generator.tableName} WHERE ${
-                            generator.eClass.getVariable()
-                                .map { "${it.colName()} = :${it.name()}" }
+                            generator.clazz.fields
+                                .map { "${it.colName()} = :${it.name}" }
                                 .joinToString(separator = " AND ")
                         }\""
                     )
@@ -34,9 +35,9 @@ class RoomMaker(private val generator: Generator) : Maker {
                 )
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
             }
             .build()
@@ -47,8 +48,8 @@ class RoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value", "\"SELECT * FROM ${generator.tableName} WHERE ${
-                            generator.eClass.getVariable()
-                                .map { "${it.colName()} = :${it.name()}" }
+                            generator.clazz.fields
+                                .map { "${it.colName()} = :${it.name}" }
                                 .joinToString(separator = " AND ")
                         } ORDER BY :columnName DESC\""
                     )
@@ -61,9 +62,9 @@ class RoomMaker(private val generator: Generator) : Maker {
                 )
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -79,8 +80,8 @@ class RoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value", "\"SELECT * FROM ${generator.tableName} WHERE ${
-                            generator.eClass.getVariable()
-                                .map { "${it.colName()} = :${it.name()}" }
+                            generator.clazz.fields
+                                .map { "${it.colName()} = :${it.name}" }
                                 .joinToString(separator = " AND ")
                         } ORDER BY :columnName ASC\""
                     )
@@ -93,9 +94,9 @@ class RoomMaker(private val generator: Generator) : Maker {
                 )
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -116,18 +117,18 @@ class RoomMaker(private val generator: Generator) : Maker {
             )
             .addStatement("return asc ? " +
                     "findAsc(${
-                        generator.eClass.getVariable().map { it.name() }
+                        generator.clazz.fields.map { it.name }
                             .joinToString(separator = ", ", postfix = ", columnName.name")
                     }) : " +
                     "findDesc(${
-                        generator.eClass.getVariable().map { it.name() }
+                        generator.clazz.fields.map { it.name }
                             .joinToString(separator = ", ", postfix = ", columnName.name")
                     })"
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
                 addParameter(
                     ParameterSpec.builder(
@@ -151,8 +152,8 @@ class RoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value", "\"SELECT * FROM ${generator.tableName} WHERE ${
-                            generator.eClass.getVariable()
-                                .map { "${it.colName()} = :${it.name()}" }
+                            generator.clazz.fields
+                                .map { "${it.colName()} = :${it.name}" }
                                 .joinToString(separator = " AND ")
                         } LIMIT :offset,:size\""
                     )
@@ -165,9 +166,9 @@ class RoomMaker(private val generator: Generator) : Maker {
                 )
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
                 addParameter(ClassName.INT, "offset")
                 addParameter(ClassName.INT, "size")
@@ -180,8 +181,8 @@ class RoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value", "\"SELECT * FROM ${generator.tableName} WHERE ${
-                            generator.eClass.getVariable()
-                                .map { "${it.colName()} = :${it.name()}" }
+                            generator.clazz.fields
+                                .map { "${it.colName()} = :${it.name}" }
                                 .joinToString(separator = " AND ")
                         } ORDER BY :columnName ASC LIMIT :offset,:size\""
                     )
@@ -194,9 +195,9 @@ class RoomMaker(private val generator: Generator) : Maker {
                 )
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -215,8 +216,8 @@ class RoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value", "\"SELECT * FROM ${generator.tableName} WHERE ${
-                            generator.eClass.getVariable()
-                                .map { "${it.colName()} = :${it.name()}" }
+                            generator.clazz.fields
+                                .map { "${it.colName()} = :${it.name}" }
                                 .joinToString(separator = " AND ")
                         } ORDER BY :columnName DESC LIMIT :offset,:size\""
                     )
@@ -229,9 +230,9 @@ class RoomMaker(private val generator: Generator) : Maker {
                 )
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -253,9 +254,9 @@ class RoomMaker(private val generator: Generator) : Maker {
                 )
             )
             .apply {
-                generator.eClass.getVariable()
+                generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type()), it.name())
+                        addParameter(ClassName.bestGuess(it.type), it.name)
                     }
                 addParameter(
                     ParameterSpec.builder(
@@ -273,14 +274,14 @@ class RoomMaker(private val generator: Generator) : Maker {
             }
             .addStatement("return asc ? " +
                     "findAsc(${
-                        generator.eClass.getVariable().map { it.name() }
+                        generator.clazz.fields.map { it.name }
                             .joinToString(
                                 separator = ", ",
                                 postfix = ", columnName.name, offset, size"
                             )
                     }) : " +
                     "findDesc(${
-                        generator.eClass.getVariable().map { it.name() }
+                        generator.clazz.fields.map { it.name }
                             .joinToString(
                                 separator = ", ",
                                 postfix = ", columnName.name, offset, size"

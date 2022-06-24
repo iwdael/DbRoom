@@ -1,7 +1,7 @@
 package com.iwdael.dbroom.compiler
 
 import androidx.room.Entity
-import com.iwdael.dbroom.compiler.e.EClass
+import com.iwdael.dbroom.compiler.element.Class
 
 /**
  * author : 段泽全(hacknife)
@@ -10,17 +10,12 @@ import com.iwdael.dbroom.compiler.e.EClass
  * desc   : MVVM
  * version: 1.0
  */
-class Generator(val eClass: EClass) {
-    val packageName = eClass.getPackage()
-    val packageNameGenerator = eClass.getPackage() + ".room"
-    val className = eClass.getClassName()
+class Generator(val clazz: Class) {
+    val packageName = clazz.`package`.name
+    val packageNameGenerator = clazz.`package`.name + ".room"
+    val className = clazz.name
     val classNameGenerator = className + "Room"
-    val tableName = eClass.element.annotationMirrors
-        .firstOrNull { it.annotationType.toString().contains(Entity::class.java.name) }
-        ?.elementValues
-        ?.map { it.key.toString() to it.value.toString() }
-        ?.firstOrNull { it.first.contains("tableName") }
-        ?.second
-        ?.trim { it == '\"' }
-        ?: className
+    val tableName =
+        if (clazz.getAnnotation(Entity::class.java)?.tableName?.isEmpty() == true) className
+        else clazz.getAnnotation(Entity::class.java)?.tableName
 }
