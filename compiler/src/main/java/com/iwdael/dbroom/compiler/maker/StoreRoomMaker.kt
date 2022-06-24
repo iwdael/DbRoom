@@ -25,23 +25,22 @@ class StoreRoomMaker : Maker {
                         MethodSpec.methodBuilder("store")
                             .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
                             .addParameter(
-                                ParameterSpec.builder(String::class.java, "name")
+                                ParameterSpec.builder(
+                                    ClassName.get(Maker.ROOT_PACKAGE, "Store"),
+                                    "entity"
+                                )
                                     .addAnnotation(NotNull::class.java)
                                     .build()
                             )
-                            .addParameter(
-                                ParameterSpec.builder(String::class.java, "value")
-                                    .build()
-                            )
                             .addAnnotation(
-                                AnnotationSpec.builder(Query::class.java)
+                                AnnotationSpec.builder(Insert::class.java)
                                     .addMember(
-                                        "value",
-                                        "\"IF (SELECT COUNT(*) FROM tb_store WHERE store_name =:name) > 0 BEGIN UPDATE tb_store SET store_value=:value WHERE store_name=:name END ELSE BEGIN INSERT INTO tb_store VALUES(:name,:value) END\""
+                                        "entity",
+                                        "\$T.class", ClassName.get(Maker.ROOT_PACKAGE, "Store")
                                     )
+                                    .addMember("onConflict", "\$T.REPLACE", ClassName.get("androidx.room","OnConflictStrategy"))
                                     .build()
                             )
-                            .returns(Int::class.java)
                             .build()
                     )
                     .addMethod(
