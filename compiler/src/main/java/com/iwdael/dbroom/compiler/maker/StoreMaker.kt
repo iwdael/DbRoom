@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class HolderMaker : Maker {
+class StoreMaker : Maker {
     override fun classFull() = "${packageName()}.${className()}"
 
-    override fun className() = "Holder"
+    override fun className() = "Store"
 
     override fun packageName() = Maker.ROOT_PACKAGE
 
@@ -24,7 +24,7 @@ class HolderMaker : Maker {
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(
                         AnnotationSpec.builder(Entity::class.java)
-                            .addMember("tableName", "\"tb_holder\"")
+                            .addMember("tableName", "\"tb_store\"")
                             .build()
                     )
                     .addField(
@@ -32,7 +32,7 @@ class HolderMaker : Maker {
                             .addAnnotation(PrimaryKey::class.java)
                             .addAnnotation(
                                 AnnotationSpec.builder(ColumnInfo::class.java)
-                                    .addMember("name", CodeBlock.of("\"holder_name\""))
+                                    .addMember("name", CodeBlock.of("\"store_name\""))
                                     .build()
                             )
                             .addAnnotation(NotNull::class.java)
@@ -41,7 +41,7 @@ class HolderMaker : Maker {
                         FieldSpec.builder(String::class.java, "value")
                             .addAnnotation(
                                 AnnotationSpec.builder(ColumnInfo::class.java)
-                                    .addMember("name", CodeBlock.of("\"holder_value\""))
+                                    .addMember("name", CodeBlock.of("\"store_value\""))
                                     .build()
                             )
                             .build()

@@ -18,13 +18,13 @@ class AnnotationProcessor : AbstractProcessor() {
 
     override fun process(annos: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
         if (processed) return false
-        HolderRoomMaker().make(processingEnv.filer)
+        StoreRoomMaker().make(processingEnv.filer)
         (env.getElementsAnnotatedWith(TypeConverter::class.java) ?: arrayListOf())
             .map { Method(it) }
             .apply {
                 HCMaker(this).make(processingEnv.filer)
             }
-        HolderMaker().make(processingEnv.filer)
+        StoreMaker().make(processingEnv.filer)
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
 
             .map { Generator(Class(it)) }

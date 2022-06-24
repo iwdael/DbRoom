@@ -56,7 +56,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                     .build()
             )
             .addParameter(Object::class.java, "value")
-            .addStatement("instance().holder().store(new Holder(name, HC.ctString(value)))")
+            .addStatement("instance().store().store(new Store(name, HC.ctString(value)))")
             .build()
 
         val obtain = MethodSpec.methodBuilder("obtain")
@@ -76,9 +76,9 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                 "_default"
             )
             .returns(TypeVariableName.get("T"))
-            .addStatement("Holder holder = instance().holder().obtain(name)")
-            .addStatement("if (holder == null) return _default")
-            .addStatement("T val = (T)HC.ctObject(holder.value, _default.getClass())")
+            .addStatement("Store store = instance().store().obtain(name)")
+            .addStatement("if (store == null) return _default")
+            .addStatement("T val = (T)HC.ctObject(store.value, _default.getClass())")
             .addStatement("if (val == null) return _default")
             .addStatement("return val")
             .build()
@@ -100,9 +100,9 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                 "clazz"
             )
             .returns(TypeVariableName.get("T"))
-            .addStatement("Holder holder = instance().holder().obtain(name)")
-            .addStatement("if (holder == null) return null")
-            .addStatement("T val = (T)HC.ctObject(holder.value, clazz)")
+            .addStatement("Store store = instance().store().obtain(name)")
+            .addStatement("if (store == null) return null")
+            .addStatement("T val = (T)HC.ctObject(store.value, clazz)")
             .addStatement("if (val == null) return null")
             .addStatement("return val")
             .build()
@@ -119,7 +119,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                                 val fmt = entities.joinToString(
                                     separator = ",",
                                     transform = { "\$T.class" },
-                                    postfix = ",Holder.class}",
+                                    postfix = ",Store.class}",
                                     prefix = "{"
                                 )
                                 add(
@@ -184,9 +184,9 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
             }
             .apply {
                 addMethod(
-                    MethodSpec.methodBuilder("holder")
+                    MethodSpec.methodBuilder("store")
                         .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                        .returns(ClassName.get(ROOT_PACKAGE, "HolderRoom"))
+                        .returns(ClassName.get(ROOT_PACKAGE, "StoreRoom"))
                         .build()
                 )
             }
