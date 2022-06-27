@@ -16,12 +16,16 @@ class MainActivity : AppCompatActivity() {
         DbRoom.init(this)
 
         Thread {
-            Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) +"-")
-            Log.v("dzq", DbRoom.obtain(DB_KEY, "12312312"))
-            DbRoom.store(DB_KEY, "Android")
-            Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java))
-            DbRoom.store(DB_KEY, null)
-            Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java))
+            try {
+                Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")
+                Log.v("dzq", DbRoom.obtain(DB_KEY, "12312312"))
+                DbRoom.store(DB_KEY, "Android")
+                Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java))
+//                DbRoom.store(DB_KEY, null)
+//                Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")
+            } catch (e: Exception) {
+                Log.v("dzq", e.stackTraceToString())
+            }
         }.start()
     }
 }

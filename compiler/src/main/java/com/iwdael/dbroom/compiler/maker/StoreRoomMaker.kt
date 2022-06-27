@@ -24,21 +24,28 @@ class StoreRoomMaker : Maker {
                     .addMethod(
                         MethodSpec.methodBuilder("store")
                             .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
-                            .addParameter(
-                                ParameterSpec.builder(
-                                    ClassName.get(Maker.ROOT_PACKAGE, "Store"),
-                                    "entity"
-                                )
-                                    .addAnnotation(NotNull::class.java)
-                                    .build()
-                            )
+                            .addParameter(String::class.java,"name")
+                            .addParameter(String::class.java,"value")
+//                            .addParameter(
+//                                ParameterSpec.builder(
+//                                    ClassName.get(Maker.ROOT_PACKAGE, "Store"),
+//                                    "entity"
+//                                )
+//                                    .addAnnotation(NotNull::class.java)
+//                                    .build()
+//                            )
+//                            .addAnnotation(
+//                                AnnotationSpec.builder(Insert::class.java)
+//                                    .addMember(
+//                                        "entity",
+//                                        "\$T.class", ClassName.get(Maker.ROOT_PACKAGE, "Store")
+//                                    )
+//                                    .addMember("onConflict", "\$T.REPLACE", ClassName.get("androidx.room","OnConflictStrategy"))
+//                                    .build()
+//                            )
                             .addAnnotation(
-                                AnnotationSpec.builder(Insert::class.java)
-                                    .addMember(
-                                        "entity",
-                                        "\$T.class", ClassName.get(Maker.ROOT_PACKAGE, "Store")
-                                    )
-                                    .addMember("onConflict", "\$T.REPLACE", ClassName.get("androidx.room","OnConflictStrategy"))
+                                AnnotationSpec.builder(Query::class.java)
+                                    .addMember("value","\"REPLACE INTO tb_store (store_name,store_value) VALUES(:name, :value)\"")
                                     .build()
                             )
                             .build()

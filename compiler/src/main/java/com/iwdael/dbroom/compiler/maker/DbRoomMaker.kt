@@ -56,7 +56,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                     .build()
             )
             .addParameter(Object::class.java, "value")
-            .addStatement("instance().store().store(new Store(name, HC.ctString(value)))")
+            .addStatement("instance().store().store(name, HC.ctString(value))")
             .build()
 
         val obtain = MethodSpec.methodBuilder("obtain")
