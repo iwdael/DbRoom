@@ -60,6 +60,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
             .build()
 
         val obtain = MethodSpec.methodBuilder("obtain")
+            .addAnnotation(NotNull::class.java)
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(
                 ParameterSpec.builder(String::class.java, "name")
@@ -119,7 +120,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                                 val fmt = entities.joinToString(
                                     separator = ",",
                                     transform = { "\$T.class" },
-                                    postfix = ",Store.class}",
+                                    postfix = if (entities.isNotEmpty()) ",Store.class}" else "Store.class}",
                                     prefix = "{"
                                 )
                                 add(
