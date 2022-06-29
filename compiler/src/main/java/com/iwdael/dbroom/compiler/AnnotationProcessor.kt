@@ -56,6 +56,7 @@ class AnnotationProcessor : AbstractProcessor() {
             }
             .forEach {
                 RoomMaker(it).make(processingEnv.filer)
+                RoomCompatMaker(it).make(processingEnv.filer)
             }
         processed = true
         return false

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.iwdael.dbroom.DbRoom
+import com.iwdael.dbroom.example.room.findX
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         DbRoom.init(this)
+        DbRoom.user().findX()
         Thread {
             try {
                 Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")

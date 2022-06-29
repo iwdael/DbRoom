@@ -6,9 +6,10 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
     implementation dep.roomCommon
+    implementation dep.javapoet
+    implementation dep.kotlinpoet
+    implementation dep.annotationprocessorparser
     compileOnly project(":annotation")
-    implementation 'com.squareup:javapoet:1.13.0'
-    implementation 'com.iwdael:annotationprocessorparser:0.0.3'
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8

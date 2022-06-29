@@ -8,34 +8,28 @@ fun String.firstLetterLowercase(): String {
     return "${this.substring(0, 1).toLowerCase()}${this.substring(1)}"
 }
 
-fun String.javaFullClass2KotlinShotClass(): String {
+fun String.kotlin(): String {
     return when {
-        this == "java.lang.String" -> "String"
-        this == "java.lang.String[]" -> "Array<String>"
-        this == "int" -> "Int"
-        this == "int[]" -> "IntArray"
-        this == "boolean" -> "Boolean"
-        this == "boolean[]" -> "BooleanArray"
-        this == "float" -> "Float"
-        this == "float[]" -> "FloatArray"
-        this == "long" -> "Long"
-        this == "long[]" -> "LongArray"
-        this == "double" -> "Double"
-        this == "double[]" -> "DoubleArray"
-        this == "short" -> "Short"
-        this == "short[]" -> "ShortArray"
-        this == "byte" -> "Byte"
-        this == "byte[]" -> "ByteArray"
-        this == "char" -> "Char"
-        this == "char[]" -> "CharArray"
-        this.endsWith("[]") -> "Array<${this.replace("[]", "")}>".javaFullClass2KotlinShotClass()
-        this.contains("java.util.") -> this.replace("java.util.", "")
-            .javaFullClass2KotlinShotClass()
-        this.contains("java.lang.") -> this.replace("java.lang.", "")
-            .javaFullClass2KotlinShotClass()
-        this.contains("Integer") -> this.replace("Integer", "Int").javaFullClass2KotlinShotClass()
+        this == "java.lang.String" -> "kotlin.String"
+        this == "java.lang.String[]" -> "kotlin.Array<String>"
+        this == "int" -> "kotlin.Int"
+        this == "int[]" -> "kotlin.IntArray"
+        this == "boolean" -> "kotlin.Boolean"
+        this == "boolean[]" -> "kotlin.BooleanArray"
+        this == "float" -> "kotlin.Float"
+        this == "float[]" -> "kotlin.FloatArray"
+        this == "long" -> "kotlin.Long"
+        this == "long[]" -> "kotlin.LongArray"
+        this == "double" -> "kotlin.Double"
+        this == "double[]" -> "kotlin.DoubleArray"
+        this == "short" -> "kotlin.Short"
+        this == "short[]" -> "kotlin.ShortArray"
+        this == "byte" -> "kotlin.Byte"
+        this == "byte[]" -> "kotlin.ByteArray"
+        this == "char" -> "kotlin.Char"
+        this == "char[]" -> "kotlin.CharArray"
+        this == "java.util.List" -> "kotlin.collections.List"
+        this == "java.lang.Integer" -> "kotlin.Int"
         else -> this
     }
 }
-
-const val TAB = "    "
