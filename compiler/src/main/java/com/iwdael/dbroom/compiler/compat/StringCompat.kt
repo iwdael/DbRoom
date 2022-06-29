@@ -1,6 +1,9 @@
 package com.iwdael.dbroom.compiler.compat
 
-
+/**
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
+ */
 fun String.firstLetterLowercase(): String {
     return "${this.substring(0, 1).toLowerCase()}${this.substring(1)}"
 }

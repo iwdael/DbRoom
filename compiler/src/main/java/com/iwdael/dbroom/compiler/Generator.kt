@@ -1,14 +1,10 @@
 package com.iwdael.dbroom.compiler
 
 import androidx.room.Entity
-import com.iwdael.dbroom.compiler.element.Class
-
+import com.iwdael.annotationprocessorparser.Class
 /**
- * author : 段泽全(hacknife)
- * e-mail : hacknife@outlook.com
- * time   : 2019/8/5
- * desc   : MVVM
- * version: 1.0
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
  */
 class Generator(val clazz: Class) {
     val packageName = clazz.`package`.name

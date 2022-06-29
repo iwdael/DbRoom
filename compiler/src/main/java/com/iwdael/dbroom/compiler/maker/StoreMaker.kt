@@ -8,7 +8,10 @@ import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
-
+/**
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
+ */
 class StoreMaker : Maker {
     override fun classFull() = "${packageName()}.${className()}"
 

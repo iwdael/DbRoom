@@ -14,7 +14,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         DbRoom.init(this)
-
         Thread {
             try {
                 Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")

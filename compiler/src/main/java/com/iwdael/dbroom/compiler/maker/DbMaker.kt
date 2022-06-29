@@ -8,11 +8,8 @@ import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
 /**
- * author : 段泽全(hacknife)
- * e-mail : hacknife@outlook.com
- * time   : 2019/8/5
- * desc   : MVVM
- * version: 1.0
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
  */
 class DbMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${packageName()}.${className()}"

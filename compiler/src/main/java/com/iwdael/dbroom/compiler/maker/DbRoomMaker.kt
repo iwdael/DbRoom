@@ -10,7 +10,10 @@ import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-
+/**
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
+ */
 class DbRoomMaker(private val entities: List<Generator>, private val dao: List<Generator>) : Maker {
 
     override fun classFull() = "$ROOT_PACKAGE.${className()}"
@@ -56,7 +59,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                     .build()
             )
             .addParameter(Object::class.java, "value")
-            .addStatement("instance().store().store(name, HC.ctString(value))")
+            .addStatement("instance().store().store(name, Converter.toString(value))")
             .build()
 
         val obtain = MethodSpec.methodBuilder("obtain")
@@ -79,7 +82,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
             .returns(TypeVariableName.get("T"))
             .addStatement("Store store = instance().store().obtain(name)")
             .addStatement("if (store == null) return _default")
-            .addStatement("T val = (T)HC.ctObject(store.value, _default.getClass())")
+            .addStatement("T val = (T)Converter.toObject(store.value, _default.getClass())")
             .addStatement("if (val == null) return _default")
             .addStatement("return val")
             .build()
@@ -103,7 +106,7 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
             .returns(TypeVariableName.get("T"))
             .addStatement("Store store = instance().store().obtain(name)")
             .addStatement("if (store == null) return null")
-            .addStatement("T val = (T)HC.ctObject(store.value, clazz)")
+            .addStatement("T val = (T)Converter.toObject(store.value, clazz)")
             .addStatement("if (val == null) return null")
             .addStatement("return val")
             .build()

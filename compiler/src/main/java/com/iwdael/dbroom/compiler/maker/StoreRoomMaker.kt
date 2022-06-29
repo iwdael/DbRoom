@@ -6,7 +6,10 @@ import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
-
+/**
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
+ */
 class StoreRoomMaker : Maker {
     override fun classFull() = "${packageName()}.${className()}"
 
@@ -26,23 +29,6 @@ class StoreRoomMaker : Maker {
                             .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
                             .addParameter(String::class.java,"name")
                             .addParameter(String::class.java,"value")
-//                            .addParameter(
-//                                ParameterSpec.builder(
-//                                    ClassName.get(Maker.ROOT_PACKAGE, "Store"),
-//                                    "entity"
-//                                )
-//                                    .addAnnotation(NotNull::class.java)
-//                                    .build()
-//                            )
-//                            .addAnnotation(
-//                                AnnotationSpec.builder(Insert::class.java)
-//                                    .addMember(
-//                                        "entity",
-//                                        "\$T.class", ClassName.get(Maker.ROOT_PACKAGE, "Store")
-//                                    )
-//                                    .addMember("onConflict", "\$T.REPLACE", ClassName.get("androidx.room","OnConflictStrategy"))
-//                                    .build()
-//                            )
                             .addAnnotation(
                                 AnnotationSpec.builder(Query::class.java)
                                     .addMember("value","\"REPLACE INTO tb_store (store_name,store_value) VALUES(:name, :value)\"")

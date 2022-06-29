@@ -3,14 +3,17 @@ package com.iwdael.dbroom.compiler
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.TypeConverter
+import com.iwdael.annotationprocessorparser.Method
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.compiler.maker.*
-import com.iwdael.dbroom.compiler.element.Class
-import com.iwdael.dbroom.compiler.element.Method
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-
+/**
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
+ */
 class AnnotationProcessor : AbstractProcessor() {
     private var processed = false
     override fun getSupportedAnnotationTypes() = mutableSetOf(Override::class.java.canonicalName)
@@ -22,7 +25,7 @@ class AnnotationProcessor : AbstractProcessor() {
         (env.getElementsAnnotatedWith(TypeConverter::class.java) ?: arrayListOf())
             .map { Method(it) }
             .apply {
-                HCMaker(this).make(processingEnv.filer)
+                ConverterMaker(this).make(processingEnv.filer)
             }
         StoreMaker().make(processingEnv.filer)
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())

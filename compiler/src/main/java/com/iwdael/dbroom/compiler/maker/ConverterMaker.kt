@@ -1,16 +1,18 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.compat.write
-import com.iwdael.dbroom.compiler.element.Method
-import com.squareup.javapoet.*
-import org.jetbrains.annotations.NotNull
+import com.iwdael.annotationprocessorparser.Method 
+import com.squareup.javapoet.* 
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
-
-class HCMaker(private val generator: List<Method>) : Maker {
+/**
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
+ */
+class ConverterMaker(private val generator: List<Method>) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
 
-    override fun className() = "HC"
+    override fun className() = "Converter"
 
     override fun packageName() = Maker.ROOT_PACKAGE
 
@@ -24,7 +26,7 @@ class HCMaker(private val generator: List<Method>) : Maker {
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(
                         MethodSpec
-                            .methodBuilder("ctString")
+                            .methodBuilder("toString")
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                             .returns(String::class.java)
                             .addParameter(ClassName.get(Object::class.java), "value")
@@ -78,7 +80,7 @@ class HCMaker(private val generator: List<Method>) : Maker {
                             .build()
                     )
                     .addMethod(
-                        MethodSpec.methodBuilder("ctObject")
+                        MethodSpec.methodBuilder("toObject")
                             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                             .addTypeVariable(TypeVariableName.get("T"))
                             .returns(Object::class.java)

@@ -9,7 +9,10 @@ import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-
+/**
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
+ */
 class RoomMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
     override fun className() = "${generator.className}Room"
@@ -37,7 +40,19 @@ class RoomMaker(private val generator: Generator) : Maker {
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
             }
             .build()
@@ -64,7 +79,19 @@ class RoomMaker(private val generator: Generator) : Maker {
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -96,7 +123,19 @@ class RoomMaker(private val generator: Generator) : Maker {
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -118,24 +157,36 @@ class RoomMaker(private val generator: Generator) : Maker {
             .addStatement("return asc ? " +
                     "findAsc(${
                         generator.clazz.fields.map { it.name }
-                            .joinToString(separator = ", ", postfix = ", columnName.name")
+                            .joinToString(separator = ", ", postfix = ", rankColumnName.name")
                     }) : " +
                     "findDesc(${
                         generator.clazz.fields.map { it.name }
-                            .joinToString(separator = ", ", postfix = ", columnName.name")
+                            .joinToString(separator = ", ", postfix = ", rankColumnName.name")
                     })"
             )
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
                 addParameter(
                     ParameterSpec.builder(
                         ClassName.get(
                             "${generator.packageNameGenerator}.${generator.className}Db",
                             "Column"
-                        ), "columnName"
+                        ), "rankColumnName"
                     )
                         .addAnnotation(NotNull::class.java)
                         .build()
@@ -168,7 +219,19 @@ class RoomMaker(private val generator: Generator) : Maker {
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
                 addParameter(ClassName.INT, "offset")
                 addParameter(ClassName.INT, "size")
@@ -197,7 +260,19 @@ class RoomMaker(private val generator: Generator) : Maker {
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -232,7 +307,19 @@ class RoomMaker(private val generator: Generator) : Maker {
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
                 addParameter(
                     ParameterSpec.builder(String::class.java, "columnName")
@@ -256,14 +343,26 @@ class RoomMaker(private val generator: Generator) : Maker {
             .apply {
                 generator.clazz.fields
                     .forEach {
-                        addParameter(ClassName.bestGuess(it.type), it.name)
+                        if (it.getAnnotation(PrimaryKey::class.java) == null)
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .build()
+                            )
+                        else
+                            addParameter(
+                                ParameterSpec
+                                    .builder(ClassName.bestGuess(it.type), it.name)
+                                    .addAnnotation(NotNull::class.java)
+                                    .build()
+                            )
                     }
                 addParameter(
                     ParameterSpec.builder(
                         ClassName.get(
                             "${generator.packageNameGenerator}.${generator.className}Db",
                             "Column"
-                        ), "columnName"
+                        ), "rankColumnName"
                     )
                         .addAnnotation(NotNull::class.java)
                         .build()
@@ -277,14 +376,14 @@ class RoomMaker(private val generator: Generator) : Maker {
                         generator.clazz.fields.map { it.name }
                             .joinToString(
                                 separator = ", ",
-                                postfix = ", columnName.name, offset, size"
+                                postfix = ", rankColumnName.name, offset, size"
                             )
                     }) : " +
                     "findDesc(${
                         generator.clazz.fields.map { it.name }
                             .joinToString(
                                 separator = ", ",
-                                postfix = ", columnName.name, offset, size"
+                                postfix = ", rankColumnName.name, offset, size"
                             )
                     })"
             )

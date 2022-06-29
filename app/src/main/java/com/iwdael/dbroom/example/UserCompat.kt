@@ -4,7 +4,7 @@ import androidx.room.TypeConverter
 
 
 @TypeConverter
-fun userctString(user: User): String {
+fun usertoString(user: User): String {
     return ""
 }
 

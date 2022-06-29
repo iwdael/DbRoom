@@ -1,16 +1,13 @@
 package com.iwdael.dbroom.compiler.compat
 
 import androidx.room.ColumnInfo
-import com.iwdael.dbroom.compiler.element.Field
+import com.iwdael.annotationprocessorparser.Field
 import com.squareup.javapoet.JavaFile
 import javax.annotation.processing.Filer
 
 /**
- * author : 段泽全(hacknife)
- * e-mail : hacknife@outlook.com
- * time   : 2019/8/5
- * desc   : MVVM
- * version: 1.0
+ * author : iwdael
+ * e-mail : iwdael@outlook.com
  */
 fun JavaFile.write(filer: Filer) {
     try {
