@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.TypeConverter
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.Class
-import com.iwdael.dbroom.annotation.CreateDatabase
+import com.iwdael.dbroom.annotation.DbRoomCreator
 import com.iwdael.dbroom.compiler.maker.*
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -37,7 +37,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 val dao = env.getElementsAnnotatedWith(Dao::class.java)
                     ?.map { Generator(Class(it)) }
                     ?: arrayListOf()
-                val creates = env.getElementsAnnotatedWith(CreateDatabase::class.java)?.toList()
+                val creates = env.getElementsAnnotatedWith(DbRoomCreator::class.java)?.toList()
                     ?: arrayListOf()
                 if (creates.size > 1) throw Exception("Annotation can only be used at most once.(CreateDatabase)")
                 val create = creates.firstOrNull()
