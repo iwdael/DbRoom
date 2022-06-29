@@ -24,6 +24,7 @@ dependencies {
     implementation dep.coreKtx
     implementation dep.appcompat
     implementation dep.room
+    implementation project(path: ':annotation')
     kapt dep.roomCompiler
     kapt project(path: ':compiler')
 }

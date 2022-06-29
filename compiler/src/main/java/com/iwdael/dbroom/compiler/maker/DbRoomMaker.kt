@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.Database
+import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.firstLetterLowercase
 import com.iwdael.dbroom.compiler.compat.write
@@ -14,7 +15,11 @@ import javax.lang.model.element.Modifier
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class DbRoomMaker(private val entities: List<Generator>, private val dao: List<Generator>) : Maker {
+class DbRoomMaker(
+    private val entities: List<Generator>,
+    private val dao: List<Generator>,
+    private val method: Method?
+) : Maker {
 
     override fun classFull() = "$ROOT_PACKAGE.${className()}"
     override fun className() = "DbRoom"
@@ -29,15 +34,29 @@ class DbRoomMaker(private val entities: List<Generator>, private val dao: List<G
                 CodeBlock.builder()
                     .beginControlFlow("synchronized (DbRoom.class)")
                     .addStatement(CodeBlock.of("if (instance != null) return"))
-                    .addStatement(
-                        CodeBlock
-                            .builder()
-                            .add(
-                                "instance = \$T.databaseBuilder(context.getApplicationContext(),DbRoom.class,\"lite.db\").build()",
-                                ClassName.get("androidx.room", "Room")
+                    .apply {
+                        if (method == null)
+                            addStatement(
+                                CodeBlock
+                                    .builder()
+                                    .add(
+                                        "instance = \$T.databaseBuilder(context.getApplicationContext(),DbRoom.class,\"lite.db\").build()",
+                                        ClassName.get("androidx.room", "Room")
+                                    )
+                                    .build()
                             )
-                            .build()
-                    )
+                        else
+                            addStatement(
+                                CodeBlock
+                                    .builder()
+                                    .add(
+                                        "instance = (DbRoom)${method.owner}.${method.name}(context)",
+                                        ClassName.get("androidx.room", "Room")
+                                    )
+                                    .build()
+                            )
+                    }
+
                     .endControlFlow()
                     .build()
             )
