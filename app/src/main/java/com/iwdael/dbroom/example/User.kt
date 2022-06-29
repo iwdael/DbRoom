@@ -2,7 +2,9 @@ package com.iwdael.dbroom.example
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.iwdael.dbroom.annotation.UseFlow
 
+@UseFlow
 @Entity(tableName = "TB_USER")
 data class User(
     @PrimaryKey

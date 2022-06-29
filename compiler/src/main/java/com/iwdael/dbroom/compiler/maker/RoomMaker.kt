@@ -33,9 +33,11 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .apply {
@@ -64,9 +66,11 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .apply {
@@ -100,9 +104,11 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .apply {
@@ -125,9 +131,11 @@ class RoomMaker(private val generator: Generator) : Maker {
     private fun findOrder() = MethodSpec.methodBuilder("find")
         .addModifiers(Modifier.PUBLIC)
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .addStatement("return asc ? " +
@@ -179,9 +187,11 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .apply {
@@ -212,9 +222,11 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .apply {
@@ -250,9 +262,11 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .apply {
@@ -278,9 +292,11 @@ class RoomMaker(private val generator: Generator) : Maker {
     private fun findLimitOrder() = MethodSpec.methodBuilder("find")
         .addModifiers(Modifier.PUBLIC)
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .apply {
@@ -350,6 +366,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             "entity"
         )
         .varargs(true)
+        .returns(TypeName.INT)
         .build()
 
     private fun delete() = MethodSpec.methodBuilder("delete")
@@ -374,25 +391,45 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .build()
+
 
     private fun rawQuery() = MethodSpec.methodBuilder("rawQuery")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-        .addAnnotation(RawQuery::class.java)
+        .addAnnotation(
+            AnnotationSpec.builder(RawQuery::class.java)
+                .addMember(
+                    "observedEntities",
+                    "{\$T.class}",
+                    ClassName.get(generator.packageName, generator.className)
+                )
+                .build()
+        )
         .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
         .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                ClassName.get(generator.packageName, generator.className)
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
             )
         )
         .build()
 
+    private fun useFlow(typeName: TypeName): TypeName {
+        return if (hasFlow())
+            ParameterizedTypeName.get(flow(), typeName)
+        else typeName
+    }
+
+    private fun flow() = ClassName.get("kotlinx.coroutines.flow", "Flow")
     private fun hasFlow() = generator.clazz.getAnnotation(UseFlow::class.java) != null
 
     override fun make(filer: Filer) {

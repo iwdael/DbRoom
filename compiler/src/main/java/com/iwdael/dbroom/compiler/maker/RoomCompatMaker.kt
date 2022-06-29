@@ -1,5 +1,6 @@
 package com.iwdael.dbroom.compiler.maker
 
+import com.iwdael.dbroom.annotation.UseFlow
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.kotlin
@@ -27,10 +28,12 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
             )
         )
         .returns(
-            ClassName("kotlin.collections", "List").parameterizedBy(
-                ClassName(
-                    generator.packageName,
-                    generator.className
+            useFlow(
+                ClassName("kotlin.collections", "List").parameterizedBy(
+                    ClassName(
+                        generator.packageName,
+                        generator.className
+                    )
                 )
             )
         )
@@ -79,10 +82,12 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
             )
         )
         .returns(
-            ClassName("kotlin.collections", "List").parameterizedBy(
-                ClassName(
-                    generator.packageName,
-                    generator.className
+            useFlow(
+                ClassName("kotlin.collections", "List").parameterizedBy(
+                    ClassName(
+                        generator.packageName,
+                        generator.className
+                    )
                 )
             )
         )
@@ -138,10 +143,12 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
             )
         )
         .returns(
-            ClassName("kotlin.collections", "List").parameterizedBy(
-                ClassName(
-                    generator.packageName,
-                    generator.className
+            useFlow(
+                ClassName("kotlin.collections", "List").parameterizedBy(
+                    ClassName(
+                        generator.packageName,
+                        generator.className
+                    )
                 )
             )
         )
@@ -206,10 +213,12 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
             )
         )
         .returns(
-            ClassName("kotlin.collections", "List").parameterizedBy(
-                ClassName(
-                    generator.packageName,
-                    generator.className
+            useFlow(
+                ClassName("kotlin.collections", "List").parameterizedBy(
+                    ClassName(
+                        generator.packageName,
+                        generator.className
+                    )
                 )
             )
         )
@@ -271,6 +280,14 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         .addStatement("return rawQuery(query.create())")
         .build()
 
+    private fun useFlow(typeName: TypeName): TypeName {
+        return if (hasFlow())
+            flow().parameterizedBy(typeName)
+        else typeName
+    }
+
+    private fun flow() = ClassName("kotlinx.coroutines.flow", "Flow")
+    private fun hasFlow() = generator.clazz.getAnnotation(UseFlow::class.java) != null
     override fun make(filer: Filer) {
         if (generator.clazz.getAnnotation(Metadata::class.java) == null) return
         FileSpec.builder(packageName(), className())
