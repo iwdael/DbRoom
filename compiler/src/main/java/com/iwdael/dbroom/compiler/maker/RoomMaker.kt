@@ -4,6 +4,7 @@ import androidx.room.*
 import com.iwdael.dbroom.annotation.UseFlow
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.colName
+import com.iwdael.dbroom.compiler.compat.getField
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
@@ -20,7 +21,7 @@ class RoomMaker(private val generator: Generator) : Maker {
     override fun packageName() = generator.packageNameGenerator
 
     private fun find() = MethodSpec.methodBuilder("find")
-        .addModifiers(Modifier.PROTECTED, Modifier.ABSTRACT)
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Query::class.java)
                 .addMember(
@@ -42,6 +43,42 @@ class RoomMaker(private val generator: Generator) : Maker {
         )
         .apply {
             generator.fields
+                .forEach {
+                    addParameter(
+                        ParameterSpec
+                            .builder(ClassName.bestGuess(it.type), it.name)
+                            .build()
+                    )
+                }
+        }
+        .build()
+
+
+    private fun findByKey() = MethodSpec.methodBuilder("find")
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .addAnnotation(
+            AnnotationSpec.builder(Query::class.java)
+                .addMember(
+                    "value", "\"SELECT * FROM ${generator.tableName} WHERE ${
+                        generator.fields
+                            .filter { it.getAnnotation(PrimaryKey::class.java) != null }
+                            .map { "${it.colName()} = :${it.name}" }
+                            .joinToString(separator = " AND ")
+                    }\""
+                )
+                .build()
+        )
+        .returns(
+            useFlow(
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    ClassName.get(generator.packageName, generator.className)
+                )
+            )
+        )
+        .apply {
+            generator.fields
+                .filter { it.getAnnotation(PrimaryKey::class.java) != null }
                 .forEach {
                     addParameter(
                         ParameterSpec
@@ -288,7 +325,6 @@ class RoomMaker(private val generator: Generator) : Maker {
         }
         .build()
 
-
     private fun findLimitOrder() = MethodSpec.methodBuilder("find")
         .addModifiers(Modifier.PUBLIC)
         .returns(
@@ -400,6 +436,48 @@ class RoomMaker(private val generator: Generator) : Maker {
         )
         .build()
 
+    private fun replaces() = MethodSpec.methodBuilder("replace")
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(
+            ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
+            "entities"
+        )
+        .beginControlFlow(
+            "for (\$T entity : entities)",
+            ClassName.get(generator.packageName, generator.className)
+        )
+        .addStatement(
+            String.format(
+                "replace(%s)",
+                generator.fields
+                    .map { "entity.${generator.clazz.methods.getField(it).name}()" }
+                    .joinToString(separator = ",")
+            )
+        )
+        .endControlFlow()
+        .varargs(true)
+        .build()
+
+    private fun replace() = MethodSpec.methodBuilder("replace")
+        .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
+        .addAnnotation(
+            AnnotationSpec.builder(Query::class.java)
+                .addMember(
+                    "value",
+                    String.format(
+                        "\"REPLACE INTO ${generator.tableName} (%s) VALUES(%s)\"",
+                        generator.fields.map { it.colName() }.joinToString(separator = ","),
+                        generator.fields.map { ":${it.name}" }.joinToString(separator = ",")
+                    )
+                )
+                .build()
+        )
+        .apply {
+            generator.fields.forEach {
+                addParameter(ClassName.bestGuess(it.type), it.name)
+            }
+        }
+        .build()
 
     private fun rawQuery() = MethodSpec.methodBuilder("rawQuery")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -442,6 +520,8 @@ class RoomMaker(private val generator: Generator) : Maker {
                     .addMethod(insert())
                     .addMethod(update())
                     .addMethod(delete())
+                    .addMethod(replace())
+                    .apply { if (generator.fields.size > 1) addMethod(findByKey()) }
                     .addMethod(find())
                     .addMethod(findAsc())
                     .addMethod(findDesc())
@@ -451,6 +531,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                     .addMethod(rawQuery())
                     .addMethod(findOrder())
                     .addMethod(findLimitOrder())
+                    .addMethod(replaces())
                     .build()
             )
             .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")

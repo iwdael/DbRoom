@@ -6,29 +6,19 @@ import android.util.Log
 import com.iwdael.dbroom.DbRoom
 import com.iwdael.dbroom.example.room.findX
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.*
 
 class MainActivity : AppCompatActivity() {
     companion object {
         const val DB_KEY = "DB_KEY"
     }
 
-    override suspend fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         DbRoom.init(this)
 
-        DbRoom.user().findX()
-            .map {
-                it.asFlow()
-            }
-            .flowOn(Dispatchers.IO)
-            .collect {
-
-            }
         Thread {
             try {
                 Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")
