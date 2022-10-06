@@ -19,6 +19,6 @@ fun JavaFile.write(filer: Filer) {
 
 fun Field.colName(): String {
     return if (this.getAnnotation(ColumnInfo::class.java) == null || this.getAnnotation(ColumnInfo::class.java)!!.name == ColumnInfo.INHERIT_FIELD_NAME)
-        this.name
-    else this.getAnnotation(ColumnInfo::class.java)!!.name
+        "`" + this.name + "`"
+    else "`" + this.getAnnotation(ColumnInfo::class.java)!!.name + "`"
 }

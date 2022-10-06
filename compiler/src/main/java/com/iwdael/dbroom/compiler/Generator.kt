@@ -14,8 +14,10 @@ class Generator(val clazz: Class) {
     val className = clazz.name
     val classNameGenerator = className + "Room"
     val tableName =
-        if (clazz.getAnnotation(Entity::class.java)?.tableName?.isNotEmpty() == true) clazz.getAnnotation(Entity::class.java)!!.tableName
-        else className
+        if (clazz.getAnnotation(Entity::class.java)?.tableName?.isNotEmpty() == true) "`" + clazz.getAnnotation(
+            Entity::class.java
+        )!!.tableName + "`"
+        else "`$className`"
 
     val fields = clazz.fields.filter { it.getAnnotation(Ignore::class.java) == null }
 }

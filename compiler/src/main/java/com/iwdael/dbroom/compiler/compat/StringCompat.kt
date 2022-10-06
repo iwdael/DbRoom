@@ -7,6 +7,9 @@ package com.iwdael.dbroom.compiler.compat
 fun String.firstLetterLowercase(): String {
     return "${this.substring(0, 1).toLowerCase()}${this.substring(1)}"
 }
+fun String.firstLetterUppercase(): String {
+    return "${this.substring(0, 1).toUpperCase()}${this.substring(1)}"
+}
 
 fun String.kotlin(): String {
     return when {
