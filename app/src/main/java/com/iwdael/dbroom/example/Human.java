@@ -3,12 +3,15 @@ package com.iwdael.dbroom.example;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.iwdael.dbroom.annotation.Insert;
+
 @Entity
-public class UserJava {
+public class Human {
     @PrimaryKey
     Long id;
-
+    @Insert(value = {"insertInfo"})
     String name;
+    @Insert(value = {"insertInfo"})
     String address;
 
     public Long getId() {

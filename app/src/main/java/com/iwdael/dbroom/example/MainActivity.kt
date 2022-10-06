@@ -19,7 +19,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         DbRoom.init(this)
 //        DbRoom.user().find()
-        TEST().add()
+        DbRoom.user().findX()
+        DbRoom.user().deleteAll()
         Thread {
             try {
                 Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")

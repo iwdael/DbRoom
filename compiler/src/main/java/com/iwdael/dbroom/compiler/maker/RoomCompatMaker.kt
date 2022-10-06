@@ -6,7 +6,6 @@ import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.kotlin
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
 
 /**
