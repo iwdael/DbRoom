@@ -8,17 +8,12 @@ import com.iwdael.dbroom.annotation.UseFlow
 
 @UseFlow
 @Entity(tableName = "TB_USER")
-data class User(
+open class User(
     @PrimaryKey
-    var id: Int? = null,
+    open var id: Int? = null,
     var name: String? = null,
     var address: String? = null,
+    var isSelected: Boolean? = null,
 ) {
-    override fun toString(): String {
-        return "User(" +
-                "id=$id, " +
-                "name=$name, " +
-                "address=$address" +
-                ")"
-    }
+
 }

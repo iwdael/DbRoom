@@ -7,7 +7,7 @@ import com.iwdael.dbroom.annotation.Find
 import com.iwdael.dbroom.annotation.Update
 
 @Entity
-data class Post(
+open class Post(
     @PrimaryKey
     var id: Int? = null,
 

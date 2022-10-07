@@ -11,13 +11,14 @@ import com.iwdael.annotationprocessorparser.Class
 class Generator(val clazz: Class) {
     val packageName = clazz.`package`.name
     val packageNameGenerator = clazz.`package`.name + ".room"
-    val className = clazz.name
-    val classNameGenerator = className + "Room"
+    val cn = clazz.name
+    val classNameGenerator = cn + "Room"
     val tableName =
         if (clazz.getAnnotation(Entity::class.java)?.tableName?.isNotEmpty() == true) "`" + clazz.getAnnotation(
             Entity::class.java
         )!!.tableName + "`"
-        else "`$className`"
+        else "`$cn`"
 
     val fields = clazz.fields.filter { it.getAnnotation(Ignore::class.java) == null }
+    val methods = clazz.methods
 }

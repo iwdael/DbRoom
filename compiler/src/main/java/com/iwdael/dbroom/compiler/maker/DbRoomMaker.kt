@@ -3,7 +3,7 @@ package com.iwdael.dbroom.compiler.maker
 import androidx.room.Database
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.dbroom.compiler.Generator
-import com.iwdael.dbroom.compiler.compat.firstLetterLowercase
+import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.maker.Maker.Companion.ROOT_PACKAGE
 import com.squareup.javapoet.*
@@ -149,7 +149,7 @@ class DbRoomMaker(
                                     fmt,
                                     *entities
                                         .map {
-                                            ClassName.get(it.packageName, it.className)
+                                            ClassName.get(it.packageName, it.cn)
                                         }
                                         .toTypedArray()
                                 )
@@ -176,14 +176,14 @@ class DbRoomMaker(
             .apply {
                 entities.forEach {
                     addMethod(
-                        MethodSpec.methodBuilder(it.className.firstLetterLowercase())
+                        MethodSpec.methodBuilder(it.cn.charLower())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
                             .returns(ClassName.get(it.packageNameGenerator, it.classNameGenerator))
-                            .addStatement("return instance()._${it.className.firstLetterLowercase()}()")
+                            .addStatement("return instance()._${it.cn.charLower()}()")
                             .build()
                     )
                     addMethod(
-                        MethodSpec.methodBuilder("_" + it.className.firstLetterLowercase())
+                        MethodSpec.methodBuilder("_" + it.cn.charLower())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
                             .returns(ClassName.get(it.packageNameGenerator, it.classNameGenerator))
                             .build()
@@ -191,16 +191,16 @@ class DbRoomMaker(
                 }
                 dao.forEach {
                     addMethod(
-                        MethodSpec.methodBuilder(it.className.firstLetterLowercase())
+                        MethodSpec.methodBuilder(it.cn.charLower())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.packageName, it.className))
-                            .addStatement("return instance()._${it.className.firstLetterLowercase()}()")
+                            .returns(ClassName.get(it.packageName, it.cn))
+                            .addStatement("return instance()._${it.cn.charLower()}()")
                             .build()
                     )
                     addMethod(
-                        MethodSpec.methodBuilder("_" + it.className.firstLetterLowercase())
+                        MethodSpec.methodBuilder("_" + it.cn.charLower())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.packageName, it.className))
+                            .returns(ClassName.get(it.packageName, it.cn))
                             .build()
                     )
                 }

@@ -31,7 +31,14 @@ class AnnotationProcessor : AbstractProcessor() {
             }
         StoreMaker().make(processingEnv.filer)
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
-
+            .apply {
+                RoomObserverMaker(this.toMutableList().map { Generator(Class(it)) }).make(
+                    processingEnv.filer
+                )
+                ObserverMaker().make(processingEnv.filer)
+                EntityDBMaker(
+                    this.toMutableList().map { Generator(Class(it)) }).make(processingEnv.filer)
+            }
             .map { Generator(Class(it)) }
             .apply {
                 val dao = env.getElementsAnnotatedWith(Dao::class.java)
@@ -41,11 +48,13 @@ class AnnotationProcessor : AbstractProcessor() {
                     ?: arrayListOf()
                 if (creates.size > 1) throw Exception("Annotation can only be used at most once.(CreateDatabase)")
                 val create = creates.firstOrNull()
-                var method:Method?=null
+                var method: Method? = null
                 if (create != null) {
-                      method = Method(create)
-                    if (method.parameter.size!=1) throw Exception("Only one parameter can be used.(${method.owner}.${method.name})")
-                    if (method.parameter.first().type != "android.content.Context") throw Exception("The parameter can only be Context.(${method.owner}.${method.name}(android.content.Context))")
+                    method = Method(create)
+                    if (method.parameter.size != 1) throw Exception("Only one parameter can be used.(${method.owner}.${method.name})")
+                    if (method.parameter.first().type != "android.content.Context") throw Exception(
+                        "The parameter can only be Context.(${method.owner}.${method.name}(android.content.Context))"
+                    )
                     if (method.`return` != "androidx.room.RoomDatabase") throw Exception("The return value of this method(${method.owner}.${method.name}) can only be RoomDatabase.(androidx.room.RoomDatabase)")
                 }
                 DbRoomMaker(this, dao, method).make(processingEnv.filer)
@@ -56,6 +65,7 @@ class AnnotationProcessor : AbstractProcessor() {
             }
             .forEach {
                 RoomMaker(it).make(processingEnv.filer)
+                EntityObserverMaker(it).make(processingEnv.filer)
                 RoomCompatMaker(it).make(processingEnv.filer)
             }
         processed = true

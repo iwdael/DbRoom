@@ -86,3 +86,33 @@ fun Generator.getUpdateFiled(): Pair<Field, List<Field>> {
     return this.fields.filter { it.getAnnotation(PrimaryKey::class.java) != null }.first() to
             this.fields.filter { it.getAnnotation(PrimaryKey::class.java) == null }
 }
+
+fun Generator.getter(field: Field): String {
+    val methods = methods
+        .filter { it.parameter.isEmpty() }
+        .filter { it.`return` == field.type }
+        .filter {
+            it.name.toLowerCase() == "get${field.name.toLowerCase()}" ||
+                    it.name.equals(field.name, ignoreCase = true) ||
+                    it.name.replace("get", "")
+                        .equals(field.name.replace("is", ""), ignoreCase = true)
+
+        }
+    if (methods.size != 1) throw Exception("Can not find getter for  ${field.owner}.${field.name}")
+    return methods.first().name
+}
+
+
+fun Generator.setter(field: Field): String {
+    val methods = methods
+        .filter { it.parameter.size == 1 }
+        .filter { it.parameter[0].type  == field.type }
+        .filter {
+            it.name.toLowerCase() == "set${field.name.toLowerCase()}" ||
+                    it.name.equals(field.name, ignoreCase = true) ||
+                    it.name.replace("set", "")
+                        .equals(field.name.replace("is", ""), ignoreCase = true)
+        }
+    if (methods.size != 1) throw Exception("Can not find setter for  ${field.owner}.${field.name}")
+    return methods.first().name
+}

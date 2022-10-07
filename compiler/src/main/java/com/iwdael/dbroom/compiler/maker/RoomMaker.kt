@@ -14,7 +14,7 @@ import javax.lang.model.element.Modifier
  */
 class RoomMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
-    override fun className() = "${generator.className}Room"
+    override fun className() = "${generator.cn}Room"
     override fun packageName() = generator.packageNameGenerator
 
 
@@ -22,7 +22,7 @@ class RoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Insert::class.java)
-                .addMember("entity", "${generator.className}.class")
+                .addMember("entity", "${generator.cn}.class")
                 .addMember(
                     "onConflict",
                     "\$T.REPLACE",
@@ -31,7 +31,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
+            ArrayTypeName.of(ClassName.get(generator.packageName, generator.cn)),
             "entity"
         )
         .varargs(true)
@@ -58,7 +58,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             )
             .addParameters(generator.fields.map {
                 ParameterSpec.builder(
-                    ClassName.bestGuess(it.type),
+                    it.type.bestGuessClassName(),
                     it.name
                 ).build()
             })
@@ -69,11 +69,11 @@ class RoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Insert::class.java)
-                .addMember("entity", "${generator.className}.class")
+                .addMember("entity", "${generator.cn}.class")
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
+            ArrayTypeName.of(ClassName.get(generator.packageName, generator.cn)),
             "entity"
         )
         .varargs(true)
@@ -100,7 +100,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             )
             .addParameters(generator.fields.map {
                 ParameterSpec.builder(
-                    ClassName.bestGuess(it.type),
+                    it.type.bestGuessClassName(),
                     it.name
                 ).build()
             })
@@ -139,11 +139,11 @@ class RoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Delete::class.java)
-                .addMember("entity", "${generator.className}.class")
+                .addMember("entity", "${generator.cn}.class")
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
+            ArrayTypeName.of(ClassName.get(generator.packageName, generator.cn)),
             "entity"
         )
         .varargs(true)
@@ -189,11 +189,11 @@ class RoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Update::class.java)
-                .addMember("entity", "${generator.className}.class")
+                .addMember("entity", "${generator.cn}.class")
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.className)),
+            ArrayTypeName.of(ClassName.get(generator.packageName, generator.cn)),
             "entity"
         )
         .varargs(true)
@@ -202,7 +202,7 @@ class RoomMaker(private val generator: Generator) : Maker {
 
     private fun updateFiled() = generator.getUpdateFiled().second.map { field ->
         val primary = generator.getUpdateFiled().first
-        MethodSpec.methodBuilder("update${field.name.firstLetterUppercase()}")
+        MethodSpec.methodBuilder("update${field.name.charUpper()}")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class.java)
@@ -220,7 +220,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             )
             .addParameter(
                 ParameterSpec.builder(
-                    ClassName.bestGuess(field.type),
+                    field.type.bestGuessClassName(),
                     field.name
                 ).build()
             )
@@ -238,25 +238,25 @@ class RoomMaker(private val generator: Generator) : Maker {
                         "\"UPDATE ${generator.tableName} SET ${
                             pair.second.first.joinToString(
                                 separator = " , ",
-                                transform = { "${it.colName()} = :set${it.name.firstLetterUppercase()}" })
+                                transform = { "${it.colName()} = :set${it.name.charUpper()}" })
                         } WHERE ${
                             pair.second.second.joinToString(
                                 separator = " AND ",
-                                transform = { "${it.colName()} = :where${it.name.firstLetterUppercase()}" })
+                                transform = { "${it.colName()} = :where${it.name.charUpper()}" })
                         }\""
                     )
                     .build()
             )
             .addParameters(pair.second.first.map {
                 ParameterSpec.builder(
-                    ClassName.bestGuess(it.type),
-                    "set${it.name.firstLetterUppercase()}"
+                    it.type.bestGuessClassName(),
+                    "set${it.name.charUpper()}"
                 ).build()
             })
             .addParameters(pair.second.second.map {
                 ParameterSpec.builder(
-                    ClassName.bestGuess(it.type),
-                    "where${it.name.firstLetterUppercase()}"
+                    it.type.bestGuessClassName(),
+                    "where${it.name.charUpper()}"
                 ).build()
             })
             .returns(TypeName.INT)
@@ -275,7 +275,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             useFlow(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.className)
+                    ClassName.get(generator.packageName, generator.cn)
                 )
             )
         )
@@ -306,7 +306,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                 useFlow(
                     ParameterizedTypeName.get(
                         ClassName.get("java.util", "List"),
-                        ClassName.get(generator.packageName, generator.className)
+                        ClassName.get(generator.packageName, generator.cn)
                     )
                 )
             )
@@ -320,7 +320,7 @@ class RoomMaker(private val generator: Generator) : Maker {
                 .addMember(
                     "observedEntities",
                     "{\$T.class}",
-                    ClassName.get(generator.packageName, generator.className)
+                    ClassName.get(generator.packageName, generator.cn)
                 )
                 .build()
         )
@@ -329,7 +329,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             useFlow(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.className)
+                    ClassName.get(generator.packageName, generator.cn)
                 )
             )
         )

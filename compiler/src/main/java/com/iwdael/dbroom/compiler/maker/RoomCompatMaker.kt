@@ -14,16 +14,16 @@ import javax.annotation.processing.Filer
  */
 class RoomCompatMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${Maker.ROOT_PACKAGE}.${className()}"
-    override fun className() = "${generator.className}RoomCompat"
+    override fun className() = "${generator.cn}RoomCompat"
     override fun packageName() = generator.packageNameGenerator
 
     private fun findX() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.className}Room"))
+        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
         .receiver(
             ClassName(
                 generator.packageNameGenerator,
-                "${generator.className}Room"
+                "${generator.cn}Room"
             )
         )
         .returns(
@@ -31,7 +31,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.className
+                        generator.cn
                     )
                 )
             )
@@ -73,11 +73,11 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findLimit() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.className}Room"))
+        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
         .receiver(
             ClassName(
                 generator.packageNameGenerator,
-                "${generator.className}Room"
+                "${generator.cn}Room"
             )
         )
         .returns(
@@ -85,7 +85,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.className
+                        generator.cn
                     )
                 )
             )
@@ -134,11 +134,11 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findOrder() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.className}Room"))
+        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
         .receiver(
             ClassName(
                 generator.packageNameGenerator,
-                "${generator.className}Room"
+                "${generator.cn}Room"
             )
         )
         .returns(
@@ -146,7 +146,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.className
+                        generator.cn
                     )
                 )
             )
@@ -168,7 +168,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ParameterSpec.builder(
                     "column",
                     ClassName(
-                        "${generator.packageNameGenerator}.${generator.className}Db",
+                        "${generator.packageNameGenerator}.${generator.cn}Db",
                         "Column"
                     )
                 ).build()
@@ -204,11 +204,11 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findLimitOrder() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.className}Room"))
+        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
         .receiver(
             ClassName(
                 generator.packageNameGenerator,
-                "${generator.className}Room"
+                "${generator.cn}Room"
             )
         )
         .returns(
@@ -216,7 +216,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.className
+                        generator.cn
                     )
                 )
             )
@@ -238,7 +238,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ParameterSpec.builder(
                     "column",
                     ClassName(
-                        "${generator.packageNameGenerator}.${generator.className}Db",
+                        "${generator.packageNameGenerator}.${generator.cn}Db",
                         "Column"
                     )
                 ).build()
