@@ -58,6 +58,7 @@ class ObserverMaker : Maker {
                                 ),
                                 "notifier"
                             )
+                            .addStatement("checkAndInit()")
                             .addCode(
                                 CodeBlock.builder()
                                     .beginControlFlow("handler.post(new Runnable()")

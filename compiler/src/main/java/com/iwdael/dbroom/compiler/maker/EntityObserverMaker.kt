@@ -113,7 +113,6 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                                     .addStatement("if (from(${gen.cn.charLower()}) == null) return")
                                     .addStatement("${it.name}EntityVersion++")
                                     .beginControlFlow("for (WeakReference<${gen.cn}> reference : all)")
-                                    .addStatement("if (reference.get() == null) continue")
                                     .addStatement("${gen.cn} entity = reference.get()")
                                     .addStatement("if (entity == null) continue")
                                     .addStatement("${gen.cn}Observer observer = from(entity)")
