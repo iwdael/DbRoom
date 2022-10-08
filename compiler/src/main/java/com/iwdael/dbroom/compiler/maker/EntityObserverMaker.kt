@@ -163,6 +163,7 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                                 gen.cn.charLower()
                             )
                             .addStatement("this.${gen.cn.charLower()} = ${gen.cn.charLower()}")
+                            .addStatement("all.add(new WeakReference(${gen.cn.charLower()}))")
                             .build()
                     )
                     .addMethod(
