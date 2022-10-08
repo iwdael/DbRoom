@@ -214,7 +214,7 @@ class RoomMaker(private val generator: Generator) : Maker {
             )
             .addParameter(
                 ParameterSpec.builder(
-                    ClassName.bestGuess(primary.type),
+                    primary.type.bestGuessClassName(),
                     primary.name
                 ).build()
             )

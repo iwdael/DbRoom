@@ -2,6 +2,7 @@ package com.iwdael.dbroom.example
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.iwdael.dbroom.RoomObserver
 import com.iwdael.dbroom.annotation.Delete
 import com.iwdael.dbroom.annotation.Find
 import com.iwdael.dbroom.annotation.Update
@@ -18,4 +19,4 @@ open class Post(
     @Delete("deleteAddress")
     @Find("findAddress")
     var address: String? = null,
-)
+): RoomObserver()

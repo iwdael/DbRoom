@@ -38,6 +38,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 ObserverMaker().make(processingEnv.filer)
                 EntityDBMaker(
                     this.toMutableList().map { Generator(Class(it)) }).make(processingEnv.filer)
+                RoomMapHandler(this.toMutableList().map { Generator(Class(it)) }).handle()
             }
             .map { Generator(Class(it)) }
             .apply {
