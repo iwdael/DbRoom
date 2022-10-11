@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.PrimaryKey
+import com.iwdael.dbroom.annotation.UseDataBinding
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.*
 import com.squareup.javapoet.*
@@ -14,6 +15,7 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
     override fun packageName() = gen.packageNameGenerator
 
     override fun make(filer: Filer) {
+        val useDataBinding = gen.clazz.getAnnotation(UseDataBinding::class.java) != null
         JavaFile
             .builder(
                 packageName(),
@@ -30,6 +32,53 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                             .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                             .build()
                     )
+                    .apply {
+                        if (useDataBinding) {
+                            addField(
+                                ClassName.get(
+                                    "androidx.databinding",
+                                    "PropertyChangeRegistry"
+                                ), "callbacks",
+                                Modifier.PRIVATE, Modifier.TRANSIENT
+                            )
+
+                            addMethod(
+                                MethodSpec.methodBuilder("addOnPropertyChangedCallback")
+                                    .addAnnotation(Override::class.java)
+                                    .addModifiers(Modifier.PUBLIC)
+                                    .addParameter(
+                                        ClassName.get(
+                                            "androidx.databinding.Observable",
+                                            "OnPropertyChangedCallback"
+                                        ), "callback"
+                                    )
+                                    .beginControlFlow("synchronized (this)")
+                                    .beginControlFlow("if (callbacks == null)")
+                                    .addStatement("callbacks = new PropertyChangeRegistry()")
+                                    .endControlFlow()
+                                    .endControlFlow()
+                                    .build()
+                            )
+                            addMethod(
+                                MethodSpec.methodBuilder("removeOnPropertyChangedCallback")
+                                    .addAnnotation(Override::class.java)
+                                    .addModifiers(Modifier.PUBLIC)
+                                    .addParameter(
+                                        ClassName.get(
+                                            "androidx.databinding.Observable",
+                                            "OnPropertyChangedCallback"
+                                        ), "callback"
+                                    )
+                                    .beginControlFlow("synchronized (this)")
+                                    .beginControlFlow("if (callbacks == null)")
+                                    .addStatement("return")
+                                    .endControlFlow()
+                                    .endControlFlow()
+                                    .addStatement("callbacks.remove(callback)")
+                                    .build()
+                            )
+                        }
+                    }
                     .apply {
                         gen.fields.filter { it.getAnnotation(PrimaryKey::class.java) == null }
                             .forEach {
@@ -110,6 +159,21 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                                     gen.fields.first { it.getAnnotation(PrimaryKey::class.java) != null }
                                 MethodSpec.methodBuilder("notify${it.name.charUpper()}Changed")
                                     .addModifiers(Modifier.PRIVATE)
+                                    .apply {
+                                        if (!useDataBinding) return@apply
+                                        beginControlFlow("synchronized (this)")
+                                            .beginControlFlow("if (callbacks != null)")
+                                            .addStatement(
+                                                "callbacks.notifyCallbacks(this, \$T.${it.name.charLower()}, null)",
+                                                ClassName.get(
+                                                    "androidx.databinding.library.baseAdapters",
+                                                    "BR"
+                                                )
+                                            )
+                                            .endControlFlow()
+                                            .endControlFlow()
+                                    }
+
                                     .addStatement("if (from(${gen.cn.charLower()}) == null) return")
                                     .addStatement("${it.name}EntityVersion++")
                                     .beginControlFlow("for (WeakReference<${gen.cn}> reference : all)")

@@ -6,6 +6,7 @@ apply plugin: 'kotlin-kapt'
 
 dependencies {
     implementation dep.roomCommon
+    implementation dep.bindingCommon
     implementation dep.javapoet
     implementation dep.kotlinpoet
     implementation dep.annotationprocessorparser

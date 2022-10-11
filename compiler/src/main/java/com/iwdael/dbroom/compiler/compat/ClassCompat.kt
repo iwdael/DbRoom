@@ -34,3 +34,13 @@ fun Class.filePath(): String? {
         build
     )
 }
+
+fun Class.srcPath(`package`: String): String? {
+    val sourceFile = this.filePath() ?: return null
+    var dir = File(sourceFile).parentFile
+    val dirLevel = `package`.split(".").size
+    for (index in 0 until dirLevel) {
+        dir = dir.parentFile
+    }
+    return dir.absolutePath
+}

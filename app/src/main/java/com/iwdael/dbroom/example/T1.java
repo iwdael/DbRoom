@@ -1,32 +1,41 @@
 package com.iwdael.dbroom.example;
 
+import androidx.databinding.Bindable;
+import androidx.databinding.Observable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.iwdael.dbroom.DB;
 import com.iwdael.dbroom.RoomObserver;
-import com.iwdael.dbroom.annotation.UseRoomMap;
+import com.iwdael.dbroom.annotation.UseDataBinding;
+import com.iwdael.dbroom.annotation.UseRoomNotifier;
 
-@UseRoomMap
+import java.lang.Long;
+import java.lang.String;
+
+@UseRoomNotifier(generate = false)
+@UseDataBinding
 @Entity
-public class T1 extends RoomObserver {
+public class T1 extends RoomObserver implements Observable {
+    @ColumnInfo(
+            name = "c_name"
+    )
     @PrimaryKey
+    @Bindable
     private Long id_;
+
+    @Bindable
     private String name_;
+
+    @Bindable
     private String address_;
+
+    @Bindable
     private String age_;
-
-
-    public Long getId_() {
-        return id_;
-    }
 
     public void setId_(Long id_) {
         this.id_ = id_;
-    }
-
-    public String getName_() {
-        return name_;
     }
 
     public void setName_(String name_) {
@@ -34,21 +43,29 @@ public class T1 extends RoomObserver {
         notifyPropertyChanged(DB.name_);
     }
 
-    public String getAddress_() {
-        return address_;
-    }
-
     public void setAddress_(String address_) {
         this.address_ = address_;
         notifyPropertyChanged(DB.address_);
     }
 
-    public String getAge_() {
-        return age_;
-    }
-
     public void setAge_(String age_) {
         this.age_ = age_;
         notifyPropertyChanged(DB.age_);
+    }
+
+    public Long getId_() {
+        return this.id_;
+    }
+
+    public String getName_() {
+        return this.name_;
+    }
+
+    public String getAddress_() {
+        return this.address_;
+    }
+
+    public String getAge_() {
+        return this.age_;
     }
 }

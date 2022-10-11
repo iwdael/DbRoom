@@ -4,9 +4,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.iwdael.dbroom.DB
 import com.iwdael.dbroom.RoomObserver
-import com.iwdael.dbroom.annotation.UseRoomMap
+import com.iwdael.dbroom.annotation.UseRoomNotifier
 
-@UseRoomMap
+@UseRoomNotifier
 @Entity
 class Pojo : RoomObserver() {
     @PrimaryKey

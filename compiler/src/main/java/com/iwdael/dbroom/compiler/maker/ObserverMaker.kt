@@ -1,17 +1,20 @@
 package com.iwdael.dbroom.compiler.maker
 
+import com.iwdael.dbroom.annotation.UseDataBinding
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class ObserverMaker : Maker {
+class ObserverMaker(val gens: List<Generator>) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
     override fun className() = "Observer"
     override fun packageName() = "com.iwdael.dbroom"
 
     override fun make(filer: Filer) {
+        val useDataBinding =
+            gens.map { it.clazz }.any { it.getAnnotation(UseDataBinding::class.java) != null }
         JavaFile
             .builder(
                 packageName(), TypeSpec.classBuilder(className())
@@ -26,6 +29,35 @@ class ObserverMaker : Maker {
                             )
                             .build()
                     )
+                    .apply {
+                        if (useDataBinding) {
+                            addSuperinterface(ClassName.bestGuess("androidx.databinding.Observable"))
+                            addMethod(
+                                MethodSpec.methodBuilder("addOnPropertyChangedCallback")
+                                    .addAnnotation(Override::class.java)
+                                    .addModifiers(Modifier.PUBLIC)
+                                    .addParameter(
+                                        ClassName.get(
+                                            "androidx.databinding.Observable",
+                                            "OnPropertyChangedCallback"
+                                        ), "callback"
+                                    )
+                                    .build()
+                            )
+                            addMethod(
+                                MethodSpec.methodBuilder("removeOnPropertyChangedCallback")
+                                    .addAnnotation(Override::class.java)
+                                    .addModifiers(Modifier.PUBLIC)
+                                    .addParameter(
+                                        ClassName.get(
+                                            "androidx.databinding.Observable",
+                                            "OnPropertyChangedCallback"
+                                        ), "callback"
+                                    )
+                                    .build()
+                            )
+                        }
+                    }
                     .addField(
                         FieldSpec.builder(ClassName.bestGuess("android.os.Handler"), "handler")
                             .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.VOLATILE)
