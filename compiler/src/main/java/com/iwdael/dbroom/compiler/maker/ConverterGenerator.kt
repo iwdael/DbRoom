@@ -11,20 +11,18 @@ import javax.lang.model.element.Modifier
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class ConverterMaker(private val generator: List<Method>) : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
+class ConverterGenerator(private val generator: List<Method>) : Generator {
+    override fun classFull() = "${packageName()}.${simpleClassName()}"
 
-    override fun className() = "Converter"
+    override fun simpleClassName() = "Converter"
 
-    override fun packageName() = Maker.ROOT_PACKAGE
+    override fun packageName() = Generator.ROOT_PACKAGE
 
-    override fun make(filer: Filer) {
-
-
+    override fun generate(filer: Filer) {
         JavaFile
             .builder(
                 packageName(),
-                TypeSpec.classBuilder(className())
+                TypeSpec.classBuilder(simpleClassName())
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(
                         MethodSpec

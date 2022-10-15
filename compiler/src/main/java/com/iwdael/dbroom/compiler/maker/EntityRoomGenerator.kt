@@ -1,10 +1,14 @@
 package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.*
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.annotations.UseFlow
-import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.*
+import com.iwdael.dbroom.compiler.packageName
+import com.iwdael.dbroom.compiler.roomFields
+import com.iwdael.dbroom.compiler.roomPackage
+import com.iwdael.dbroom.compiler.roomTableName
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
@@ -13,17 +17,17 @@ import javax.lang.model.element.Modifier
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class EntityRoomMaker(private val generator: Generator) : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
-    override fun className() = "${generator.classSimpleName}Room"
-    override fun packageName() = generator.roomPackage
+class EntityRoomGenerator(private val clazz: Class) : Generator {
+    override fun classFull() = "${packageName()}.${simpleClassName()}"
+    override fun simpleClassName() = "${clazz.classSimpleName}Room"
+    override fun packageName() = clazz.roomPackage()
 
 
     private fun replaceArray() = MethodSpec.methodBuilder("replace")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Insert::class.java)
-                .addMember("entity", "${generator.classSimpleName}.class")
+                .addMember("entity", "${clazz.classSimpleName}.class")
                 .addMember(
                     "onConflict",
                     "\$T.REPLACE",
@@ -32,7 +36,7 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.classSimpleName)),
+            ArrayTypeName.of(ClassName.get(clazz.packageName(), clazz.classSimpleName)),
             "entity"
         )
         .varargs(true)
@@ -45,19 +49,19 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"INSERT OR REPLACE INTO ${generator.roomTableName}(${
-                            generator.roomFields.joinToString(
+                        "\"INSERT OR REPLACE INTO ${clazz.roomTableName()}(${
+                            clazz.roomFields().joinToString(
                                 separator = " ,",
                                 transform = { it.colName() })
                         }) values(${
-                            generator.roomFields.joinToString(
+                            clazz.roomFields().joinToString(
                                 separator = " ,",
                                 transform = { ":${it.name}" })
                         })\""
                     )
                     .build()
             )
-            .addParameters(generator.roomFields.map {
+            .addParameters(clazz.roomFields().map {
                 ParameterSpec.builder(
                     it.asTypeName(),
                     it.name
@@ -70,11 +74,11 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Insert::class.java)
-                .addMember("entity", "${generator.classSimpleName}.class")
+                .addMember("entity", "${clazz.classSimpleName}.class")
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.classSimpleName)),
+            ArrayTypeName.of(clazz.asTypeName()),
             "entity"
         )
         .varargs(true)
@@ -87,19 +91,19 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"INSERT INTO ${generator.roomTableName}(${
-                            generator.roomFields.joinToString(
+                        "\"INSERT INTO ${clazz.roomTableName()}(${
+                            clazz.roomFields().joinToString(
                                 separator = " ,",
                                 transform = { it.colName() })
                         }) values(${
-                            generator.roomFields.joinToString(
+                            clazz.roomFields().joinToString(
                                 separator = " ,",
                                 transform = { ":${it.name}" })
                         })\""
                     )
                     .build()
             )
-            .addParameters(generator.roomFields.map {
+            .addParameters(clazz.roomFields().map {
                 ParameterSpec.builder(
                     it.asTypeName(),
                     it.name
@@ -108,14 +112,14 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
             .build()
     }
 
-    private fun inserts() = generator.getInsert().map { pair ->
+    private fun inserts() = clazz.getInsert().map { pair ->
         MethodSpec.methodBuilder(pair.first)
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"INSERT INTO ${generator.roomTableName}(${
+                        "\"INSERT INTO ${clazz.roomTableName()}(${
                             pair.second.joinToString(
                                 separator = " ,",
                                 transform = { it.colName() })
@@ -140,24 +144,24 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Delete::class.java)
-                .addMember("entity", "${generator.classSimpleName}.class")
+                .addMember("entity", "${clazz.classSimpleName}.class")
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.classSimpleName)),
+            ArrayTypeName.of(clazz.asTypeName()),
             "entity"
         )
         .varargs(true)
         .build()
 
-    private fun deletes() = generator.getDelete().map { pair ->
+    private fun deletes() = clazz.getDelete().map { pair ->
         MethodSpec.methodBuilder(pair.first)
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"DELETE FROM ${generator.roomTableName} WHERE ${
+                        "\"DELETE FROM ${clazz.roomTableName()} WHERE ${
                             pair.second.joinToString(
                                 separator = " AND ",
                                 transform = { "${it.colName()} = :${it.name}" })
@@ -180,7 +184,7 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
         .addAnnotation(
             AnnotationSpec.builder(Query::class.java)
                 .addMember(
-                    "value", "\"DELETE FROM ${generator.roomTableName}\""
+                    "value", "\"DELETE FROM ${clazz.roomTableName()}\""
                 )
                 .build()
         )
@@ -190,26 +194,26 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Update::class.java)
-                .addMember("entity", "${generator.classSimpleName}.class")
+                .addMember("entity", "${clazz.classSimpleName}.class")
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(generator.packageName, generator.classSimpleName)),
+            ArrayTypeName.of(clazz.asTypeName()),
             "entity"
         )
         .varargs(true)
         .returns(TypeName.INT)
         .build()
 
-    private fun updateFiled() = generator.getUpdateFiled().second.map { field ->
-        val primary = generator.getUpdateFiled().first
+    private fun updateFiled() = clazz.getUpdateFiled().second.map { field ->
+        val primary = clazz.getUpdateFiled().first
         MethodSpec.methodBuilder("update${field.name.charUpper()}")
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"UPDATE ${generator.roomTableName} SET ${field.colName()} = :${field.name} WHERE ${primary.colName()} = :${primary.name}\""
+                        "\"UPDATE ${clazz.roomTableName()} SET ${field.colName()} = :${field.name} WHERE ${primary.colName()} = :${primary.name}\""
                     )
                     .build()
             )
@@ -229,14 +233,14 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
             .build()
     }
 
-    private fun updates() = generator.getUpdate().map { pair ->
+    private fun updates() = clazz.getUpdate().map { pair ->
         MethodSpec.methodBuilder(pair.first)
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"UPDATE ${generator.roomTableName} SET ${
+                        "\"UPDATE ${clazz.roomTableName()} SET ${
                             pair.second.first.joinToString(
                                 separator = " , ",
                                 transform = { "${it.colName()} = :set${it.name.charUpper()}" })
@@ -269,27 +273,27 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Query::class.java)
-                .addMember("value", "\"SELECT * FROM ${generator.roomTableName}\"")
+                .addMember("value", "\"SELECT * FROM ${clazz.roomTableName()}\"")
                 .build()
         )
         .returns(
             useFlow(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.classSimpleName)
+                    clazz.asTypeName()
                 )
             )
         )
         .build()
 
-    private fun finds() = generator.getQuery().map { pair ->
+    private fun finds() = clazz.getQuery().map { pair ->
         MethodSpec.methodBuilder(pair.first)
             .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"SELECT * FROM ${generator.roomTableName} WHERE ${
+                        "\"SELECT * FROM ${clazz.roomTableName()} WHERE ${
                             pair.second.joinToString(
                                 separator = " AND ",
                                 transform = { "${it.colName()} = :${it.name}" })
@@ -307,7 +311,7 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
                 useFlow(
                     ParameterizedTypeName.get(
                         ClassName.get("java.util", "List"),
-                        ClassName.get(generator.packageName, generator.classSimpleName)
+                        clazz.asTypeName()
                     )
                 )
             )
@@ -321,7 +325,7 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
                 .addMember(
                     "observedEntities",
                     "{\$T.class}",
-                    ClassName.get(generator.packageName, generator.classSimpleName)
+                    clazz.asTypeName()
                 )
                 .build()
         )
@@ -330,7 +334,7 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
             useFlow(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
-                    ClassName.get(generator.packageName, generator.classSimpleName)
+                    clazz.asTypeName()
                 )
             )
         )
@@ -344,12 +348,12 @@ class EntityRoomMaker(private val generator: Generator) : Maker {
     }
 
     private fun flow() = ClassName.get("kotlinx.coroutines.flow", "Flow")
-    private fun hasFlow() = generator.clazz.getAnnotation(UseFlow::class.java) != null
+    private fun hasFlow() = clazz.getAnnotation(UseFlow::class.java) != null
 
-    override fun make(filer: Filer) {
+    override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.interfaceBuilder(className())
+                packageName(), TypeSpec.interfaceBuilder(simpleClassName())
                     .addAnnotation(Dao::class.java)
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(replace())

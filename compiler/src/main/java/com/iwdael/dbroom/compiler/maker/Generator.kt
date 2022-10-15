@@ -6,12 +6,12 @@ import javax.annotation.processing.Filer
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-interface Maker {
+interface Generator {
     companion object {
         const val ROOT_PACKAGE = "com.iwdael.dbroom"
     }
     fun classFull(): String
-    fun className(): String
+    fun simpleClassName(): String
     fun packageName(): String
-    fun make(filer: Filer)
+    fun generate(filer: Filer)
 }

@@ -1,35 +1,30 @@
 package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.PrimaryKey
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
-import com.iwdael.dbroom.annotations.UseDataBinding
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.*
 import com.iwdael.dbroom.compiler.compat.*
 import com.squareup.javapoet.*
 import java.lang.ref.WeakReference
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class EntityObserverMaker(private val gen: Generator) : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
-    override fun className() = "${gen.classSimpleName}Observer"
-    override fun packageName() = gen.roomPackage
+class EntityObserverGenerator(private val clazz: Class) : Generator {
+    override fun classFull() = "${packageName()}.${simpleClassName()}"
+    override fun simpleClassName() = "${clazz.classSimpleName}Observer"
+    override fun packageName() = clazz.roomPackage()
 
-    override fun make(filer: Filer) {
-        val useDataBinding = gen.clazz.getAnnotation(UseDataBinding::class.java) != null
+    override fun generate(filer: Filer) {
+        val useDataBinding = listOf(clazz).useDataBinding()
         JavaFile
             .builder(
                 packageName(),
-                TypeSpec.classBuilder(className())
+                TypeSpec.classBuilder(simpleClassName())
                     .superclass(ClassName.get("com.iwdael.dbroom", "Observer"))
                     .addModifiers(Modifier.PUBLIC)
                     .addField(
-                        FieldSpec.builder(
-                            ClassName.get(
-                                gen.packageName,
-                                gen.classSimpleName
-                            ), gen.classSimpleName.charLower()
-                        )
+                        FieldSpec.builder(clazz.asTypeName(), clazz.classSimpleName.charLower())
                             .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                             .build()
                     )
@@ -81,7 +76,8 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                         }
                     }
                     .apply {
-                        gen.roomFields.filter { it.getAnnotation(PrimaryKey::class.java) == null }
+                        clazz.roomFields()
+                            .filter { it.getAnnotation(PrimaryKey::class.java) == null }
                             .forEach {
                                 addField(
                                     FieldSpec.builder(TypeName.INT, "${it.name}RoomVersion")
@@ -100,7 +96,7 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                     .apply {
                         val weak = ParameterizedTypeName.get(
                             ClassName.get(WeakReference::class.java),
-                            gen.clazz.asTypeName()
+                            clazz.asTypeName()
                         )
                         val list = ParameterizedTypeName.get(ClassName.get(List::class.java), weak)
                         addField(
@@ -122,9 +118,9 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                             )
                             .addStatement("cleanCache()")
                             .apply {
-                                val getter = gen.roomPrimaryKeyField.getter
+                                val getter = clazz.roomPrimaryKeyField().getter
                                 beginControlFlow(
-                                    "if (null == ${gen.classSimpleName.charLower()}.${
+                                    "if (null == ${clazz.classSimpleName.charLower()}.${
                                         getter.name
                                     }())"
                                 )
@@ -132,11 +128,11 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                             .addStatement("return")
                             .endControlFlow()
                             .apply {
-                                if (gen.roomFields
+                                if (clazz.roomFields()
                                         .filter { it.getAnnotation(PrimaryKey::class.java) == null }
                                         .isEmpty()
                                 ) return@apply
-                                gen.roomFields
+                                clazz.roomFields()
                                     .filter { it.getAnnotation(PrimaryKey::class.java) == null }
                                     .forEachIndexed { index, field ->
                                         if (index == 0) {
@@ -156,11 +152,9 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                             .build()
                     )
                     .addMethods(
-                        gen.roomFields
+                        clazz.roomFields()
                             .filter { it.getAnnotation(PrimaryKey::class.java) == null }
                             .map {
-                                val key =
-                                    gen.roomFields.first { it.getAnnotation(PrimaryKey::class.java) != null }
                                 MethodSpec.methodBuilder("notify${it.name.charUpper()}Changed")
                                     .addModifiers(Modifier.PRIVATE)
                                     .apply {
@@ -178,22 +172,20 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                                             .endControlFlow()
                                     }
 
-                                    .addStatement("if (from(${gen.classSimpleName.charLower()}) == null) return")
+                                    .addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
                                     .addStatement("${it.name}EntityVersion++")
-                                    .beginControlFlow("for (WeakReference<${gen.classSimpleName}> reference : all)")
-                                    .addStatement("${gen.classSimpleName} entity = reference.get()")
+                                    .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
+                                    .addStatement("${clazz.classSimpleName} entity = reference.get()")
                                     .addStatement("if (entity == null) continue")
-                                    .addStatement("${gen.classSimpleName}Observer observer = from(entity)")
+                                    .addStatement("${clazz.classSimpleName}Observer observer = from(entity)")
                                     .beginControlFlow("if (${it.name}EntityVersion > observer.${it.name}EntityVersion)")
                                     .addStatement("observer.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
                                     .addStatement("observer.${it.name}RoomVersion = ${it.name}EntityVersion")
                                     .apply {
-                                        val getter = gen.roomPrimaryKeyField.getter
-                                            ?: throw IllegalArgumentException("Can not found getter(${gen.clazz.className}.${gen.roomPrimaryKeyField.name})")
-                                        val setter = gen.roomPrimaryKeyField.setter
-                                            ?: throw IllegalArgumentException("Can not found setter(${gen.clazz.className}.${gen.roomPrimaryKeyField.name})")
+                                        val getter = clazz.roomPrimaryKeyField().getter
+                                        val setter = clazz.roomPrimaryKeyField().setter
                                         addStatement(
-                                            "entity.${setter.name}(${gen.classSimpleName.charLower()}.${getter.name}())"
+                                            "entity.${setter.name}(${clazz.classSimpleName.charLower()}.${getter.name}())"
                                         )
                                     }
 
@@ -211,11 +203,11 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
 
                                             .apply {
                                                 val getter = it.getter
-                                                val keyGetter = key.getter
+                                                val keyGetter = clazz.roomPrimaryKeyField().getter
                                                 addStatement(
-                                                    "\$T.${gen.classSimpleName.charLower()}().update${it.name.charUpper()}(" +
-                                                            "${gen.classSimpleName.charLower()}.${keyGetter.name}() ," +
-                                                            "${gen.classSimpleName.charLower()}.${getter.name}()" +
+                                                    "\$T.${clazz.classSimpleName.charLower()}().update${it.name.charUpper()}(" +
+                                                            "${clazz.classSimpleName.charLower()}.${keyGetter.name}() ," +
+                                                            "${clazz.classSimpleName.charLower()}.${getter.name}()" +
                                                             ")",
                                                     dbRoomClassName()
                                                 )
@@ -235,14 +227,11 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                         MethodSpec.constructorBuilder()
                             .addModifiers(Modifier.PUBLIC)
                             .addParameter(
-                                ClassName.get(
-                                    gen.packageName,
-                                    gen.classSimpleName
-                                ),
-                                gen.classSimpleName.charLower()
+                                clazz.asTypeName(),
+                                clazz.classSimpleName.charLower()
                             )
-                            .addStatement("this.${gen.classSimpleName.charLower()} = ${gen.classSimpleName.charLower()}")
-                            .addStatement("all.add(new WeakReference(${gen.classSimpleName.charLower()}))")
+                            .addStatement("this.${clazz.classSimpleName.charLower()} = ${clazz.classSimpleName.charLower()}")
+                            .addStatement("all.add(new WeakReference(${clazz.classSimpleName.charLower()}))")
                             .build()
                     )
                     .addMethod(
@@ -261,29 +250,20 @@ class EntityObserverMaker(private val gen: Generator) : Maker {
                             .addModifiers(Modifier.PRIVATE)
                             .addParameter(
                                 ParameterSpec.builder(
-                                    ClassName.get(
-                                        gen.packageName,
-                                        gen.classSimpleName
-                                    ), gen.classSimpleName
-                                )
-                                    .build()
+                                    clazz.asTypeName(), clazz.classSimpleName
+                                ).build()
                             )
-                            .returns(
-                                ClassName.get(
-                                    gen.roomPackage,
-                                    "${gen.classSimpleName}Observer"
-                                )
-                            )
+                            .returns(clazz.observerClassName().asTypeName())
                             .addStatement(
                                 "\$T roomObserver = null",
                                 ClassName.get("com.iwdael.dbroom", "RoomObserver")
                             )
-                            .addStatement("Object target = ${gen.classSimpleName.charLower()}")
+                            .addStatement("Object target = ${clazz.classSimpleName.charLower()}")
                             .beginControlFlow("if (target instanceof RoomObserver)")
                             .addStatement("roomObserver = (RoomObserver) target")
                             .endControlFlow()
                             .addStatement("if (roomObserver == null) return null")
-                            .addStatement("return (${gen.classSimpleName}Observer) roomObserver.getDbObserver()")
+                            .addStatement("return (${clazz.classSimpleName}Observer) roomObserver.getDbObserver()")
                             .build()
                     )
                     .build()

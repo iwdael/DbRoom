@@ -11,12 +11,12 @@ import javax.lang.model.element.Modifier
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class StoreRoomMaker : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
+class StoreRoomGenerator : Generator {
+    override fun classFull() = "${packageName()}.${simpleClassName()}"
 
-    override fun className() = "StoreRoom"
+    override fun simpleClassName() = "StoreRoom"
 
-    override fun packageName() = Maker.ROOT_PACKAGE
+    override fun packageName() = Generator.ROOT_PACKAGE
 
     private fun store() = MethodSpec.methodBuilder("store")
         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
@@ -47,14 +47,14 @@ class StoreRoomMaker : Maker {
                 )
                 .build()
         )
-        .returns(ClassName.get(Maker.ROOT_PACKAGE, "Store"))
+        .returns(ClassName.get(Generator.ROOT_PACKAGE, "Store"))
         .build()
 
-    override fun make(filer: Filer) {
+    override fun generate(filer: Filer) {
         JavaFile
             .builder(
                 packageName(),
-                TypeSpec.classBuilder(className())
+                TypeSpec.classBuilder(simpleClassName())
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                     .addAnnotation(Dao::class.java)
                     .addMethod(store())

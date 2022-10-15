@@ -3,33 +3,36 @@ package com.iwdael.dbroom.compiler.maker
 import androidx.annotation.Nullable
 import androidx.databinding.Bindable
 import androidx.room.PrimaryKey
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asMethodBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asAnnotation
+import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asFileBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
 import com.iwdael.annotationprocessorparser.poet.srcPath
 import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.annotations.UseRoomNotifier
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.KotlinClass.observable
+import com.iwdael.dbroom.compiler.KotlinClass.roomObserver
+import com.iwdael.dbroom.compiler.packageName
+import com.iwdael.dbroom.compiler.roomFields
+import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.kotlinpoet.*
 import org.jetbrains.annotations.NotNull
 import java.io.File
 import javax.lang.model.element.Modifier
 
-class RoomMapKotlinHandler(val gen: Generator) {
+class UseRoomNotifierKotlinGenerator(val clazz: Class) {
     fun handle() {
-        val dataBinding = gen.clazz.getAnnotation(UseDataBinding::class.java)
-        val needGenerator = gen.clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate
-        val useDataBinding = dataBinding != null
+        val needGenerator = clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate
+        val useDataBinding = listOf(clazz).useDataBinding()
         if (!needGenerator) return
-        FileSpec.builder(gen.clazz.packet.name, gen.clazz.classSimpleName)
+        clazz.asFileBuilder()
             .addType(
-                gen.clazz.asTypeBuilder()
-                    .superclass(ClassName.bestGuess("com.iwdael.dbroom.RoomObserver"))
+                clazz.asTypeBuilder()
+                    .superclass(roomObserver)
                     .apply {
-                        if (useDataBinding) addSuperinterface(
-                            ClassName.bestGuess("androidx.databinding.Observable")
-                        )
+                        if (useDataBinding) addSuperinterface(observable)
                     }
                     .addAnnotation(
                         AnnotationSpec.builder(UseRoomNotifier::class.java)
@@ -37,13 +40,13 @@ class RoomMapKotlinHandler(val gen: Generator) {
                             .build()
                     )
                     .addAnnotations(
-                        gen.clazz.annotations
+                        clazz.annotations
                             .filter { it.className != UseRoomNotifier::class.java.name }
                             .filter { it.className != Metadata::class.java.name }
-                            .map { annotation -> annotation.asAnnotation() }
+                            .map { it.asAnnotation() }
                     )
                     .addProperties(
-                        gen.roomFields.map {
+                        clazz.roomFields().map {
                             PropertySpec
                                 .builder(
                                     it.name,
@@ -57,7 +60,7 @@ class RoomMapKotlinHandler(val gen: Generator) {
                                     .filter { it.className != NotNull::class.java.name }
                                     .filter { it.className != org.jetbrains.annotations.Nullable::class.java.name }
                                     .filter { it.className != Nullable::class.java.name }
-                                    .map { annotation -> annotation.asAnnotation() })
+                                    .map { it.asAnnotation() })
                                 .apply {
                                     if (useDataBinding)
                                         addAnnotation(
@@ -69,12 +72,9 @@ class RoomMapKotlinHandler(val gen: Generator) {
                         }
                     )
                     .addFunctions(
-                        gen.roomFields
+                        clazz.roomFields()
                             .filter { !it.modifiers.contains(Modifier.STATIC) }
-                            .map {
-                                it to (it.setter
-                                    ?: throw IllegalArgumentException("Can not found setter(${it.parent.className}.${it.name})"))
-                            }
+                            .map { it to it.setter }
                             .map { pair ->
                                 val setter = pair.second
                                 setter.asMethodBuilder()
@@ -96,12 +96,9 @@ class RoomMapKotlinHandler(val gen: Generator) {
                             }
                     )
                     .addFunctions(
-                        gen.roomFields
+                        clazz.roomFields()
                             .filter { !it.modifiers.contains(Modifier.STATIC) }
-                            .map {
-                                it to (it.getter
-                                    ?: throw IllegalArgumentException("Can not found getter(${it.parent.className}.${it.name})"))
-                            }
+                            .map { it to it.getter }
                             .map { pair ->
                                 val getter = pair.second
                                 FunSpec.builder(getter.name)
@@ -116,7 +113,7 @@ class RoomMapKotlinHandler(val gen: Generator) {
                     .build()
             )
             .build()
-            .writeTo(File(gen.clazz.srcPath(gen.clazz.packet.name)!!))
+            .writeTo(File(clazz.srcPath(clazz.packageName())!!))
 
     }
 }

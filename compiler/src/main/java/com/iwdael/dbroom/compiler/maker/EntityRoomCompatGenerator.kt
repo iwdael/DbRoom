@@ -1,9 +1,14 @@
 package com.iwdael.dbroom.compiler.maker
 
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
 import com.iwdael.dbroom.annotations.UseFlow
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.compat.bestGuessClassName
 import com.iwdael.dbroom.compiler.compat.colName
+import com.iwdael.dbroom.compiler.roomClassName
+import com.iwdael.dbroom.compiler.roomFields
+import com.iwdael.dbroom.compiler.roomPackage
+import com.iwdael.dbroom.compiler.roomTableName
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.annotation.processing.Filer
@@ -12,32 +17,21 @@ import javax.annotation.processing.Filer
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class RoomCompatMaker(private val generator: Generator) : Maker {
-    override fun classFull() = "${Maker.ROOT_PACKAGE}.${className()}"
-    override fun className() = "${generator.classSimpleName}RoomCompat"
-    override fun packageName() = generator.roomPackage
+class EntityRoomCompatGenerator(private val clazz: Class) : Generator {
+    override fun classFull() = "${Generator.ROOT_PACKAGE}.${simpleClassName()}"
+    override fun simpleClassName() = "${clazz.classSimpleName}RoomCompat"
+    override fun packageName() = clazz.roomPackage()
 
     private fun findX() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
-        .receiver(
-            ClassName(
-                generator.roomPackage,
-                "${generator.classSimpleName}Room"
-            )
-        )
+        .receiver(clazz.roomClassName().asTypeName())
         .returns(
             useFlow(
-                ClassName("kotlin.collections", "List").parameterizedBy(
-                    ClassName(
-                        generator.packageName,
-                        generator.classSimpleName
-                    )
-                )
+                ClassName("kotlin.collections", "List").parameterizedBy(clazz.asTypeName())
             )
         )
         .apply {
-            generator.roomFields
+            clazz.roomFields()
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
@@ -50,7 +44,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 }
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.roomTableName}\")",
+            "val query = %T.builder(\"${clazz.roomTableName()}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -59,7 +53,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.roomFields.forEach {
+            clazz.roomFields().forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")
@@ -73,25 +67,14 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findLimit() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
-        .receiver(
-            ClassName(
-                generator.roomPackage,
-                "${generator.classSimpleName}Room"
-            )
-        )
+        .receiver(clazz.roomClassName().asTypeName())
         .returns(
             useFlow(
-                ClassName("kotlin.collections", "List").parameterizedBy(
-                    ClassName(
-                        generator.packageName,
-                        generator.classSimpleName
-                    )
-                )
+                ClassName("kotlin.collections", "List").parameterizedBy(clazz.asTypeName())
             )
         )
         .apply {
-            generator.roomFields
+            clazz.roomFields()
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
@@ -110,7 +93,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
             )
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.roomTableName}\")",
+            "val query = %T.builder(\"${clazz.roomTableName()}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -119,7 +102,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.roomFields.forEach {
+            clazz.roomFields().forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")
@@ -134,29 +117,18 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findOrder() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
-        .receiver(
-            ClassName(
-                generator.roomPackage,
-                "${generator.classSimpleName}Room"
-            )
-        )
+        .receiver(clazz.roomClassName().asTypeName())
         .returns(
             useFlow(
-                ClassName("kotlin.collections", "List").parameterizedBy(
-                    ClassName(
-                        generator.packageName,
-                        generator.classSimpleName
-                    )
-                )
+                ClassName("kotlin.collections", "List").parameterizedBy(clazz.asTypeName())
             )
         )
         .apply {
-            generator.roomFields
+            clazz.roomFields()
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
-                            it.name,it.asTypeName().copy(true)
+                            it.name, it.asTypeName().copy(true)
                         )
                             .defaultValue("null")
                             .build()
@@ -167,7 +139,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ParameterSpec.builder(
                     "column",
                     ClassName(
-                        "${generator.roomPackage}.${generator.classSimpleName}Db",
+                        "${clazz.roomPackage()}.${clazz.classSimpleName}Db",
                         "Column"
                     )
                 ).build()
@@ -179,7 +151,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.roomTableName}\")",
+            "val query = %T.builder(\"${clazz.roomTableName()}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -188,7 +160,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.roomFields.forEach {
+            clazz.roomFields().forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")
@@ -203,29 +175,18 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findLimitOrder() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
-        .receiver(
-            ClassName(
-                generator.roomPackage,
-                "${generator.classSimpleName}Room"
-            )
-        )
+        .receiver(clazz.roomClassName().asTypeName())
         .returns(
             useFlow(
-                ClassName("kotlin.collections", "List").parameterizedBy(
-                    ClassName(
-                        generator.packageName,
-                        generator.classSimpleName
-                    )
-                )
+                ClassName("kotlin.collections", "List").parameterizedBy(clazz.asTypeName())
             )
         )
         .apply {
-            generator.roomFields
+            clazz.roomFields()
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
-                            it.name,it.asTypeName().copy(true)
+                            it.name, it.asTypeName().copy(true)
                         )
                             .defaultValue("null")
                             .build()
@@ -236,7 +197,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ParameterSpec.builder(
                     "column",
                     ClassName(
-                        "${generator.roomPackage}.${generator.classSimpleName}Db",
+                        "${clazz.roomPackage()}.${clazz.classSimpleName}Db",
                         "Column"
                     )
                 ).build()
@@ -254,7 +215,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.roomTableName}\")",
+            "val query = %T.builder(\"${clazz.roomTableName()}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -263,7 +224,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.roomFields.forEach {
+            clazz.roomFields().forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")
@@ -284,10 +245,10 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
     }
 
     private fun flow() = ClassName("kotlinx.coroutines.flow", "Flow")
-    private fun hasFlow() = generator.clazz.getAnnotation(UseFlow::class.java) != null
-    override fun make(filer: Filer) {
-        if (generator.clazz.getAnnotation(Metadata::class.java) == null) return
-        FileSpec.builder(packageName(), className())
+    private fun hasFlow() = clazz.getAnnotation(UseFlow::class.java) != null
+    override fun generate(filer: Filer) {
+        if (clazz.getAnnotation(Metadata::class.java) == null) return
+        FileSpec.builder(packageName(), simpleClassName())
             .apply {
                 addFunction(findX())
                 addFunction(findLimit())

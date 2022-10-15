@@ -1,8 +1,9 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.write
+import com.iwdael.dbroom.compiler.roomPackage
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
@@ -11,14 +12,14 @@ import javax.lang.model.element.Modifier
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class DbMaker(private val generator: Generator) : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
+class EntityDbGenerator(private val clazz: Class) : Generator {
+    override fun classFull() = "${packageName()}.${simpleClassName()}"
 
-    override fun className() = "${generator.classSimpleName}Db"
+    override fun simpleClassName() = "${clazz.classSimpleName}Db"
 
-    override fun packageName() = generator.roomPackage
+    override fun packageName() = clazz.roomPackage()
 
-    override fun make(filer: Filer) {
+    override fun generate(filer: Filer) {
 
         val column = TypeSpec.classBuilder("Column")
             .addField(String::class.java, "name", Modifier.FINAL, Modifier.PUBLIC)
@@ -31,7 +32,7 @@ class DbMaker(private val generator: Generator) : Maker {
                     .build()
             )
             .build()
-        val staticFields = generator.clazz.fields.map {
+        val staticFields = clazz.fields.map {
             FieldSpec.builder(
                 ClassName.get(classFull(), "Column"),
                 it.name,
@@ -45,7 +46,7 @@ class DbMaker(private val generator: Generator) : Maker {
         JavaFile
             .builder(
                 packageName(),
-                TypeSpec.classBuilder(className())
+                TypeSpec.classBuilder(simpleClassName())
                     .addModifiers(Modifier.PUBLIC)
                     .addFields(staticFields)
                     .addType(column)

@@ -12,18 +12,18 @@ import javax.lang.model.element.Modifier
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class StoreMaker : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
+class StoreGenerator : Generator {
+    override fun classFull() = "${packageName()}.${simpleClassName()}"
 
-    override fun className() = "Store"
+    override fun simpleClassName() = "Store"
 
-    override fun packageName() = Maker.ROOT_PACKAGE
+    override fun packageName() = Generator.ROOT_PACKAGE
 
-    override fun make(filer: Filer) {
+    override fun generate(filer: Filer) {
         JavaFile
             .builder(
                 packageName(),
-                TypeSpec.classBuilder(className())
+                TypeSpec.classBuilder(simpleClassName())
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(
                         AnnotationSpec.builder(Entity::class.java)

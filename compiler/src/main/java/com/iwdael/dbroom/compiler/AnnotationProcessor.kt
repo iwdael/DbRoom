@@ -23,27 +23,24 @@ class AnnotationProcessor : AbstractProcessor() {
 
     override fun process(annos: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
         if (processed) return false
-        StoreRoomMaker().make(processingEnv.filer)
+        StoreRoomGenerator().generate(processingEnv.filer)
         (env.getElementsAnnotatedWith(TypeConverter::class.java) ?: arrayListOf())
             .map { Method(it) }
             .apply {
-                ConverterMaker(this).make(processingEnv.filer)
+                ConverterGenerator(this).generate(processingEnv.filer)
             }
-        StoreMaker().make(processingEnv.filer)
+        StoreGenerator().generate(processingEnv.filer)
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
+            .map{it->Class(it)}
             .apply {
-                RoomObserverMaker(this.toMutableList().map { Generator(Class(it)) }).make(
-                    processingEnv.filer
-                )
-                ObserverMaker(this.toMutableList().map { Generator(Class(it)) }).make(processingEnv.filer)
-                EntityDBMaker(
-                    this.toMutableList().map { Generator(Class(it)) }).make(processingEnv.filer)
-                RoomMapHandler(this.toMutableList().map { Generator(Class(it)) }).handle()
+                RoomObserverMaker(this).generate(processingEnv.filer)
+                ObserverGenerator(this).generate(processingEnv.filer)
+                DBGenerator( this).generate(processingEnv.filer)
+                UseRoomNotifierGenerator(this).handle()
             }
-            .map { Generator(Class(it)) }
             .apply {
                 val dao = env.getElementsAnnotatedWith(Dao::class.java)
-                    ?.map { Generator(Class(it)) }
+                    ?.map { Class(it) }
                     ?: arrayListOf()
                 val creates = env.getElementsAnnotatedWith(DbRoomCreator::class.java)?.toList()
                     ?: arrayListOf()
@@ -58,16 +55,16 @@ class AnnotationProcessor : AbstractProcessor() {
                     )
                     if (method.returnClassName != "androidx.room.RoomDatabase") throw Exception("The return value of this method(${method.parent.className}.${method.name}) can only be RoomDatabase.(androidx.room.RoomDatabase)")
                 }
-                DbRoomMaker(this, dao, method).make(processingEnv.filer)
+                DbRoomGenerator(this, dao, method).generate(processingEnv.filer)
             }
             .map {
-                DbMaker(it).make(processingEnv.filer)
+                EntityDbGenerator(it).generate(processingEnv.filer)
                 it
             }
             .forEach {
-                EntityRoomMaker(it).make(processingEnv.filer)
-                EntityObserverMaker(it).make(processingEnv.filer)
-                RoomCompatMaker(it).make(processingEnv.filer)
+                EntityRoomGenerator(it).generate(processingEnv.filer)
+                EntityObserverGenerator(it).generate(processingEnv.filer)
+                EntityRoomCompatGenerator(it).generate(processingEnv.filer)
             }
         processed = true
         return false

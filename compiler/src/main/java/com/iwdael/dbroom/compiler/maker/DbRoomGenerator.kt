@@ -1,11 +1,16 @@
 package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.Database
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.Method
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.iwdael.dbroom.compiler.JavaClass.context
+import com.iwdael.dbroom.compiler.JavaClass.roomDatabase
 import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.write
-import com.iwdael.dbroom.compiler.maker.Maker.Companion.ROOT_PACKAGE
+import com.iwdael.dbroom.compiler.maker.Generator.Companion.ROOT_PACKAGE
+import com.iwdael.dbroom.compiler.roomClassName
+import com.iwdael.dbroom.compiler.roomPackage
 import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
@@ -15,20 +20,20 @@ import javax.lang.model.element.Modifier
  * author : iwdael
  * e-mail : iwdael@outlook.com
  */
-class DbRoomMaker(
-    private val entities: List<Generator>,
-    private val dao: List<Generator>,
+class DbRoomGenerator(
+    private val entities: List<Class>,
+    private val dao: List<Class>,
     private val method: Method?
-) : Maker {
+) : Generator {
 
-    override fun classFull() = "$ROOT_PACKAGE.${className()}"
-    override fun className() = "DbRoom"
+    override fun classFull() = "$ROOT_PACKAGE.${simpleClassName()}"
+    override fun simpleClassName() = "DbRoom"
     override fun packageName() = ROOT_PACKAGE
-    override fun make(filer: Filer) {
+    override fun generate(filer: Filer) {
         val init = MethodSpec.methodBuilder("init")
             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
             .returns(Void.TYPE)
-            .addParameter(ClassName.get("android.content", "Context"), "context")
+            .addParameter(context, "context")
             .addStatement("if (instance != null) return")
             .addCode(
                 CodeBlock.builder()
@@ -65,7 +70,7 @@ class DbRoomMaker(
 
         val instance = MethodSpec.methodBuilder("instance")
             .addModifiers(Modifier.STATIC, Modifier.PRIVATE)
-            .returns(ClassName.get(packageName(), className()))
+            .returns(ClassName.get(packageName(), simpleClassName()))
             .addStatement("if (instance == null) throw new RuntimeException(\"Please initialize DbRoom first\")")
             .addStatement("return instance")
             .build()
@@ -130,7 +135,7 @@ class DbRoomMaker(
             .addStatement("return val")
             .build()
 
-        val classTypeSpec = TypeSpec.classBuilder(className())
+        val classTypeSpec = TypeSpec.classBuilder(simpleClassName())
             .addModifiers(Modifier.ABSTRACT)
             .addModifiers(Modifier.PUBLIC)
             .addAnnotation(
@@ -145,14 +150,7 @@ class DbRoomMaker(
                                     postfix = if (entities.isNotEmpty()) ",Store.class}" else "Store.class}",
                                     prefix = "{"
                                 )
-                                add(
-                                    fmt,
-                                    *entities
-                                        .map {
-                                            ClassName.get(it.packageName, it.classSimpleName)
-                                        }
-                                        .toTypedArray()
-                                )
+                                add(fmt, *entities.map { it.asTypeName() }.toTypedArray())
                             }
                             .build()
                     )
@@ -161,13 +159,13 @@ class DbRoomMaker(
                     .build()
             )
             .addField(
-                ClassName.get(packageName(), className()),
+                ClassName.get(packageName(), simpleClassName()),
                 "instance",
                 Modifier.PRIVATE,
                 Modifier.STATIC,
                 Modifier.VOLATILE
             )
-            .superclass(ClassName.get("androidx.room", "RoomDatabase"))
+            .superclass(roomDatabase)
             .addMethod(init)
             .addMethod(instance)
             .addMethod(store)
@@ -178,14 +176,14 @@ class DbRoomMaker(
                     addMethod(
                         MethodSpec.methodBuilder(it.classSimpleName.charLower())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.roomPackage, it.roomSimpleClassName))
+                            .returns(it.roomClassName().asTypeName())
                             .addStatement("return instance()._${it.classSimpleName.charLower()}()")
                             .build()
                     )
                     addMethod(
                         MethodSpec.methodBuilder("_" + it.classSimpleName.charLower())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.roomPackage, it.roomSimpleClassName))
+                            .returns(it.roomClassName().asTypeName())
                             .build()
                     )
                 }
@@ -193,14 +191,14 @@ class DbRoomMaker(
                     addMethod(
                         MethodSpec.methodBuilder(it.classSimpleName.charLower())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.packageName, it.classSimpleName))
+                            .returns(it.asTypeName())
                             .addStatement("return instance()._${it.classSimpleName.charLower()}()")
                             .build()
                     )
                     addMethod(
                         MethodSpec.methodBuilder("_" + it.classSimpleName.charLower())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.packageName, it.classSimpleName))
+                            .returns(it.asTypeName())
                             .build()
                     )
                 }

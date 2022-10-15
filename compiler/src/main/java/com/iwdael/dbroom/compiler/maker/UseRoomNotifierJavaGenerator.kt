@@ -2,6 +2,7 @@ package com.iwdael.dbroom.compiler.maker
 
 import androidx.databinding.Bindable
 import androidx.room.PrimaryKey
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asAnnotation
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asFieldBuilder
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asMethodBuilder
@@ -12,46 +13,44 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
 import com.iwdael.annotationprocessorparser.poet.srcPath
 import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.annotations.UseRoomNotifier
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.JavaClass.observable
+import com.iwdael.dbroom.compiler.JavaClass.roomObserver
+import com.iwdael.dbroom.compiler.packageName
+import com.iwdael.dbroom.compiler.roomFields
+import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.javapoet.*
 import java.io.File
 import javax.lang.model.element.Modifier
 
-class RoomMapJavaHandler(val gen: Generator) {
+class UseRoomNotifierJavaGenerator(val clazz: Class) {
     fun handle() {
-        val dataBinding = gen.clazz.getAnnotation(UseDataBinding::class.java)
-        val needGenerator = gen.clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate
-        val useDataBinding = dataBinding != null
+        val needGenerator = clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate
+        val useDataBinding = listOf(clazz).useDataBinding()
         if (!needGenerator) return
         JavaFile
             .builder(
-                gen.clazz.packet.name, TypeSpec.classBuilder(gen.clazz.classSimpleName)
-                    .superclass(ClassName.get("com.iwdael.dbroom", "RoomObserver"))
+                clazz.packageName(), TypeSpec.classBuilder(clazz.classSimpleName)
+                    .superclass(roomObserver)
                     .apply {
-                        if (useDataBinding) addSuperinterface(
-                            ClassName.get(
-                                "androidx.databinding",
-                                "Observable"
-                            )
-                        )
+                        if (useDataBinding) addSuperinterface(observable)
                     }
-                    .addModifiers(*gen.clazz.modifiers.toTypedArray())
+                    .addModifiers(*clazz.modifiers.toTypedArray())
                     .addAnnotation(
                         AnnotationSpec.builder(UseRoomNotifier::class.java)
                             .addMember("generate", "false")
                             .build()
                     )
-                    .addAnnotations(gen.clazz.annotations
+                    .addAnnotations(clazz.annotations
                         .filter { it.className != UseRoomNotifier::class.java.name }
                         .map { annotation ->
                             annotation.asAnnotation()
                         })
                     .addFields(
-                        gen.roomFields.map {
+                        clazz.roomFields().map {
                             it.asFieldBuilder()
                                 .addAnnotations(it.annotation
                                     .filter { it.className != Bindable::class.java.name }
-                                    .map { annotation -> annotation.asAnnotation() })
+                                    .map { it.asAnnotation() })
                                 .apply {
                                     if (useDataBinding)
                                         addAnnotation(
@@ -62,12 +61,9 @@ class RoomMapJavaHandler(val gen: Generator) {
                         }
                     )
                     .addMethods(
-                        gen.roomFields
+                        clazz.roomFields()
                             .filter { !it.modifiers.contains(Modifier.STATIC) }
-                            .map {
-                                it to (it.setter
-                                    ?: throw IllegalArgumentException("Can not found setter(${it.parent.className}.${it.name})"))
-                            }
+                            .map { it to it.setter }
                             .map { pair ->
                                 val setter = pair.second
                                 setter.asMethodBuilder()
@@ -86,12 +82,9 @@ class RoomMapJavaHandler(val gen: Generator) {
                             }
                     )
                     .addMethods(
-                        gen.roomFields
+                        clazz.roomFields()
                             .filter { !it.modifiers.contains(Modifier.STATIC) }
-                            .map {
-                                it to (it.getter
-                                    ?: throw IllegalArgumentException("Can not found setter(${it.parent.className}.${it.name})"))
-                            }
+                            .map { it to it.getter }
                             .map { pair ->
                                 val getter = pair.second
                                 getter
@@ -106,6 +99,6 @@ class RoomMapJavaHandler(val gen: Generator) {
                     .build()
             )
             .build()
-            .writeTo(File(gen.clazz.srcPath(gen.clazz.packet.name)!!))
+            .writeTo(File(clazz.srcPath(clazz.packageName())!!))
     }
 }

@@ -1,23 +1,22 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.annotations.UseDataBinding
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.compiler.compat.write
+import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class ObserverMaker(val gens: List<Generator>) : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
-    override fun className() = "Observer"
+class ObserverGenerator(private val classes: List<Class>) : Generator {
+    override fun classFull() = "com.iwdael.dbroom.Observer"
+    override fun simpleClassName() = "Observer"
     override fun packageName() = "com.iwdael.dbroom"
 
-    override fun make(filer: Filer) {
-        val useDataBinding =
-            gens.map { it.clazz }.any { it.getAnnotation(UseDataBinding::class.java) != null }
+    override fun generate(filer: Filer) {
+        val useDataBinding = classes.useDataBinding()
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(className())
+                packageName(), TypeSpec.classBuilder(simpleClassName())
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                     .addType(
                         TypeSpec.interfaceBuilder("RoomNotifier")

@@ -1,34 +1,32 @@
 package com.iwdael.dbroom.compiler.maker
 
+import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
-import com.iwdael.dbroom.annotations.UseDataBinding
-import com.iwdael.dbroom.compiler.Generator
+import com.iwdael.dbroom.compiler.JavaClass.baseObserver
 import com.iwdael.dbroom.compiler.compat.write
+import com.iwdael.dbroom.compiler.observerClassName
+import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class RoomObserverMaker(private val generator: List<Generator>) : Maker {
-    override fun classFull() = "${packageName()}.${className()}"
-    override fun className() = "RoomObserver"
+class RoomObserverMaker(private val classes: List<Class>) : Generator {
+    override fun classFull() = "com.iwdael.dbroom.RoomObserver"
+    override fun simpleClassName() = "RoomObserver"
     override fun packageName() = "com.iwdael.dbroom"
 
-    override fun make(filer: Filer) {
-        val useDataBinding =
-            generator.map { it.clazz }.any { it.getAnnotation(UseDataBinding::class.java) != null }
+    override fun generate(filer: Filer) {
+        val useDataBinding = classes.useDataBinding()
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(className())
+                packageName(), TypeSpec.classBuilder(simpleClassName())
                     .addField(
-                        FieldSpec.builder(
-                            ClassName.get(packageName(), "Observer"),
-                            "dbObserver",
-                            Modifier.PRIVATE, Modifier.FINAL
-                        )
+                        FieldSpec.builder(baseObserver, "dbObserver")
+                            .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                             .addAnnotation(ClassName.bestGuess("androidx.room.Ignore"))
                             .build()
                     )
-                    .superclass(ClassName.get(packageName(), "Observer"))
+                    .superclass(baseObserver)
                     .apply {
                         if (useDataBinding) {
                             addMethod(
@@ -95,31 +93,20 @@ class RoomObserverMaker(private val generator: List<Generator>) : Maker {
         .addStatement("Class<?> clazz = this.getClass()")
         .addStatement("Object obj = this")
         .apply {
-            if (generator.isEmpty()) return@apply
-            generator.forEachIndexed { index, generator ->
+            if (classes.isEmpty()) return@apply
+            classes.forEachIndexed { index, clazz ->
                 if (index == 0) {
-                    beginControlFlow(
-                        "if(clazz == \$T.class)",
-                        generator.clazz.asTypeName()
-                    )
+                    beginControlFlow("if(clazz == \$T.class)", clazz.asTypeName())
                     addStatement(
                         "dbObserver = new \$T((\$T) obj)",
-                        ClassName.get(
-                            generator.roomPackage,
-                            generator.clazz.classSimpleName + "Observer"
-                        ), generator.clazz.asTypeName()
+                        clazz.observerClassName().asTypeName(), clazz.asTypeName()
                     )
                 } else {
-                    nextControlFlow(
-                        "else if(clazz == \$T.class)",
-                        generator.clazz.asTypeName()
-                    )
+                    nextControlFlow("else if(clazz == \$T.class)", clazz.asTypeName())
                     addStatement(
                         "dbObserver = new \$T((\$T) obj)",
-                        ClassName.get(
-                            generator.roomPackage,
-                            generator.clazz.classSimpleName + "Observer"
-                        ), generator.clazz.asTypeName()
+                        clazz.observerClassName().asTypeName(),
+                        clazz.asTypeName()
                     )
                 }
             }
