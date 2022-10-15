@@ -37,7 +37,6 @@ class UseRoomNotifierJavaGenerator(val clazz: Class) {
                     .addModifiers(*clazz.modifiers.toTypedArray())
                     .addAnnotation(
                         AnnotationSpec.builder(UseRoomNotifier::class.java)
-                            .addMember("generate", "false")
                             .build()
                     )
                     .addAnnotations(clazz.annotations

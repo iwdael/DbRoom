@@ -36,7 +36,6 @@ class UseRoomNotifierKotlinGenerator(val clazz: Class) {
                     }
                     .addAnnotation(
                         AnnotationSpec.builder(UseRoomNotifier::class.java)
-                            .addMember(CodeBlock.of("generate = false"))
                             .build()
                     )
                     .addAnnotations(

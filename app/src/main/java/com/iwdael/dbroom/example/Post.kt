@@ -15,10 +15,10 @@ import kotlin.Int
 import kotlin.String
 import kotlin.Unit
 
-@UseRoomNotifier(generate = false)
+@UseRoomNotifier
 @Entity
 @UseDataBinding
-public class Post : RoomObserver(), Observable {
+class Post : RoomObserver(), Observable {
   @PrimaryKey
   @Bindable
   private var id: Int? = null
@@ -40,12 +40,12 @@ public class Post : RoomObserver(), Observable {
     this.id = id
   }
 
-  public fun setName(name: String?): Unit {
+  fun setName(name: String?) {
     this.name = name
     notifyPropertyChanged(DB.name)
   }
 
-  public fun setAddress(address: String?): Unit {
+  fun setAddress(address: String?): Unit {
     this.address = address
     notifyPropertyChanged(DB.address)
   }
