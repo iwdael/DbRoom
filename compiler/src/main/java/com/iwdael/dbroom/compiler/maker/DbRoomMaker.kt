@@ -50,7 +50,7 @@ class DbRoomMaker(
                                 CodeBlock
                                     .builder()
                                     .add(
-                                        "instance = (DbRoom)${method.owner}.${method.name}(context)",
+                                        "instance = (DbRoom)${method.parent.className}.${method.name}(context)",
                                         ClassName.get("androidx.room", "Room")
                                     )
                                     .build()
@@ -149,7 +149,7 @@ class DbRoomMaker(
                                     fmt,
                                     *entities
                                         .map {
-                                            ClassName.get(it.packageName, it.cn)
+                                            ClassName.get(it.packageName, it.classSimpleName)
                                         }
                                         .toTypedArray()
                                 )
@@ -176,31 +176,31 @@ class DbRoomMaker(
             .apply {
                 entities.forEach {
                     addMethod(
-                        MethodSpec.methodBuilder(it.cn.charLower())
+                        MethodSpec.methodBuilder(it.classSimpleName.charLower())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.packageNameGenerator, it.classNameGenerator))
-                            .addStatement("return instance()._${it.cn.charLower()}()")
+                            .returns(ClassName.get(it.roomPackage, it.roomSimpleClassName))
+                            .addStatement("return instance()._${it.classSimpleName.charLower()}()")
                             .build()
                     )
                     addMethod(
-                        MethodSpec.methodBuilder("_" + it.cn.charLower())
+                        MethodSpec.methodBuilder("_" + it.classSimpleName.charLower())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.packageNameGenerator, it.classNameGenerator))
+                            .returns(ClassName.get(it.roomPackage, it.roomSimpleClassName))
                             .build()
                     )
                 }
                 dao.forEach {
                     addMethod(
-                        MethodSpec.methodBuilder(it.cn.charLower())
+                        MethodSpec.methodBuilder(it.classSimpleName.charLower())
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .returns(ClassName.get(it.packageName, it.cn))
-                            .addStatement("return instance()._${it.cn.charLower()}()")
+                            .returns(ClassName.get(it.packageName, it.classSimpleName))
+                            .addStatement("return instance()._${it.classSimpleName.charLower()}()")
                             .build()
                     )
                     addMethod(
-                        MethodSpec.methodBuilder("_" + it.cn.charLower())
+                        MethodSpec.methodBuilder("_" + it.classSimpleName.charLower())
                             .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                            .returns(ClassName.get(it.packageName, it.cn))
+                            .returns(ClassName.get(it.packageName, it.classSimpleName))
                             .build()
                     )
                 }

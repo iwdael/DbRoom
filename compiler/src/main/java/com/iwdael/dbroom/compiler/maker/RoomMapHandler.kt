@@ -1,6 +1,6 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.annotation.UseRoomNotifier
+import com.iwdael.dbroom.annotations.UseRoomNotifier
 import com.iwdael.dbroom.compiler.Generator
 
 class RoomMapHandler(val gens: List<Generator>) {

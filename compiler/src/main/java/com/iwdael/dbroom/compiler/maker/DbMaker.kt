@@ -14,9 +14,9 @@ import javax.lang.model.element.Modifier
 class DbMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
 
-    override fun className() = "${generator.cn}Db"
+    override fun className() = "${generator.classSimpleName}Db"
 
-    override fun packageName() = generator.packageNameGenerator
+    override fun packageName() = generator.roomPackage
 
     override fun make(filer: Filer) {
 

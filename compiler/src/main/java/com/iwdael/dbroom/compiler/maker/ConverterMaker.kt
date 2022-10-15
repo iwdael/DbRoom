@@ -1,10 +1,12 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.compat.write
-import com.iwdael.annotationprocessorparser.Method 
-import com.squareup.javapoet.* 
+import com.iwdael.annotationprocessorparser.Method
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
+
 /**
  * author : iwdael
  * e-mail : iwdael@outlook.com
@@ -61,17 +63,16 @@ class ConverterMaker(private val generator: List<Method>) : Maker {
                             .addStatement("return String.valueOf(value)")
                             .apply {
                                 generator.filter { it.parameter.size == 1 }
-                                    .filter { it.`return` == String::class.java.name }
+                                    .filter { it.returnClassName == String::class.java.name }
                                     .map {
                                         val par = it.parameter.first()
-                                        val type = par.type
                                         nextControlFlow(
                                             "else if (value instanceof \$T)",
-                                            ClassName.bestGuess(type)
+                                            par.asTypeName()
                                         )
                                         addStatement(
-                                            "return ${it.owner}.${par.methodName}((\$T)value)",
-                                            ClassName.bestGuess(type)
+                                            "return ${it.parent.className}.${it.name}((\$T)value)",
+                                            par.asTypeName()
                                         )
                                     }
                             }
@@ -128,13 +129,15 @@ class ConverterMaker(private val generator: List<Method>) : Maker {
 
                             .apply {
                                 generator.filter { it.parameter.size == 1 }
-                                    .filter { it.parameter.first().type == String::class.java.name }
+                                    .filter { it.parameter.first().className == String::class.java.name }
                                     .map {
                                         nextControlFlow(
                                             "else if (clazz == \$T.class)",
-                                            ClassName.bestGuess(it.`return`)
+                                            it.returnClassName.asTypeName()
                                         )
-                                        addStatement("return (T)${it.owner}.${it.name}(str)")
+                                        addStatement(
+                                            "return ${it.parent.className}.${it.name}(str)"
+                                        )
                                     }
                             }
 

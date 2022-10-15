@@ -1,6 +1,6 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.annotation.UseDataBinding
+import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*

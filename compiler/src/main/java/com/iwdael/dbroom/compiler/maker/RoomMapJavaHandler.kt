@@ -2,11 +2,17 @@ package com.iwdael.dbroom.compiler.maker
 
 import androidx.databinding.Bindable
 import androidx.room.PrimaryKey
-import com.iwdael.annotationprocessorparser.Annotation
-import com.iwdael.dbroom.annotation.UseDataBinding
-import com.iwdael.dbroom.annotation.UseRoomNotifier
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.asAnnotation
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.asFieldBuilder
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.asMethodBuilder
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickAnnotation
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickModifier
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
+import com.iwdael.annotationprocessorparser.poet.srcPath
+import com.iwdael.dbroom.annotations.UseDataBinding
+import com.iwdael.dbroom.annotations.UseRoomNotifier
 import com.iwdael.dbroom.compiler.Generator
-import com.iwdael.dbroom.compiler.compat.*
 import com.squareup.javapoet.*
 import java.io.File
 import javax.lang.model.element.Modifier
@@ -19,7 +25,7 @@ class RoomMapJavaHandler(val gen: Generator) {
         if (!needGenerator) return
         JavaFile
             .builder(
-                gen.clazz.`package`.name, TypeSpec.classBuilder(gen.clazz.name)
+                gen.clazz.packet.name, TypeSpec.classBuilder(gen.clazz.classSimpleName)
                     .superclass(ClassName.get("com.iwdael.dbroom", "RoomObserver"))
                     .apply {
                         if (useDataBinding) addSuperinterface(
@@ -36,44 +42,16 @@ class RoomMapJavaHandler(val gen: Generator) {
                             .build()
                     )
                     .addAnnotations(gen.clazz.annotations
-                        .filter { it.name != UseRoomNotifier::class.java.name }
+                        .filter { it.className != UseRoomNotifier::class.java.name }
                         .map { annotation ->
-                            AnnotationSpec
-                                .builder(ClassName.bestGuess(annotation.name))
-                                .apply {
-                                    annotation.values
-                                        .forEach { pair ->
-                                            addMember(
-                                                pair.first.toString(),
-                                                pair.second.toAnnotationValue()
-                                            )
-                                        }
-                                }
-                                .build()
+                            annotation.asAnnotation()
                         })
                     .addFields(
-                        gen.fields.map {
-                            FieldSpec
-                                .builder(
-                                    it.type.bestGuessClassName(),
-                                    it.name,
-                                    *it.modifiers.toTypedArray()
-                                )
+                        gen.roomFields.map {
+                            it.asFieldBuilder()
                                 .addAnnotations(it.annotation
-                                    .filter { it.name != Bindable::class.java.name }
-                                    .map { annotation ->
-                                        AnnotationSpec
-                                            .builder(ClassName.bestGuess(annotation.name))
-                                            .apply {
-                                                annotation.values.forEach { pair ->
-                                                    addMember(
-                                                        pair.first.toString(),
-                                                        pair.second.toAnnotationValue()
-                                                    )
-                                                }
-                                            }
-                                            .build()
-                                    })
+                                    .filter { it.className != Bindable::class.java.name }
+                                    .map { annotation -> annotation.asAnnotation() })
                                 .apply {
                                     if (useDataBinding)
                                         addAnnotation(
@@ -84,35 +62,18 @@ class RoomMapJavaHandler(val gen: Generator) {
                         }
                     )
                     .addMethods(
-                        gen.fields
+                        gen.roomFields
                             .filter { !it.modifiers.contains(Modifier.STATIC) }
-                            .map { it to gen.setterMethod(it) }
+                            .map {
+                                it to (it.setter
+                                    ?: throw IllegalArgumentException("Can not found setter(${it.parent.className}.${it.name})"))
+                            }
                             .map { pair ->
                                 val setter = pair.second
-                                MethodSpec.methodBuilder(setter.name)
-                                    .addModifiers(
-                                        *setter.modifiers.toTypedArray()
-                                    )
-                                    .addParameter(
-                                        setter.parameter[0].type.bestGuessClassName(),
-                                        pair.first.name
-                                    )
-                                    .addAnnotations(
-                                        setter.e.annotationMirrors.map { Annotation(it) }
-                                            .map { annotation ->
-                                                AnnotationSpec
-                                                    .builder(ClassName.bestGuess(annotation.name))
-                                                    .apply {
-                                                        annotation.values.forEach { pair ->
-                                                            addMember(
-                                                                pair.first.toString(),
-                                                                pair.second.toAnnotationValue()
-                                                            )
-                                                        }
-                                                    }
-                                                    .build()
-                                            }
-                                    )
+                                setter.asMethodBuilder()
+                                    .stickModifier()
+                                    .stickParameter()
+                                    .stickAnnotation()
                                     .addStatement("this.${pair.first.name} = ${pair.first.name}")
                                     .apply {
                                         if (pair.first.getAnnotation(PrimaryKey::class.java) == null)
@@ -125,30 +86,19 @@ class RoomMapJavaHandler(val gen: Generator) {
                             }
                     )
                     .addMethods(
-                        gen.fields
+                        gen.roomFields
                             .filter { !it.modifiers.contains(Modifier.STATIC) }
-                            .map { it to gen.getterMethod(it) }
+                            .map {
+                                it to (it.getter
+                                    ?: throw IllegalArgumentException("Can not found setter(${it.parent.className}.${it.name})"))
+                            }
                             .map { pair ->
                                 val getter = pair.second
-                                MethodSpec.methodBuilder(getter.name)
-                                    .addModifiers(*getter.modifiers.toTypedArray())
-                                    .addAnnotations(
-                                        getter.e.annotationMirrors.map { Annotation(it) }
-                                            .map { annotation ->
-                                                AnnotationSpec
-                                                    .builder(ClassName.bestGuess(annotation.name))
-                                                    .apply {
-                                                        annotation.values.forEach { pair ->
-                                                            addMember(
-                                                                pair.first.toString(),
-                                                                pair.second.toAnnotationValue()
-                                                            )
-                                                        }
-                                                    }
-                                                    .build()
-                                            }
-                                    )
-                                    .returns(pair.first.type.bestGuessClassName())
+                                getter
+                                    .asMethodBuilder()
+                                    .stickModifier()
+                                    .stickAnnotation()
+                                    .stickReturn()
                                     .addStatement("return this.${pair.first.name}")
                                     .build()
                             }
@@ -156,6 +106,6 @@ class RoomMapJavaHandler(val gen: Generator) {
                     .build()
             )
             .build()
-            .writeTo(File(gen.clazz.srcPath(gen.clazz.`package`.name)!!))
+            .writeTo(File(gen.clazz.srcPath(gen.clazz.packet.name)!!))
     }
 }

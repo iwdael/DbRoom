@@ -1,9 +1,9 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.annotation.UseFlow
+import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
+import com.iwdael.dbroom.annotations.UseFlow
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.colName
-import com.iwdael.dbroom.compiler.compat.kotlin
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.annotation.processing.Filer
@@ -14,16 +14,16 @@ import javax.annotation.processing.Filer
  */
 class RoomCompatMaker(private val generator: Generator) : Maker {
     override fun classFull() = "${Maker.ROOT_PACKAGE}.${className()}"
-    override fun className() = "${generator.cn}RoomCompat"
-    override fun packageName() = generator.packageNameGenerator
+    override fun className() = "${generator.classSimpleName}RoomCompat"
+    override fun packageName() = generator.roomPackage
 
     private fun findX() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
+        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
         .receiver(
             ClassName(
-                generator.packageNameGenerator,
-                "${generator.cn}Room"
+                generator.roomPackage,
+                "${generator.classSimpleName}Room"
             )
         )
         .returns(
@@ -31,18 +31,18 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.cn
+                        generator.classSimpleName
                     )
                 )
             )
         )
         .apply {
-            generator.fields
+            generator.roomFields
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
                             it.name,
-                            ClassName.bestGuess(it.type.kotlin()).copy(true)
+                            it.asTypeName().copy(true)
                         )
                             .defaultValue("null")
                             .build()
@@ -50,7 +50,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 }
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.tableName}\")",
+            "val query = %T.builder(\"${generator.roomTableName}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -59,7 +59,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.fields.forEach {
+            generator.roomFields.forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")
@@ -73,11 +73,11 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findLimit() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
+        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
         .receiver(
             ClassName(
-                generator.packageNameGenerator,
-                "${generator.cn}Room"
+                generator.roomPackage,
+                "${generator.classSimpleName}Room"
             )
         )
         .returns(
@@ -85,18 +85,18 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.cn
+                        generator.classSimpleName
                     )
                 )
             )
         )
         .apply {
-            generator.fields
+            generator.roomFields
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
                             it.name,
-                            ClassName.bestGuess(it.type.kotlin()).copy(true)
+                            it.asTypeName().copy(true)
                         )
                             .defaultValue("null")
                             .build()
@@ -110,7 +110,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
             )
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.tableName}\")",
+            "val query = %T.builder(\"${generator.roomTableName}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -119,7 +119,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.fields.forEach {
+            generator.roomFields.forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")
@@ -134,11 +134,11 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findOrder() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
+        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
         .receiver(
             ClassName(
-                generator.packageNameGenerator,
-                "${generator.cn}Room"
+                generator.roomPackage,
+                "${generator.classSimpleName}Room"
             )
         )
         .returns(
@@ -146,18 +146,17 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.cn
+                        generator.classSimpleName
                     )
                 )
             )
         )
         .apply {
-            generator.fields
+            generator.roomFields
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
-                            it.name,
-                            ClassName.bestGuess(it.type.kotlin()).copy(true)
+                            it.name,it.asTypeName().copy(true)
                         )
                             .defaultValue("null")
                             .build()
@@ -168,7 +167,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ParameterSpec.builder(
                     "column",
                     ClassName(
-                        "${generator.packageNameGenerator}.${generator.cn}Db",
+                        "${generator.roomPackage}.${generator.classSimpleName}Db",
                         "Column"
                     )
                 ).build()
@@ -180,7 +179,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.tableName}\")",
+            "val query = %T.builder(\"${generator.roomTableName}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -189,7 +188,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.fields.forEach {
+            generator.roomFields.forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")
@@ -204,11 +203,11 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
     private fun findLimitOrder() = FunSpec
         .builder("findX")
-        .receiver(ClassName.bestGuess("${generator.packageNameGenerator}.${generator.cn}Room"))
+        .receiver(ClassName.bestGuess("${generator.roomPackage}.${generator.classSimpleName}Room"))
         .receiver(
             ClassName(
-                generator.packageNameGenerator,
-                "${generator.cn}Room"
+                generator.roomPackage,
+                "${generator.classSimpleName}Room"
             )
         )
         .returns(
@@ -216,18 +215,17 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ClassName("kotlin.collections", "List").parameterizedBy(
                     ClassName(
                         generator.packageName,
-                        generator.cn
+                        generator.classSimpleName
                     )
                 )
             )
         )
         .apply {
-            generator.fields
+            generator.roomFields
                 .forEach {
                     addParameter(
                         ParameterSpec.builder(
-                            it.name,
-                            ClassName.bestGuess(it.type.kotlin()).copy(true)
+                            it.name,it.asTypeName().copy(true)
                         )
                             .defaultValue("null")
                             .build()
@@ -238,7 +236,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
                 ParameterSpec.builder(
                     "column",
                     ClassName(
-                        "${generator.packageNameGenerator}.${generator.cn}Db",
+                        "${generator.roomPackage}.${generator.classSimpleName}Db",
                         "Column"
                     )
                 ).build()
@@ -256,7 +254,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
 
         }
         .addStatement(
-            "val query = %T.builder(\"${generator.tableName}\")",
+            "val query = %T.builder(\"${generator.roomTableName}\")",
             ClassName.bestGuess("androidx.sqlite.db.SupportSQLiteQueryBuilder")
         )
         .addStatement(
@@ -265,7 +263,7 @@ class RoomCompatMaker(private val generator: Generator) : Maker {
         )
         .addStatement("val bindArgs = mutableListOf<Any>()")
         .apply {
-            generator.fields.forEach {
+            generator.roomFields.forEach {
                 beginControlFlow("${it.name}?.let")
                 addStatement("if (selection.isNotEmpty()) selection.append(\" AND \")")
                 addStatement(" selection.append(\"${it.colName()} = ?\")")

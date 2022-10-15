@@ -1,24 +1,19 @@
 package com.iwdael.dbroom.example
 
+import androidx.databinding.Bindable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.iwdael.dbroom.DB
-import com.iwdael.dbroom.RoomObserver
-import com.iwdael.dbroom.annotation.UseRoomNotifier
+import com.iwdael.dbroom.annotations.UseDataBinding
+import com.iwdael.dbroom.annotations.UseRoomNotifier
 
-@UseRoomNotifier
+@UseRoomNotifier(generate = false)
 @Entity
-class Pojo : RoomObserver() {
+@UseDataBinding
+class Pojo {
     @PrimaryKey
     var id: Long? = null
     var name: String? = null
-        set(value) {
-            field = value
-            notifyPropertyChanged(DB.name)
-        }
     var address: String? = null
-        set(value) {
-            field = value
-            notifyPropertyChanged(DB.address)
-        }
+
+
 }

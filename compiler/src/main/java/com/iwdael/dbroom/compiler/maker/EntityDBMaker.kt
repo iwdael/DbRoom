@@ -1,12 +1,10 @@
 package com.iwdael.dbroom.compiler.maker
 
-import androidx.room.Dao
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
-import javax.swing.MenuSelectionManager
 
 class EntityDBMaker(private val generator: List<Generator>) : Maker {
     override fun classFull() = "${packageName()}.${className()}"
@@ -19,7 +17,7 @@ class EntityDBMaker(private val generator: List<Generator>) : Maker {
                 packageName(), TypeSpec.classBuilder(className())
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .apply {
-                        generator.flatMap { it.fields }
+                        generator.flatMap { it.roomFields }
                             .map { it.name }
                             .toHashSet()
                             .forEachIndexed { index, name ->

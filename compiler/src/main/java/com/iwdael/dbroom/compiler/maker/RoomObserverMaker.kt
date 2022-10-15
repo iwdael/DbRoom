@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.annotation.UseDataBinding
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.compiler.Generator
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -99,32 +100,26 @@ class RoomObserverMaker(private val generator: List<Generator>) : Maker {
                 if (index == 0) {
                     beginControlFlow(
                         "if(clazz == \$T.class)",
-                        ClassName.get(generator.packageName, generator.cn)
+                        generator.clazz.asTypeName()
                     )
                     addStatement(
                         "dbObserver = new \$T((\$T) obj)",
                         ClassName.get(
-                            generator.packageNameGenerator,
-                            generator.cn + "Observer"
-                        ), ClassName.get(
-                            generator.packageName,
-                            generator.cn
-                        )
+                            generator.roomPackage,
+                            generator.clazz.classSimpleName + "Observer"
+                        ), generator.clazz.asTypeName()
                     )
                 } else {
                     nextControlFlow(
                         "else if(clazz == \$T.class)",
-                        ClassName.get(generator.packageName, generator.cn)
+                        generator.clazz.asTypeName()
                     )
                     addStatement(
                         "dbObserver = new \$T((\$T) obj)",
                         ClassName.get(
-                            generator.packageNameGenerator,
-                            generator.cn + "Observer"
-                        ), ClassName.get(
-                            generator.packageName,
-                            generator.cn
-                        )
+                            generator.roomPackage,
+                            generator.clazz.classSimpleName + "Observer"
+                        ), generator.clazz.asTypeName()
                     )
                 }
             }

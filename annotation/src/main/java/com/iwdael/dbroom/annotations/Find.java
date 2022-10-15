@@ -1,4 +1,4 @@
-package com.iwdael.dbroom.annotation;
+package com.iwdael.dbroom.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
