@@ -23,7 +23,7 @@ import java.io.File
 import javax.lang.model.element.Modifier
 
 class UseRoomNotifierKotlinGenerator(val clazz: Class) {
-    fun handle() {
+    fun generate() {
         val needGenerator = clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate
         val useDataBinding = listOf(clazz).useDataBinding()
         if (!needGenerator) return

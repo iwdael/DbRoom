@@ -36,7 +36,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 RoomObserverMaker(this).generate(processingEnv.filer)
                 ObserverGenerator(this).generate(processingEnv.filer)
                 DBGenerator( this).generate(processingEnv.filer)
-                UseRoomNotifierGenerator(this).handle()
+                UseRoomNotifierGenerator(this).generate()
             }
             .apply {
                 val dao = env.getElementsAnnotatedWith(Dao::class.java)

@@ -4,14 +4,14 @@ import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.annotations.UseRoomNotifier
 
 class UseRoomNotifierGenerator(private val classes: List<Class>) {
-    fun handle() {
+    fun generate() {
         classes
             .filter { it.getAnnotation(UseRoomNotifier::class.java) != null }
             .forEach {
                 if (it.getAnnotation(Metadata::class.java) == null)
-                    UseRoomNotifierJavaGenerator(it).handle()
+                    UseRoomNotifierJavaGenerator(it).generate()
                 else
-                    UseRoomNotifierKotlinGenerator(it).handle()
+                    UseRoomNotifierKotlinGenerator(it).generate()
             }
     }
 }

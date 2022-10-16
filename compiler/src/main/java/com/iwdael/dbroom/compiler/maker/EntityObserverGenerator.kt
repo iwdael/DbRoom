@@ -82,13 +82,13 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                 addField(
                                     FieldSpec.builder(TypeName.INT, "${it.name}RoomVersion")
                                         .addModifiers(Modifier.PRIVATE)
-                                        .initializer("0")
+                                        .initializer("-1")
                                         .build()
                                 )
                                 addField(
                                     FieldSpec.builder(TypeName.INT, "${it.name}EntityVersion")
                                         .addModifiers(Modifier.PRIVATE)
-                                        .initializer("0")
+                                        .initializer("-1")
                                         .build()
                                 )
                             }
@@ -171,8 +171,17 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                             .endControlFlow()
                                             .endControlFlow()
                                     }
-
                                     .addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
+                                    .beginControlFlow("if (${it.name}EntityVersion == -1)")
+                                    .addStatement("int maxVersion = 0")
+                                    .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
+                                    .addStatement("${clazz.classSimpleName} entity = reference.get()")
+                                    .addStatement("if (entity == null) continue")
+                                    .addStatement("${clazz.classSimpleName}Observer observer = from(entity)")
+                                    .addStatement("maxVersion = Math.max(observer.${it.name}EntityVersion, maxVersion)")
+                                    .endControlFlow()
+                                    .addStatement("${it.name}EntityVersion = maxVersion")
+                                    .endControlFlow()
                                     .addStatement("${it.name}EntityVersion++")
                                     .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
                                     .addStatement("${clazz.classSimpleName} entity = reference.get()")

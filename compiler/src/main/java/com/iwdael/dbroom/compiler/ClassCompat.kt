@@ -13,7 +13,7 @@ import com.iwdael.dbroom.annotations.UseDataBinding
  */
 
 fun Class.roomPackage(): String {
-    return this.packet.name + ".room"
+    return this.packet.name + ""
 }
 
 fun Class.roomSimpleClassName(): String {
@@ -46,7 +46,7 @@ fun Class.packageName(): String {
 
 
 fun Class.observerPackage(): String {
-    return packageName() + ".room"
+    return packageName() + ""
 }
 
 fun Class.observerClassName(): String {
