@@ -47,6 +47,7 @@ class UseRoomNotifierJavaGenerator(val clazz: Class) {
                     .addFields(
                         clazz.roomFields().map {
                             it.asFieldBuilder()
+                                .stickModifier()
                                 .addAnnotations(it.annotation
                                     .filter { it.className != Bindable::class.java.name }
                                     .map { it.asAnnotation() })

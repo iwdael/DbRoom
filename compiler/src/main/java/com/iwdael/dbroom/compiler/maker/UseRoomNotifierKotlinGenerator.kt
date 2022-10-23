@@ -4,17 +4,15 @@ import androidx.annotation.Nullable
 import androidx.databinding.Bindable
 import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
-import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asMethodBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asAnnotation
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asFileBuilder
+import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asMethodBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
-import com.iwdael.annotationprocessorparser.poet.srcPath
-import com.iwdael.dbroom.annotations.UseDataBinding
+import com.iwdael.annotationprocessorparser.poet.filePath
 import com.iwdael.dbroom.annotations.UseRoomNotifier
 import com.iwdael.dbroom.compiler.KotlinClass.observable
 import com.iwdael.dbroom.compiler.KotlinClass.roomObserver
-import com.iwdael.dbroom.compiler.packageName
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.kotlinpoet.*
@@ -112,7 +110,10 @@ class UseRoomNotifierKotlinGenerator(val clazz: Class) {
                     .build()
             )
             .build()
-            .writeTo(File(clazz.srcPath(clazz.packageName())!!))
+            .toString()
+            .replace("public ", "")
+            .replace(": Unit {", " {")
 
+            .let { File(clazz.filePath()!!).writeText(it) }
     }
 }

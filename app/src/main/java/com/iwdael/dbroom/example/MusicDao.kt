@@ -2,6 +2,8 @@ package com.iwdael.dbroom.example
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import com.iwdael.dbroom.example.entity.Music
 
 /**
  * author : 段泽全(hacknife)
@@ -11,7 +13,8 @@ import androidx.room.Delete
  * version: 1.0
  */
 @Dao
-interface UserDao {
-    @Delete(entity = User::class)
-    fun delete(vararg user: User)
+interface MusicDao {
+    @Delete(entity = Music::class)
+    fun delete(vararg user: Music)
+
 }

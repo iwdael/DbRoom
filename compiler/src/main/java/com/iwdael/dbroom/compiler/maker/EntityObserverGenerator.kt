@@ -4,7 +4,9 @@ import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.*
-import com.iwdael.dbroom.compiler.compat.*
+import com.iwdael.dbroom.compiler.compat.charLower
+import com.iwdael.dbroom.compiler.compat.charUpper
+import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import java.lang.ref.WeakReference
 import javax.annotation.processing.Filer
@@ -53,6 +55,7 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                     .addStatement("callbacks = new PropertyChangeRegistry()")
                                     .endControlFlow()
                                     .endControlFlow()
+                                    .addStatement("callbacks.add(callback)")
                                     .build()
                             )
                             addMethod(
@@ -162,7 +165,7 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                         beginControlFlow("synchronized (this)")
                                             .beginControlFlow("if (callbacks != null)")
                                             .addStatement(
-                                                "callbacks.notifyCallbacks(this, \$T.${it.name.charLower()}, null)",
+                                                "callbacks.notifyCallbacks(${clazz.classSimpleName.charLower()}, \$T.${it.name.charLower()}, null)",
                                                 ClassName.get(
                                                     "androidx.databinding.library.baseAdapters",
                                                     "BR"
@@ -183,6 +186,7 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                     .addStatement("${it.name}EntityVersion = maxVersion")
                                     .endControlFlow()
                                     .addStatement("${it.name}EntityVersion++")
+
                                     .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
                                     .addStatement("${clazz.classSimpleName} entity = reference.get()")
                                     .addStatement("if (entity == null) continue")
@@ -191,15 +195,15 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                     .addStatement("observer.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
                                     .addStatement("observer.${it.name}RoomVersion = ${it.name}EntityVersion")
                                     .apply {
-                                        val getter = clazz.roomPrimaryKeyField().getter
-                                        val setter = clazz.roomPrimaryKeyField().setter
+                                        val getter = it.getter
+                                        val setter = it.setter
                                         addStatement(
                                             "entity.${setter.name}(${clazz.classSimpleName.charLower()}.${getter.name}())"
                                         )
                                     }
+                                    .endControlFlow()
+                                    .endControlFlow()
 
-                                    .endControlFlow()
-                                    .endControlFlow()
                                     .addStatement("if (${it.name}RoomVersion >= ${it.name}EntityVersion) return")
                                     .addStatement("${it.name}RoomVersion = ${it.name}EntityVersion - 1")
                                     .addCode(
@@ -209,7 +213,6 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                             .beginControlFlow("public void notifier()")
                                             .beginControlFlow("if (${it.name}EntityVersion - ${it.name}RoomVersion == 1)")
                                             .addStatement("${it.name}RoomVersion = ${it.name}EntityVersion")
-
                                             .apply {
                                                 val getter = it.getter
                                                 val keyGetter = clazz.roomPrimaryKeyField().getter
@@ -221,6 +224,23 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                                     dbRoomClassName()
                                                 )
                                             }
+
+                                            .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
+                                            .addStatement("${clazz.classSimpleName} entity = reference.get()")
+                                            .addStatement("if (entity == null) continue")
+                                            .addStatement("${clazz.classSimpleName}Observer observer = from(entity)")
+                                            .beginControlFlow("if (${it.name}EntityVersion > observer.${it.name}EntityVersion)")
+                                            .addStatement("observer.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
+                                            .addStatement("observer.${it.name}RoomVersion = ${it.name}EntityVersion")
+                                            .apply {
+                                                val getter = it.getter
+                                                val setter = it.setter
+                                                addStatement(
+                                                    "entity.${setter.name}(${clazz.classSimpleName.charLower()}.${getter.name}())"
+                                                )
+                                            }
+                                            .endControlFlow()
+                                            .endControlFlow()
 
                                             .endControlFlow()
                                             .endControlFlow()
@@ -247,7 +267,7 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                         MethodSpec.methodBuilder("cleanCache")
                             .addModifiers(Modifier.PRIVATE)
                             .addStatement("int size = all.size()")
-                            .beginControlFlow("for (int index = size; index > 0; index--)")
+                            .beginControlFlow("for (int index = size - 1; index >= 0; index--)")
                             .beginControlFlow("if (null == all.get(index).get())")
                             .addStatement("all.remove(index)")
                             .endControlFlow()

@@ -1,12 +1,13 @@
 package com.iwdael.dbroom.example
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.iwdael.dbroom.DbRoom
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.*
+import com.iwdael.dbroom.example.databinding.ActivityMainBinding
+import com.iwdael.dbroom.example.databinding.ActivityMainBindingImpl
+import com.iwdael.dbroom.example.entity.Music
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -15,22 +16,27 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding =
+            DataBindingUtil.setContentView<ActivityMainBindingImpl>(this, R.layout.activity_main)
         DbRoom.init(this)
-//        DbRoom.user().find()
-        DbRoom.user().findX()
-        DbRoom.user().deleteAll()
         Thread {
-            try {
-                Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")
-                Log.v("dzq", DbRoom.obtain(DB_KEY, "12312312"))
-                DbRoom.store(DB_KEY, "Android")
-                Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java))
-//                DbRoom.store(DB_KEY, null)
-//                Log.v("dzq", DbRoom.obtain(DB_KEY, String::class.java) + "-")
-            } catch (e: Exception) {
-                Log.v("dzq", e.stackTraceToString())
-            }
+            DbRoom.music().deleteAll()
+            DbRoom.music().insert(Music().apply { setName("Android") })
+            Thread.sleep(10000)
+            val music0 = DbRoom.music().findAll().first()
+            val music1 = DbRoom.music().findAll().first()
+            val music2 = DbRoom.music().findAll().first()
+            Log.v("dzq","name:${music1.getName()},id:${music1.getId()}")
+            binding.entity1 = music1
+            binding.entity2 = music2
+//            Log.v("dzq","m0:${music0.dbObserver.}")
+            Thread.sleep(10000)
+            music0.setName("IOS")
+            Log.v("dzq","name:${music1.getName()}")
         }.start()
+//        val music  = Music().apply { setName("IOS") }
+//        binding.entity1 =  music
+//        music.setId(1)
+//        music.setName("Android")
     }
 }
