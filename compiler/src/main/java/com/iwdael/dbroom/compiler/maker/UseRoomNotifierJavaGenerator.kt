@@ -21,6 +21,11 @@ import com.squareup.javapoet.*
 import java.io.File
 import javax.lang.model.element.Modifier
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 class UseRoomNotifierJavaGenerator(val clazz: Class) {
     fun generate() {
         val needGenerator = clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate

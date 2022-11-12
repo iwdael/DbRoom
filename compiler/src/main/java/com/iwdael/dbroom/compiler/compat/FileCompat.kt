@@ -2,7 +2,11 @@ package com.iwdael.dbroom.compiler.compat
 
 import java.io.File
 
-
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 fun File.searchPathWithEnd(path: String, vararg filters: String): String? {
     if (isFile) return null
     val list = listFiles()

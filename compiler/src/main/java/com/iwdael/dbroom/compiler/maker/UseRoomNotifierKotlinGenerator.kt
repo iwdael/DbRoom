@@ -20,6 +20,11 @@ import org.jetbrains.annotations.NotNull
 import java.io.File
 import javax.lang.model.element.Modifier
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 class UseRoomNotifierKotlinGenerator(val clazz: Class) {
     fun generate() {
         val needGenerator = clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate

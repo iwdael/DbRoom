@@ -5,8 +5,9 @@ import com.squareup.javapoet.TypeName
 import java.lang.StringBuilder
 
 /**
- * author : iwdael
- * e-mail : iwdael@outlook.com
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
  */
 fun String.charLower(): String {
     return "${this.substring(0, 1).toLowerCase()}${this.substring(1)}"

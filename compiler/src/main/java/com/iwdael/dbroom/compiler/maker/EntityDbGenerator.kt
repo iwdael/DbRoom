@@ -9,8 +9,9 @@ import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
 /**
- * author : iwdael
- * e-mail : iwdael@outlook.com
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
  */
 class EntityDbGenerator(private val clazz: Class) : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"

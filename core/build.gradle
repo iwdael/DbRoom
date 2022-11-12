@@ -1,36 +1,26 @@
 apply from: './../config.gradle'
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.android.library'
 
 android {
     compileSdk buildConfig.compileSdkVersion
     defaultConfig {
-        applicationId "com.iwdael.dbroom.example"
         minSdk buildConfig.minSdkVersion
         targetSdk buildConfig.targetSdkVersion
         versionCode buildConfig.versionCode
         versionName buildConfig.versionName
     }
     compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     dataBinding {
         enabled = true
     }
-
 }
 
 dependencies {
     implementation dep.coreKtx
     implementation dep.appcompat
     implementation dep.room
-    implementation dep.roomKtx
-    implementation dep.coroutinesCore
-    implementation dep.coroutinesAndroid
-    implementation project(path: ':core')
-    kapt dep.roomCompiler
-    kapt project(path: ':compiler')
+    api project(":annotation")
 }

@@ -3,8 +3,9 @@ package com.iwdael.dbroom.compiler.maker
 import javax.annotation.processing.Filer
 
 /**
- * author : iwdael
- * e-mail : iwdael@outlook.com
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
  */
 interface Generator {
     companion object {

@@ -12,6 +12,11 @@ import java.lang.ref.WeakReference
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 class EntityObservableGenerator(private val clazz: Class) : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
     override fun simpleClassName() = "${clazz.classSimpleName}Observable"

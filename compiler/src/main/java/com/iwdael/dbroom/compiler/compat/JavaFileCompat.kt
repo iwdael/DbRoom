@@ -6,8 +6,9 @@ import com.squareup.javapoet.JavaFile
 import javax.annotation.processing.Filer
 
 /**
- * author : iwdael
- * e-mail : iwdael@outlook.com
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
  */
 fun JavaFile.write(filer: Filer) {
     try {

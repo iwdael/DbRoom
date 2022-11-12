@@ -11,7 +11,12 @@ import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class RoomObservableMaker(private val classes: List<Class>) : Generator {
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
+class RoomObservableGenerator(private val classes: List<Class>) : Generator {
     override fun classFull() = "com.iwdael.dbroom.RoomObservable"
     override fun simpleClassName() = "RoomObservable"
     override fun packageName() = "com.iwdael.dbroom"

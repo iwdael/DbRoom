@@ -5,7 +5,7 @@ import androidx.databinding.Observable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import com.iwdael.dbroom.DB;
-import com.iwdael.dbroom.RoomObservable;
+import com.iwdael.dbroom.core.RoomObservable;
 import com.iwdael.dbroom.annotations.UseDataBinding;
 import com.iwdael.dbroom.annotations.UseRoomNotifier;
 import java.lang.Long;
@@ -14,7 +14,7 @@ import java.lang.String;
 @UseRoomNotifier
 @Entity
 @UseDataBinding
-public class Movie extends RoomObservable implements Observable {
+public class Movie extends RoomObservable  {
   @PrimaryKey
   @Bindable
   private Long id;

@@ -8,8 +8,9 @@ import com.iwdael.annotationprocessorparser.Field
 import com.iwdael.dbroom.annotations.UseDataBinding
 
 /**
- * author : iwdael
- * e-mail : iwdael@outlook.com
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
  */
 
 fun Class.roomPackage(): String {

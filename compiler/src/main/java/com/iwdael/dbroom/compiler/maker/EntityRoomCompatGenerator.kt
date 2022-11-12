@@ -14,8 +14,9 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.annotation.processing.Filer
 
 /**
- * author : iwdael
- * e-mail : iwdael@outlook.com
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
  */
 class EntityRoomCompatGenerator(private val clazz: Class) : Generator {
     override fun classFull() = "${Generator.ROOT_PACKAGE}.${simpleClassName()}"

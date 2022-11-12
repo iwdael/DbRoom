@@ -1,5 +1,5 @@
 ext {
-    buidConfig = [
+    buildConfig = [
             'compileSdkVersion': 32,
             'targetSdkVersion' : 32,
             'minSdkVersion'    : 19,

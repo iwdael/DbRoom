@@ -13,8 +13,9 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 
 /**
- * author : iwdael
- * e-mail : iwdael@outlook.com
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
  */
 class AnnotationProcessor : AbstractProcessor() {
     private var processed = false
@@ -33,8 +34,8 @@ class AnnotationProcessor : AbstractProcessor() {
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
             .map{it->Class(it)}
             .apply {
-                RoomObservableMaker(this).generate(processingEnv.filer)
-                BaseObservableGenerator(this).generate(processingEnv.filer)
+                ObservableCreatorGenerator(this).generate(processingEnv.filer)
+//                BaseObservableGenerator(this).generate(processingEnv.filer)
                 DBGenerator( this).generate(processingEnv.filer)
                 UseRoomNotifierGenerator(this).generate()
             }

@@ -7,6 +7,11 @@ import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 class BaseObservableGenerator(private val classes: List<Class>) : Generator {
     override fun classFull() = "com.iwdael.dbroom.BaseObservable"
     override fun simpleClassName() = "BaseObservable"

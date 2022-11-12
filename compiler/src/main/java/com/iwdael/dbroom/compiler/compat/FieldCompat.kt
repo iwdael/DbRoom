@@ -9,7 +9,11 @@ import com.iwdael.dbroom.annotations.Find
 import com.iwdael.dbroom.annotations.Update
 import com.iwdael.dbroom.compiler.roomFields
 
-
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 fun Class.getInsert(): List<Pair<String, List<Field>>> {
     return this.roomFields()
         .filter { it.getAnnotation(Insert::class.java) != null }
