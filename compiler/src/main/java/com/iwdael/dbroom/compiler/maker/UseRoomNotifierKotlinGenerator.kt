@@ -13,6 +13,7 @@ import com.iwdael.annotationprocessorparser.poet.filePath
 import com.iwdael.dbroom.annotations.UseRoomNotifier
 import com.iwdael.dbroom.compiler.KotlinClass.observable
 import com.iwdael.dbroom.compiler.KotlinClass.roomObserver
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.kotlinpoet.*
@@ -114,6 +115,7 @@ class UseRoomNotifierKotlinGenerator(val clazz: Class) {
                     )
                     .build()
             )
+            .addComment(FILE_COMMENT)
             .build()
             .toString()
             .replace("public ", "")

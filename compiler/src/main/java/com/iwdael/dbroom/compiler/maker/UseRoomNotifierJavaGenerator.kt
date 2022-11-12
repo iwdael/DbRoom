@@ -14,6 +14,7 @@ import com.iwdael.annotationprocessorparser.poet.srcPath
 import com.iwdael.dbroom.annotations.UseRoomNotifier
 import com.iwdael.dbroom.compiler.JavaClass.observable
 import com.iwdael.dbroom.compiler.JavaClass.roomObservable
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.packageName
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
@@ -102,6 +103,7 @@ class UseRoomNotifierJavaGenerator(val clazz: Class) {
                     )
                     .build()
             )
+            .addFileComment(FILE_COMMENT)
             .build()
             .writeTo(File(clazz.srcPath(clazz.packageName())!!))
     }

@@ -2,6 +2,7 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.compiler.compat.colName
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.roomPackage
 import com.squareup.javapoet.*
@@ -53,7 +54,7 @@ class EntityDbGenerator(private val clazz: Class) : Generator {
                     .addType(column)
                     .build()
             )
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
     }

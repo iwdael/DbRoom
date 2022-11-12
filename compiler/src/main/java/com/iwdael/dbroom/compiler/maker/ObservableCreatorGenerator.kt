@@ -4,6 +4,7 @@ import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.compat.bestGuessClassName
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.observerClassName
 import com.squareup.javapoet.ClassName
@@ -66,12 +67,11 @@ class ObservableCreatorGenerator(private val classes: List<Class>) : Generator {
                                 addStatement("return null")
                                 endControlFlow()
                             }
-
                             .build()
                     )
                     .build()
             )
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
     }

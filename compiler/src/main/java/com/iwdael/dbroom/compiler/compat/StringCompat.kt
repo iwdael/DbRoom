@@ -2,7 +2,6 @@ package com.iwdael.dbroom.compiler.compat
 
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.TypeName
-import java.lang.StringBuilder
 
 /**
  * @author  : iwdael
@@ -65,3 +64,8 @@ fun StringBuilder.setterLastLineIndex(clazz: String, methodName: String): Int {
     return -1
 
 }
+
+const val FILE_COMMENT =
+    "@author  : iwdael\n" +
+            "@mail    : iwdael@outlook.com\n" +
+            "@project : https://github.com/iwdael/dbroom"

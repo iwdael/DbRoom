@@ -3,8 +3,8 @@ package com.iwdael.dbroom.compiler.maker
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
 import com.iwdael.dbroom.annotations.UseFlow
-import com.iwdael.dbroom.compiler.compat.bestGuessClassName
 import com.iwdael.dbroom.compiler.compat.colName
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.roomClassName
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.roomPackage
@@ -256,6 +256,7 @@ class EntityRoomCompatGenerator(private val clazz: Class) : Generator {
                 addFunction(findOrder())
                 addFunction(findLimitOrder())
             }
+            .addComment(FILE_COMMENT)
             .build()
             .writeTo(filer)
     }

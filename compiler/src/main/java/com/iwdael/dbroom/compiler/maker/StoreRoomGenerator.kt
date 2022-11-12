@@ -1,6 +1,8 @@
 package com.iwdael.dbroom.compiler.maker
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Query
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
@@ -62,7 +64,7 @@ class StoreRoomGenerator : Generator {
                     .addMethod(obtain())
                     .build()
             )
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
 

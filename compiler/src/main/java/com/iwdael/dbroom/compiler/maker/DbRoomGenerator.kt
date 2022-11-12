@@ -7,10 +7,10 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.JavaClass.context
 import com.iwdael.dbroom.compiler.JavaClass.roomDatabase
 import com.iwdael.dbroom.compiler.compat.charLower
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.maker.Generator.Companion.ROOT_PACKAGE
 import com.iwdael.dbroom.compiler.roomClassName
-import com.iwdael.dbroom.compiler.roomPackage
 import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
 import javax.annotation.processing.Filer
@@ -215,7 +215,7 @@ class DbRoomGenerator(
             .build()
         JavaFile
             .builder(packageName(), classTypeSpec)
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
 

@@ -6,6 +6,7 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.*
 import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.charUpper
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import java.lang.ref.WeakReference
@@ -317,7 +318,7 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                     )
                     .build()
             )
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
     }

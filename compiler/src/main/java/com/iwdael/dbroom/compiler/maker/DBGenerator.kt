@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.roomFields
 import com.squareup.javapoet.*
@@ -41,7 +42,7 @@ class DBGenerator(private val generator: List<Class>) : Generator {
                     }
                     .build()
             )
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
     }

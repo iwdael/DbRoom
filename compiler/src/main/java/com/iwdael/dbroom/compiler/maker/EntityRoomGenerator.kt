@@ -373,7 +373,7 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                     .addMethod(rawQuery())
                     .build()
             )
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
     }

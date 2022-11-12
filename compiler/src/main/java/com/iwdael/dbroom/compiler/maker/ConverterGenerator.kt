@@ -1,8 +1,9 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
@@ -145,7 +146,7 @@ class ConverterGenerator(private val generator: List<Method>) : Generator {
                             .build())
                     .build()
             )
-            .addFileComment("author : iwdael\ne-mail : iwdael@outlook.com")
+            .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)
 
