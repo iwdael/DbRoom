@@ -8,6 +8,7 @@ import com.iwdael.dbroom.DbRoom
 import com.iwdael.dbroom.example.databinding.ActivityMainBinding
 import com.iwdael.dbroom.example.databinding.ActivityMainBindingImpl
 import com.iwdael.dbroom.example.entity.Music
+import com.iwdael.dbroom.example.entity.MusicObservable
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -29,10 +30,23 @@ class MainActivity : AppCompatActivity() {
             Log.v("dzq","name:${music1.getName()},id:${music1.getId()}")
             binding.entity1 = music1
             binding.entity2 = music2
-//            Log.v("dzq","m0:${music0.dbObserver.}")
+            Log.v("dzq","e0:${((music0.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","e1:${((music1.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","e2:${((music2.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","r0:${((music0.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","r1:${((music1.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","r2:${((music2.dbObservable) as MusicObservable).nameEntityVersion}")
             Thread.sleep(10000)
             music0.setName("IOS")
             Log.v("dzq","name:${music1.getName()}")
+
+            Log.v("dzq","e0:${((music0.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","e1:${((music1.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","e2:${((music2.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","r0:${((music0.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","r1:${((music1.dbObservable) as MusicObservable).nameEntityVersion}")
+            Log.v("dzq","r2:${((music2.dbObservable) as MusicObservable).nameEntityVersion}")
+
         }.start()
 //        val music  = Music().apply { setName("IOS") }
 //        binding.entity1 =  music

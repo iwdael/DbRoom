@@ -5,7 +5,7 @@ import androidx.databinding.Observable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.iwdael.dbroom.DB
-import com.iwdael.dbroom.RoomObserver
+import com.iwdael.dbroom.RoomObservable
 import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.annotations.UseRoomNotifier
 import kotlin.Long
@@ -14,8 +14,7 @@ import kotlin.Unit
 
 @UseRoomNotifier
 @Entity
-@UseDataBinding
-class Music : RoomObserver(), Observable {
+class Music : RoomObservable(), Observable {
   @PrimaryKey
   @Bindable
   private var id: Long? = null

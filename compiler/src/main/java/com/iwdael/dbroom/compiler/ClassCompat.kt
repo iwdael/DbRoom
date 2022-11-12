@@ -50,7 +50,7 @@ fun Class.observerPackage(): String {
 }
 
 fun Class.observerClassName(): String {
-    return observerPackage() + ".${classSimpleName}Observer"
+    return observerPackage() + ".${classSimpleName}Observable"
 }
 
 

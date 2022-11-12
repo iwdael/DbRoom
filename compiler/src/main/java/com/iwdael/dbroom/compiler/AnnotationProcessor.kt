@@ -33,8 +33,8 @@ class AnnotationProcessor : AbstractProcessor() {
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
             .map{it->Class(it)}
             .apply {
-                RoomObserverMaker(this).generate(processingEnv.filer)
-                ObserverGenerator(this).generate(processingEnv.filer)
+                RoomObservableMaker(this).generate(processingEnv.filer)
+                BaseObservableGenerator(this).generate(processingEnv.filer)
                 DBGenerator( this).generate(processingEnv.filer)
                 UseRoomNotifierGenerator(this).generate()
             }
@@ -63,7 +63,7 @@ class AnnotationProcessor : AbstractProcessor() {
             }
             .forEach {
                 EntityRoomGenerator(it).generate(processingEnv.filer)
-                EntityObserverGenerator(it).generate(processingEnv.filer)
+                EntityObservableGenerator(it).generate(processingEnv.filer)
                 EntityRoomCompatGenerator(it).generate(processingEnv.filer)
             }
         processed = true

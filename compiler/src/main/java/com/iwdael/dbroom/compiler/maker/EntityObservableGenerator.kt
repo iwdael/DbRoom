@@ -12,9 +12,9 @@ import java.lang.ref.WeakReference
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class EntityObserverGenerator(private val clazz: Class) : Generator {
+class EntityObservableGenerator(private val clazz: Class) : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = "${clazz.classSimpleName}Observer"
+    override fun simpleClassName() = "${clazz.classSimpleName}Observable"
     override fun packageName() = clazz.roomPackage()
 
     override fun generate(filer: Filer) {
@@ -23,7 +23,7 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
             .builder(
                 packageName(),
                 TypeSpec.classBuilder(simpleClassName())
-                    .superclass(ClassName.get("com.iwdael.dbroom", "Observer"))
+                    .superclass(JavaClass.baseObservable)
                     .addModifiers(Modifier.PUBLIC)
                     .addField(
                         FieldSpec.builder(clazz.asTypeName(), clazz.classSimpleName.charLower())
@@ -84,13 +84,13 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                             .forEach {
                                 addField(
                                     FieldSpec.builder(TypeName.INT, "${it.name}RoomVersion")
-                                        .addModifiers(Modifier.PRIVATE)
+                                        .addModifiers(Modifier.PUBLIC)
                                         .initializer("-1")
                                         .build()
                                 )
                                 addField(
                                     FieldSpec.builder(TypeName.INT, "${it.name}EntityVersion")
-                                        .addModifiers(Modifier.PRIVATE)
+                                        .addModifiers(Modifier.PUBLIC)
                                         .initializer("-1")
                                         .build()
                                 )
@@ -177,20 +177,21 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                     .addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
                                     .beginControlFlow("if (${it.name}EntityVersion == -1)")
                                     .addStatement("int maxVersion = 0")
-                                    .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
+                                    .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfInit = ${clazz.classSimpleName.charLower()}OfAll()")
+                                    .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : ${clazz.classSimpleName.charLower()}OfInit)")
                                     .addStatement("${clazz.classSimpleName} entity = reference.get()")
                                     .addStatement("if (entity == null) continue")
-                                    .addStatement("${clazz.classSimpleName}Observer observer = from(entity)")
+                                    .addStatement("\$T observer = from(entity)",clazz.observerClassName().asTypeName())
                                     .addStatement("maxVersion = Math.max(observer.${it.name}EntityVersion, maxVersion)")
                                     .endControlFlow()
                                     .addStatement("${it.name}EntityVersion = maxVersion")
                                     .endControlFlow()
                                     .addStatement("${it.name}EntityVersion++")
-
-                                    .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
+                                    .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfAll = ${clazz.classSimpleName.charLower()}OfAll()")
+                                    .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : ${clazz.classSimpleName.charLower()}OfAll)")
                                     .addStatement("${clazz.classSimpleName} entity = reference.get()")
                                     .addStatement("if (entity == null) continue")
-                                    .addStatement("${clazz.classSimpleName}Observer observer = from(entity)")
+                                    .addStatement("\$T observer = from(entity)",clazz.observerClassName().asTypeName())
                                     .beginControlFlow("if (${it.name}EntityVersion > observer.${it.name}EntityVersion)")
                                     .addStatement("observer.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
                                     .addStatement("observer.${it.name}RoomVersion = ${it.name}EntityVersion")
@@ -224,11 +225,11 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                                                     dbRoomClassName()
                                                 )
                                             }
-
-                                            .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : all)")
+                                            .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfRoom = ${clazz.classSimpleName.charLower()}OfAll()")
+                                            .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : ${clazz.classSimpleName.charLower()}OfRoom)")
                                             .addStatement("${clazz.classSimpleName} entity = reference.get()")
                                             .addStatement("if (entity == null) continue")
-                                            .addStatement("${clazz.classSimpleName}Observer observer = from(entity)")
+                                            .addStatement("\$T observer = from(entity)", clazz.observerClassName().asTypeName())
                                             .beginControlFlow("if (${it.name}EntityVersion > observer.${it.name}EntityVersion)")
                                             .addStatement("observer.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
                                             .addStatement("observer.${it.name}RoomVersion = ${it.name}EntityVersion")
@@ -279,20 +280,34 @@ class EntityObserverGenerator(private val clazz: Class) : Generator {
                             .addModifiers(Modifier.PRIVATE)
                             .addParameter(
                                 ParameterSpec.builder(
-                                    clazz.asTypeName(), clazz.classSimpleName
+                                    clazz.asTypeName(), "entity"
                                 ).build()
                             )
                             .returns(clazz.observerClassName().asTypeName())
                             .addStatement(
-                                "\$T roomObserver = null",
-                                ClassName.get("com.iwdael.dbroom", "RoomObserver")
+                                "\$T roomObservable = null",
+                                JavaClass.roomObservable
                             )
-                            .addStatement("Object target = ${clazz.classSimpleName.charLower()}")
-                            .beginControlFlow("if (target instanceof RoomObserver)")
-                            .addStatement("roomObserver = (RoomObserver) target")
+                            .addStatement("Object target = entity")
+                            .beginControlFlow("if (target instanceof RoomObservable)")
+                            .addStatement("roomObservable = (RoomObservable) target")
                             .endControlFlow()
-                            .addStatement("if (roomObserver == null) return null")
-                            .addStatement("return (${clazz.classSimpleName}Observer) roomObserver.getDbObserver()")
+                            .addStatement("if (roomObservable == null) return null")
+                            .addStatement("return (${clazz.classSimpleName}Observable) roomObservable.getDbObservable()")
+                            .build()
+                    )
+                    .addMethod(
+                        MethodSpec.methodBuilder("${clazz.classSimpleName.charLower()}OfAll")
+                            .returns(
+                                ParameterizedTypeName.get(
+                                    ClassName.get(List::class.java),
+                                    ParameterizedTypeName.get(
+                                        ClassName.get(WeakReference::class.java),
+                                        clazz.asTypeName()
+                                    )
+                                )
+                            )
+                            .addStatement("return new ArrayList(all)")
                             .build()
                     )
                     .build()

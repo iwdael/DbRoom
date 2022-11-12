@@ -7,9 +7,9 @@ import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class ObserverGenerator(private val classes: List<Class>) : Generator {
-    override fun classFull() = "com.iwdael.dbroom.Observer"
-    override fun simpleClassName() = "Observer"
+class BaseObservableGenerator(private val classes: List<Class>) : Generator {
+    override fun classFull() = "com.iwdael.dbroom.BaseObservable"
+    override fun simpleClassName() = "BaseObservable"
     override fun packageName() = "com.iwdael.dbroom"
 
     override fun generate(filer: Filer) {
@@ -66,7 +66,7 @@ class ObserverGenerator(private val classes: List<Class>) : Generator {
                         MethodSpec.methodBuilder("checkAndInit")
                             .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
                             .beginControlFlow("if (handler == null)")
-                            .beginControlFlow("synchronized (Observer.class)")
+                            .beginControlFlow("synchronized (BaseObservable.class)")
                             .beginControlFlow("if (handler == null)")
                             .addStatement(
                                 "\$T thread = new HandlerThread(\"room-update\")",
@@ -84,7 +84,7 @@ class ObserverGenerator(private val classes: List<Class>) : Generator {
                             .addModifiers(Modifier.PROTECTED)
                             .addParameter(
                                 ClassName.get(
-                                    "com.iwdael.dbroom.Observer",
+                                    "com.iwdael.dbroom.BaseObservable",
                                     "RoomNotifier"
                                 ),
                                 "notifier"

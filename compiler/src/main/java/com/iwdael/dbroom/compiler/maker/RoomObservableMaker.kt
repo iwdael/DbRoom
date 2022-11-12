@@ -2,7 +2,8 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
-import com.iwdael.dbroom.compiler.JavaClass.baseObserver
+import com.iwdael.dbroom.compiler.JavaClass
+import com.iwdael.dbroom.compiler.JavaClass.baseObservable
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.observerClassName
 import com.iwdael.dbroom.compiler.useDataBinding
@@ -10,9 +11,9 @@ import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
-class RoomObserverMaker(private val classes: List<Class>) : Generator {
-    override fun classFull() = "com.iwdael.dbroom.RoomObserver"
-    override fun simpleClassName() = "RoomObserver"
+class RoomObservableMaker(private val classes: List<Class>) : Generator {
+    override fun classFull() = "com.iwdael.dbroom.RoomObservable"
+    override fun simpleClassName() = "RoomObservable"
     override fun packageName() = "com.iwdael.dbroom"
 
     override fun generate(filer: Filer) {
@@ -21,12 +22,12 @@ class RoomObserverMaker(private val classes: List<Class>) : Generator {
             .builder(
                 packageName(), TypeSpec.classBuilder(simpleClassName())
                     .addField(
-                        FieldSpec.builder(baseObserver, "dbObserver")
+                        FieldSpec.builder(baseObservable, "dbObservable")
                             .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
                             .addAnnotation(ClassName.bestGuess("androidx.room.Ignore"))
                             .build()
                     )
-                    .superclass(baseObserver)
+                    .superclass(baseObservable)
                     .apply {
                         if (useDataBinding) {
                             addMethod(
@@ -39,7 +40,7 @@ class RoomObserverMaker(private val classes: List<Class>) : Generator {
                                             "OnPropertyChangedCallback"
                                         ), "callback"
                                     )
-                                    .addStatement("dbObserver.addOnPropertyChangedCallback(callback)")
+                                    .addStatement("dbObservable.addOnPropertyChangedCallback(callback)")
                                     .build()
                             )
 
@@ -54,7 +55,7 @@ class RoomObserverMaker(private val classes: List<Class>) : Generator {
                                             "OnPropertyChangedCallback"
                                         ), "callback"
                                     )
-                                    .addStatement("dbObserver.removeOnPropertyChangedCallback(callback)")
+                                    .addStatement("dbObservable.removeOnPropertyChangedCallback(callback)")
                                     .build()
                             )
                         }
@@ -70,15 +71,15 @@ class RoomObserverMaker(private val classes: List<Class>) : Generator {
                                     TypeName.INT, "fieldId"
                                 ).build()
                             )
-                            .addStatement("dbObserver.notifyPropertyChanged(fieldId)")
+                            .addStatement("dbObservable.notifyPropertyChanged(fieldId)")
                             .build()
 
                     )
                     .addMethod(
-                        MethodSpec.methodBuilder("getDbObserver")
+                        MethodSpec.methodBuilder("getDbObservable")
                             .addModifiers(Modifier.PUBLIC)
-                            .returns(ClassName.get("com.iwdael.dbroom", "Observer"))
-                            .addStatement("return dbObserver")
+                            .returns(JavaClass.baseObservable)
+                            .addStatement("return dbObservable")
                             .build()
                     )
                     .build()
@@ -98,20 +99,20 @@ class RoomObserverMaker(private val classes: List<Class>) : Generator {
                 if (index == 0) {
                     beginControlFlow("if(clazz == \$T.class)", clazz.asTypeName())
                     addStatement(
-                        "dbObserver = new \$T((\$T) obj)",
+                        "dbObservable = new \$T((\$T) obj)",
                         clazz.observerClassName().asTypeName(), clazz.asTypeName()
                     )
                 } else {
                     nextControlFlow("else if(clazz == \$T.class)", clazz.asTypeName())
                     addStatement(
-                        "dbObserver = new \$T((\$T) obj)",
+                        "dbObservable = new \$T((\$T) obj)",
                         clazz.observerClassName().asTypeName(),
                         clazz.asTypeName()
                     )
                 }
             }
             nextControlFlow("else")
-            addStatement("dbObserver = null")
+            addStatement("dbObservable = null")
             endControlFlow()
         }
         .build()
