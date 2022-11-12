@@ -11,14 +11,19 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickModifier
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
 import com.iwdael.annotationprocessorparser.poet.srcPath
+import com.iwdael.dbroom.annotations.UseDataBinding
+import com.iwdael.dbroom.annotations.UseGenerator
 import com.iwdael.dbroom.annotations.UseRoomNotifier
-import com.iwdael.dbroom.compiler.JavaClass.observable
 import com.iwdael.dbroom.compiler.JavaClass.roomObservable
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.packageName
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
-import com.squareup.javapoet.*
+import com.iwdael.dbroom.compiler.useRoomNotifier
+import com.squareup.javapoet.AnnotationSpec
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.TypeSpec
 import java.io.File
 import javax.lang.model.element.Modifier
 
@@ -27,25 +32,18 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class UseRoomNotifierJavaGenerator(val clazz: Class) {
+class UseJavaGenerator(val clazz: Class) {
     fun generate() {
-        val needGenerator = clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate
-        val useDataBinding = listOf(clazz).useDataBinding()
-        if (!needGenerator) return
+        val useDataBinding = clazz.useDataBinding()
+        val useRoomNotifier = clazz.useRoomNotifier()
+        if (!useRoomNotifier && !useDataBinding) return
         JavaFile
             .builder(
                 clazz.packageName(), TypeSpec.classBuilder(clazz.classSimpleName)
                     .superclass(roomObservable)
-                    .apply {
-                        if (useDataBinding) addSuperinterface(observable)
-                    }
                     .addModifiers(*clazz.modifiers.toTypedArray())
-                    .addAnnotation(
-                        AnnotationSpec.builder(UseRoomNotifier::class.java)
-                            .build()
-                    )
                     .addAnnotations(clazz.annotations
-                        .filter { it.className != UseRoomNotifier::class.java.name }
+                        .filter { it.className != UseGenerator::class.java.name }
                         .map { annotation ->
                             annotation.asAnnotation()
                         })

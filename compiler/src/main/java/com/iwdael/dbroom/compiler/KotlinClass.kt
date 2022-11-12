@@ -8,6 +8,6 @@ import com.squareup.kotlinpoet.ClassName
  * @project : https://github.com/iwdael/dbroom
  */
 object KotlinClass {
-    val roomObserver = ClassName.bestGuess("com.iwdael.dbroom.RoomObserver")
+    val roomObserver = ClassName.bestGuess("com.iwdael.dbroom.core.RoomObservable")
     val observable = ClassName.bestGuess("androidx.databinding.Observable")
 }

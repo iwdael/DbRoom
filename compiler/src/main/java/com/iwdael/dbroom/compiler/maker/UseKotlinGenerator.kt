@@ -10,12 +10,12 @@ import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asMethodBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
 import com.iwdael.annotationprocessorparser.poet.filePath
-import com.iwdael.dbroom.annotations.UseRoomNotifier
-import com.iwdael.dbroom.compiler.KotlinClass.observable
+import com.iwdael.dbroom.annotations.UseGenerator
 import com.iwdael.dbroom.compiler.KotlinClass.roomObserver
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
+import com.iwdael.dbroom.compiler.useRoomNotifier
 import com.squareup.kotlinpoet.*
 import org.jetbrains.annotations.NotNull
 import java.io.File
@@ -26,26 +26,19 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class UseRoomNotifierKotlinGenerator(val clazz: Class) {
+class UseKotlinGenerator(val clazz: Class) {
     fun generate() {
-        val needGenerator = clazz.getAnnotation(UseRoomNotifier::class.java)!!.generate
-        val useDataBinding = listOf(clazz).useDataBinding()
-        if (!needGenerator) return
+        val useDataBinding = clazz.useDataBinding()
+        val useRoomNotifier = clazz.useRoomNotifier()
+        if (!useRoomNotifier && !useDataBinding) return
         clazz.asFileBuilder()
             .addType(
                 clazz.asTypeBuilder()
                     .superclass(roomObserver)
-                    .apply {
-                        if (useDataBinding) addSuperinterface(observable)
-                    }
-                    .addAnnotation(
-                        AnnotationSpec.builder(UseRoomNotifier::class.java)
-                            .build()
-                    )
                     .addAnnotations(
                         clazz.annotations
-                            .filter { it.className != UseRoomNotifier::class.java.name }
                             .filter { it.className != Metadata::class.java.name }
+                            .filter { it.className != UseGenerator::class.java.name }
                             .map { it.asAnnotation() }
                     )
                     .addProperties(

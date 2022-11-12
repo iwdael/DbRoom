@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.Field
 import com.iwdael.dbroom.annotations.UseDataBinding
+import com.iwdael.dbroom.annotations.UseRoomNotifier
 
 /**
  * @author  : iwdael
@@ -55,6 +56,10 @@ fun Class.observerClassName(): String {
 }
 
 
-fun List<Class>.useDataBinding(): Boolean {
-    return any { it.getAnnotation(UseDataBinding::class.java) != null }
+fun Class.useDataBinding(): Boolean {
+    return getAnnotation(UseDataBinding::class.java) != null
+}
+
+fun Class.useRoomNotifier(): Boolean {
+    return getAnnotation(UseRoomNotifier::class.java) != null
 }

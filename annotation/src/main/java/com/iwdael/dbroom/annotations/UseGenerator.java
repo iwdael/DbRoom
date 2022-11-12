@@ -5,6 +5,6 @@ package com.iwdael.dbroom.annotations;
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-public @interface UseRoomNotifier{
+public @interface UseGenerator {
 
 }

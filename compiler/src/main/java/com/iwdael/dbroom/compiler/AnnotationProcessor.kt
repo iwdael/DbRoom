@@ -32,12 +32,11 @@ class AnnotationProcessor : AbstractProcessor() {
             }
         StoreGenerator().generate(processingEnv.filer)
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
-            .map{it->Class(it)}
+            .map{ Class(it)}
             .apply {
                 ObservableCreatorGenerator(this).generate(processingEnv.filer)
-//                BaseObservableGenerator(this).generate(processingEnv.filer)
                 DBGenerator( this).generate(processingEnv.filer)
-                UseRoomNotifierGenerator(this).generate()
+                UseGenerator(this).generate()
             }
             .apply {
                 val dao = env.getElementsAnnotatedWith(Dao::class.java)
