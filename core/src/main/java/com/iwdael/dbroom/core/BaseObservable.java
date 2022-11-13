@@ -4,6 +4,7 @@ package com.iwdael.dbroom.core;
 
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 
 import androidx.databinding.Observable;
 
@@ -38,15 +39,13 @@ public abstract class BaseObservable implements Observable {
 
   protected void notifyRoom(RoomNotifier notifier) {
     checkAndInit();
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        notifier.notifier();
-      }
-    });
+    Log.v("DbRoom","notifier");
+    handler.post(notifier::notifier);
   }
 
   public abstract void notifyPropertyChanged(int fieldId);
+
+  public abstract void notifyPropertiesChange();
 
   public interface RoomNotifier {
     void notifier();

@@ -26,6 +26,11 @@ public abstract class RoomObservable extends BaseObservable {
     dbObservable.notifyPropertyChanged(fieldId);
   }
 
+  @Override
+  public void notifyPropertiesChange() {
+    dbObservable.notifyPropertiesChange();
+  }
+
   public BaseObservable getDbObservable() {
     return dbObservable;
   }
