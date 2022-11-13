@@ -15,39 +15,38 @@ import androidx.databinding.Observable;
  * @project : https://github.com/iwdael/dbroom
  */
 public abstract class BaseObservable implements Observable {
-  private static volatile Handler handler;
+    private static volatile Handler handler;
 
-  @Override
-  public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-  }
-
-  @Override
-  public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-  }
-
-  private static void checkAndInit() {
-    if (handler == null) {
-      synchronized (BaseObservable.class) {
-        if (handler == null) {
-          HandlerThread thread = new HandlerThread("room-update");
-          thread.start();
-          handler = new Handler(thread.getLooper());
-        }
-      }
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
     }
-  }
 
-  protected void notifyRoom(RoomNotifier notifier) {
-    checkAndInit();
-    Log.v("DbRoom","notifier");
-    handler.post(notifier::notifier);
-  }
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+    }
 
-  public abstract void notifyPropertyChanged(int fieldId);
+    private static void checkAndInit() {
+        if (handler == null) {
+            synchronized (BaseObservable.class) {
+                if (handler == null) {
+                    HandlerThread thread = new HandlerThread("room-update");
+                    thread.start();
+                    handler = new Handler(thread.getLooper());
+                }
+            }
+        }
+    }
 
-  public abstract void notifyPropertiesChange();
+    protected void notifyRoom(RoomNotifier notifier) {
+        checkAndInit();
+        handler.post(notifier::notifier);
+    }
 
-  public interface RoomNotifier {
-    void notifier();
-  }
+    public abstract void notifyPropertyChanged(int fieldId);
+
+    public abstract void notifyPropertiesChange();
+
+    public interface RoomNotifier {
+        void notifier();
+    }
 }

@@ -8,30 +8,30 @@ import androidx.room.Ignore;
  * @project : https://github.com/iwdael/dbroom
  */
 public abstract class RoomObservable extends BaseObservable {
-  @Ignore
-  private final BaseObservable dbObservable = Utils.createObserver(this);
+    @Ignore
+    private final BaseObservable dbObservable = Utils.createObserver(this);
 
-  @Override
-  public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-    dbObservable.addOnPropertyChangedCallback(callback);
-  }
+    @Override
+    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        dbObservable.addOnPropertyChangedCallback(callback);
+    }
 
-  @Override
-  public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-    dbObservable.removeOnPropertyChangedCallback(callback);
-  }
+    @Override
+    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+        dbObservable.removeOnPropertyChangedCallback(callback);
+    }
 
-  @Override
-  public void notifyPropertyChanged(int fieldId) {
-    dbObservable.notifyPropertyChanged(fieldId);
-  }
+    @Override
+    public void notifyPropertyChanged(int fieldId) {
+        dbObservable.notifyPropertyChanged(fieldId);
+    }
 
-  @Override
-  public void notifyPropertiesChange() {
-    dbObservable.notifyPropertiesChange();
-  }
+    @Override
+    public void notifyPropertiesChange() {
+        dbObservable.notifyPropertiesChange();
+    }
 
-  public BaseObservable getDbObservable() {
-    return dbObservable;
-  }
+    public BaseObservable getDbObservable() {
+        return dbObservable;
+    }
 }

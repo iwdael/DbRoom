@@ -14,5 +14,5 @@ object JavaClass {
     val context = ClassName.get("android.content", "Context")
     val observable = ClassName.get("androidx.databinding", "Observable")
     const val classNameOfObservable = "com.iwdael.dbroom.RoomObservableCreator"
-    val log = ClassName.get("android.util","Log")
+    val log = ClassName.get("com.iwdael.dbroom.core","Logger")
 }
