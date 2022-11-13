@@ -4,10 +4,7 @@ import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.*
-import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
-import com.iwdael.dbroom.compiler.compat.charLower
-import com.iwdael.dbroom.compiler.compat.charUpper
-import com.iwdael.dbroom.compiler.compat.write
+import com.iwdael.dbroom.compiler.compat.*
 import com.squareup.javapoet.*
 import java.lang.ref.WeakReference
 import javax.annotation.processing.Filer
@@ -116,6 +113,21 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                 .build()
                         )
                     }
+                    .addFields(
+                        clazz.fields
+                            .filter { it.getAnnotation(PrimaryKey::class.java) == null }
+                            .map {
+                                FieldSpec.builder(
+                                    "java.lang.Object".bestGuessClassName(),
+                                    "${it.name}Lock",
+                                    Modifier.STATIC,
+                                    Modifier.FINAL,
+                                    Modifier.PRIVATE
+                                )
+                                    .initializer("new Object()")
+                                    .build()
+                            }
+                    )
                     .addMethod(
                         MethodSpec
                             .methodBuilder("notifyPropertyChanged")
@@ -128,7 +140,10 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                             )
                             .addStatement("cleanCache()")
                             .beginControlFlow("if (${clazz.classSimpleName.charLower()}.${clazz.roomPrimaryKeyField().getter.name}() == null)")
-                            .addStatement("\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",JavaClass.log)
+                            .addStatement(
+                                "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
+                                JavaClass.log
+                            )
                             .addStatement("return")
                             .endControlFlow()
                             .apply {
@@ -177,6 +192,7 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                     .apply {
                                         if (!useRoomNotifier) return@apply
                                         this.addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
+                                            .beginControlFlow("synchronized (${it.name}Lock)")
                                             .beginControlFlow("if (${it.name}EntityVersion == -1)")
                                             .addStatement("int maxVersion = 0")
                                             .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfInit = ${clazz.classSimpleName.charLower()}OfAll()")
@@ -263,6 +279,7 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
 
                                                     .build()
                                             )
+                                            .endControlFlow()
                                     }
                                     .build()
                             }
@@ -330,7 +347,10 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                             .apply {
                                 addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
                                     .beginControlFlow("if (${clazz.classSimpleName.charLower()}.${clazz.roomPrimaryKeyField().getter.name}() == null)")
-                                    .addStatement("\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",JavaClass.log)
+                                    .addStatement(
+                                        "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
+                                        JavaClass.log
+                                    )
                                     .addStatement("return")
                                     .endControlFlow()
                                 clazz.roomFields()
