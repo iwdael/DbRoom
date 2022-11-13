@@ -1,17 +1,15 @@
-package com.iwdael.dbroom.annotations;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.iwdael.dbroom.annotations
 
 /**
  * @author  : iwdael
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-@Target({ElementType.FIELD, ElementType.METHOD})
-@Retention(RetentionPolicy.CLASS)
-public @interface Find {
-    String[] value();
-}
+@Target(
+    AnnotationTarget.FIELD,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER
+)
+@kotlin.annotation.Retention(AnnotationRetention.BINARY)
+annotation class Find(vararg val value: String)

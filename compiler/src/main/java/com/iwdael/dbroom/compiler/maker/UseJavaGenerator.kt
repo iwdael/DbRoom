@@ -1,7 +1,6 @@
 package com.iwdael.dbroom.compiler.maker
 
 import androidx.databinding.Bindable
-import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asAnnotation
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asFieldBuilder
@@ -11,9 +10,7 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickModifier
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
 import com.iwdael.annotationprocessorparser.poet.srcPath
-import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.annotations.UseGenerator
-import com.iwdael.dbroom.annotations.UseRoomNotifier
 import com.iwdael.dbroom.compiler.JavaClass.roomObservable
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.packageName
@@ -74,13 +71,10 @@ class UseJavaGenerator(val clazz: Class) {
                                     .stickParameter()
                                     .stickAnnotation()
                                     .addStatement("this.${pair.first.name} = ${pair.first.name}")
-                                    .apply {
-                                        if (pair.first.getAnnotation(PrimaryKey::class.java) == null)
-                                            addStatement(
-                                                "notifyPropertyChanged(\$T.${pair.first.name})",
-                                                ClassName.get("com.iwdael.dbroom", "DB")
-                                            )
-                                    }
+                                    .addStatement(
+                                        "notifyPropertyChanged(\$T.${pair.first.name})",
+                                        ClassName.get("com.iwdael.dbroom", "DB")
+                                    )
                                     .build()
                             }
                     )

@@ -1,9 +1,8 @@
-package com.iwdael.dbroom.annotations;
+package com.iwdael.dbroom.annotations
 
 /**
  * @author  : iwdael
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-public @interface UseDataBinding {
-}
+annotation class UseDataBinding 

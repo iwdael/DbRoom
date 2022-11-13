@@ -139,8 +139,7 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                             .endControlFlow()
                             .apply {
                                 if (clazz.roomFields()
-                                        .filter { it.getAnnotation(PrimaryKey::class.java) == null }
-                                        .isEmpty()
+                                        .none { it.getAnnotation(PrimaryKey::class.java) == null }
                                 ) return@apply
                                 clazz.roomFields()
                                     .filter { it.getAnnotation(PrimaryKey::class.java) == null }
@@ -183,7 +182,6 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                     }
                                     .apply {
                                         if (!useRoomNotifier) return@apply
-
                                         this.addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
                                             .beginControlFlow("if (${it.name}EntityVersion == -1)")
                                             .addStatement("int maxVersion = 0")
@@ -198,6 +196,7 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                             .addStatement("maxVersion = Math.max(observer.${it.name}EntityVersion, maxVersion)")
                                             .endControlFlow()
                                             .addStatement("${it.name}EntityVersion = maxVersion")
+                                            .addStatement("return")
                                             .endControlFlow()
                                             .addStatement("${it.name}EntityVersion++")
                                             .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfAll = ${clazz.classSimpleName.charLower()}OfAll()")

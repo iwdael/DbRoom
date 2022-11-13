@@ -2,7 +2,6 @@ package com.iwdael.dbroom.compiler.maker
 
 import androidx.annotation.Nullable
 import androidx.databinding.Bindable
-import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asAnnotation
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asFileBuilder
@@ -79,15 +78,12 @@ class UseKotlinGenerator(val clazz: Class) {
                                         pair.first.asTypeName().copy(true)
                                     )
                                     .addStatement("this.${pair.first.name} = ${pair.first.name}")
-                                    .apply {
-                                        if (pair.first.getAnnotation(PrimaryKey::class.java) == null)
-                                            addStatement(
-                                                "notifyPropertyChanged(%T.${pair.first.name})",
-                                                ClassName.bestGuess(
-                                                    "com.iwdael.dbroom.DB"
-                                                )
-                                            )
-                                    }
+                                    .addStatement(
+                                        "notifyPropertyChanged(%T.${pair.first.name})",
+                                        ClassName.bestGuess(
+                                            "com.iwdael.dbroom.DB"
+                                        )
+                                    )
                                     .build()
                             }
                     )

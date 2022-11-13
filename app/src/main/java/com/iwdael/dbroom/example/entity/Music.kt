@@ -15,8 +15,8 @@ import kotlin.String
 import kotlin.Unit
 
 @Entity
-@UseRoomNotifier
 @UseDataBinding
+@UseRoomNotifier
 class Music : RoomObservable() {
   @PrimaryKey
   @Bindable
@@ -36,6 +36,7 @@ class Music : RoomObservable() {
 
   fun setId(id: Long?) {
     this.id = id
+    notifyPropertyChanged(DB.id)
   }
 
   fun setName(name: String?) {
