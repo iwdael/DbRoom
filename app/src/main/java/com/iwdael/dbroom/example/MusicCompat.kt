@@ -17,13 +17,10 @@ fun stringConvertMusic(user: String): Music? {
 }
 
 fun main() {
-    val query = MusicSQL.QueryBuilder()
-        .fields()
-        .where(MusicColumn.id)
-        .greater(10)
-        .and()
-        .where(MusicColumn.id)
-        .`in`(100,null ,null)
+    val query = MusicSQL.newQuery()
+        .fields(MusicColumn.lyrics)
+        .where(MusicColumn.name)
+        .equal("")
         .build()
     println(query.selection)
 }

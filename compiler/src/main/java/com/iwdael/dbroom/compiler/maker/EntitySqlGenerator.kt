@@ -24,6 +24,13 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
             .builder(
                 packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                    .addMethod(
+                        MethodSpec.methodBuilder("newQuery")
+                            .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                            .addStatement("return new \$T()", clazz.sqlQueryBuilderClassName())
+                            .returns(clazz.sqlQueryBuilderClassName())
+                            .build()
+                    )
                     .addType(
                         TypeSpec.classBuilder(clazz.sqlQueryClassName())
                             .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
@@ -50,7 +57,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                     )
 
                     .addType(
-                        TypeSpec.classBuilder("QueryBuilder")
+                        TypeSpec.classBuilder(clazz.sqlQueryBuilderClassName())
                             .addModifiers(Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC)
                             .addField(
                                 FieldSpec.builder(
@@ -76,6 +83,10 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                 )
                                     .addModifiers(Modifier.FINAL, Modifier.PRIVATE)
                                     .initializer("new \$T()", ArrayList::class.java)
+                                    .build()
+                            )
+                            .addMethod(
+                                MethodSpec.constructorBuilder().addModifiers(Modifier.PROTECTED)
                                     .build()
                             )
                             .addMethod(
@@ -113,7 +124,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                     .addModifiers(Modifier.PRIVATE)
                                     .returns(String::class.java)
                                     .addStatement(
-                                        "return \$T.toSelection(\"${clazz.roomTableName()}\", fields, wheres)",
+                                        "return \$T.toQuerySelection(\"${clazz.roomTableName()}\", fields, wheres)",
                                         UTILS
                                     )
                                     .build()

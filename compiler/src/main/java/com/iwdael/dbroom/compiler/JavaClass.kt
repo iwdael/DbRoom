@@ -50,31 +50,43 @@ object JavaClass {
     val UTILS: ClassName = ClassName.get("com.iwdael.dbroom", "Utils")
     val OPERATOR: ClassName = ClassName.get("com.iwdael.dbroom", "Operator")
     val CONDITION: ClassName = ClassName.get("com.iwdael.dbroom", "Condition")
-    val CONDITION_STRING_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingString")
+    val CONDITION_STRING_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingString")
 
-    val CONDITION_INTEGER_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingInteger")
-    val CONDITION_INTEGER_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicInteger")
+    val CONDITION_INTEGER_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingInteger")
+    val CONDITION_INTEGER_BASIC: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionBasicInteger")
 
-    val CONDITION_FLOAT_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingFloat")
+    val CONDITION_FLOAT_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingFloat")
     val CONDITION_FLOAT_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicFloat")
 
-    val CONDITION_SHORT_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingShort")
+    val CONDITION_SHORT_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingShort")
     val CONDITION_SHORT_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicShort")
 
-    val CONDITION_CHAR_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingChar")
+    val CONDITION_CHAR_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingChar")
     val CONDITION_CHAR_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicChar")
 
-    val CONDITION_DOUBLE_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingDouble")
-    val CONDITION_DOUBLE_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicDouble")
+    val CONDITION_DOUBLE_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingDouble")
+    val CONDITION_DOUBLE_BASIC: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionBasicDouble")
 
-    val CONDITION_LONG_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingLong")
+    val CONDITION_LONG_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingLong")
     val CONDITION_LONG_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicLong")
 
-    val CONDITION_BYTE_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingByte")
+    val CONDITION_BYTE_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingByte")
     val CONDITION_BYTE_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicByte")
 
-    val CONDITION_BOOLEAN_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionPackingBoolean")
-    val CONDITION_BOOLEAN_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicBoolean")
+    val CONDITION_BOOLEAN_PACKING: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionPackingBoolean")
+    val CONDITION_BOOLEAN_BASIC: ClassName =
+        ClassName.get("com.iwdael.dbroom", "ConditionBasicBoolean")
 
     val CONDITION_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBuilder")
     val CONDITION_BUILDER_2: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBuilder2")
@@ -102,4 +114,9 @@ object JavaClass {
 
 
     val STRING: ClassName = ClassName.get(String::class.java)
+
+    val STORE_ROOM: ClassName = ClassName.get("com.iwdael.dbroom", "StoreRoom")
+    val CONVERTER: ClassName = ClassName.get("com.iwdael.dbroom", "Converter")
+    val DB_ROOM: ClassName = ClassName.get("com.iwdael.dbroom", "DbRoom")
+    val STORE: ClassName = ClassName.get("com.iwdael.dbroom", "Store")
 }

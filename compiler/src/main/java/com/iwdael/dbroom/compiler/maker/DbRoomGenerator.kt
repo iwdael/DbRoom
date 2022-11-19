@@ -5,11 +5,12 @@ import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.JavaClass.CONTEXT
+import com.iwdael.dbroom.compiler.JavaClass.DB_ROOM
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_DATABASE
+import com.iwdael.dbroom.compiler.JavaClass.STORE_ROOM
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.write
-import com.iwdael.dbroom.compiler.maker.Generator.Companion.ROOT_PACKAGE
 import com.iwdael.dbroom.compiler.roomClassName
 import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
@@ -26,9 +27,9 @@ class DbRoomGenerator(
     private val dao: List<Class>,
     private val method: Method?
 ) : Generator {
-    override val simpleClassNameGen: String = "DbRoom"
-    override val packageNameGen: String = ROOT_PACKAGE
-    override val classNameGen: String = "$ROOT_PACKAGE.${simpleClassNameGen}"
+    override val simpleClassNameGen: String = DB_ROOM.simpleName()
+    override val packageNameGen: String = DB_ROOM.packageName()
+    override val classNameGen: String = "$packageNameGen.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         val init = MethodSpec.methodBuilder("init")
             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
@@ -37,7 +38,7 @@ class DbRoomGenerator(
             .addStatement("if (instance != null) return")
             .addCode(
                 CodeBlock.builder()
-                    .beginControlFlow("synchronized (DbRoom.class)")
+                    .beginControlFlow("synchronized ($simpleClassNameGen.class)")
                     .addStatement(CodeBlock.of("if (instance != null) return"))
                     .apply {
                         if (method == null)
@@ -45,7 +46,7 @@ class DbRoomGenerator(
                                 CodeBlock
                                     .builder()
                                     .add(
-                                        "instance = \$T.databaseBuilder(context.getApplicationContext(),DbRoom.class,\"lite.db\").build()",
+                                        "instance = \$T.databaseBuilder(context.getApplicationContext(),$simpleClassNameGen.class,\"lite.db\").build()",
                                         ClassName.get("androidx.room", "Room")
                                     )
                                     .build()
@@ -207,7 +208,7 @@ class DbRoomGenerator(
                 addMethod(
                     MethodSpec.methodBuilder("store")
                         .addModifiers(Modifier.ABSTRACT, Modifier.PROTECTED)
-                        .returns(ClassName.get(ROOT_PACKAGE, "StoreRoom"))
+                        .returns(STORE_ROOM)
                         .build()
                 )
             }

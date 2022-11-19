@@ -2,6 +2,8 @@ package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.iwdael.dbroom.compiler.JavaClass.STORE
+import com.iwdael.dbroom.compiler.JavaClass.STORE_ROOM
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -15,8 +17,8 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class StoreRoomGenerator : Generator {
-    override val simpleClassNameGen: String = "StoreRoom"
-    override val packageNameGen: String = Generator.ROOT_PACKAGE
+    override val simpleClassNameGen: String = STORE_ROOM.simpleName()
+    override val packageNameGen: String = STORE_ROOM.packageName()
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     private fun store() = MethodSpec.methodBuilder("store")
         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
@@ -47,15 +49,15 @@ class StoreRoomGenerator : Generator {
                 )
                 .build()
         )
-        .returns(ClassName.get(Generator.ROOT_PACKAGE, "Store"))
+        .returns(STORE)
         .build()
 
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
                 packageNameGen,
-                TypeSpec.classBuilder(simpleClassNameGen)
-                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                TypeSpec.interfaceBuilder(simpleClassNameGen)
+                    .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Dao::class.java)
                     .addMethod(store())
                     .addMethod(obtain())

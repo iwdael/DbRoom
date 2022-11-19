@@ -2,6 +2,7 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.iwdael.dbroom.compiler.JavaClass.CONVERTER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -14,8 +15,8 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ConverterGenerator(private val generator: List<Method>) : Generator {
-    override val simpleClassNameGen: String = "Converter"
-    override val packageNameGen: String = Generator.ROOT_PACKAGE
+    override val simpleClassNameGen: String = CONVERTER.simpleName()
+    override val packageNameGen: String = CONVERTER.packageName()
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile

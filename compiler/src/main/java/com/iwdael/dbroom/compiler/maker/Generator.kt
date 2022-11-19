@@ -8,10 +8,6 @@ import javax.annotation.processing.Filer
  * @project : https://github.com/iwdael/dbroom
  */
 interface Generator {
-    companion object {
-        const val ROOT_PACKAGE = "com.iwdael.dbroom"
-    }
-
     val classNameGen: String
     val simpleClassNameGen: String
     val packageNameGen: String

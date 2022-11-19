@@ -3,6 +3,7 @@ package com.iwdael.dbroom.compiler.maker
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.iwdael.dbroom.compiler.JavaClass.STORE
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -16,8 +17,8 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class StoreGenerator : Generator {
-    override val simpleClassNameGen: String = "Store"
-    override val packageNameGen: String = Generator.ROOT_PACKAGE
+    override val simpleClassNameGen: String = STORE.simpleName()
+    override val packageNameGen: String = STORE.packageName()
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile

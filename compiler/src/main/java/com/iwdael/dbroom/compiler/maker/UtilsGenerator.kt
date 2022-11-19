@@ -54,7 +54,7 @@ class UtilsGenerator : Generator {
                             .build()
                     )
                     .addMethod(
-                        MethodSpec.methodBuilder("toSelection")
+                        MethodSpec.methodBuilder("toQuerySelection")
                             .addParameter(String::class.java, "tableName")
                             .addParameter(ArrayTypeName.of(Object::class.java), "columns")
                             .addParameter(
