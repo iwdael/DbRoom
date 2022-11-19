@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.bestGuessClassName
@@ -231,6 +232,39 @@ class UtilsGenerator : Generator {
                             .endControlFlow()
 
                             .addStatement("return builder.toString()")
+                            .build()
+                    )
+                    .addMethod(
+                        MethodSpec.methodBuilder("collectionConvert")
+                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                            .addTypeVariable(TypeVariableName.get("C"))
+                            .addTypeVariable(TypeVariableName.get("T"))
+                            .returns(
+                                ParameterizedTypeName.get(
+                                    ClassName.get(List::class.java),
+                                    TypeVariableName.get("T")
+                                )
+                            )
+                            .addParameter(
+                                ParameterizedTypeName.get(
+                                    ClassName.get(List::class.java),
+                                    TypeVariableName.get("C")
+                                ),
+                                "sources"
+                            )
+                            .addParameter(
+                                ParameterizedTypeName.get(
+                                    CREATOR,
+                                    TypeVariableName.get("C"),
+                                    TypeVariableName.get("T")
+                                ),
+                                "creator"
+                            )
+                            .addStatement("List<T> collection = new ArrayList<>(sources.size())")
+                            .beginControlFlow("for (C source : sources)")
+                            .addStatement("collection.add(creator.create(source))")
+                            .endControlFlow()
+                            .addStatement("return collection")
                             .build()
                     )
                     .build()

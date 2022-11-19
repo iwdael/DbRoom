@@ -13,7 +13,6 @@ import com.iwdael.dbroom.compiler.KotlinClass.BASE_OBSERVABLE
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
-import com.iwdael.dbroom.compiler.useRoomNotifier
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
@@ -28,8 +27,6 @@ import java.io.File
 class UseKotlinGenerator(val clazz: Class) {
     fun generate() {
         val useDataBinding = clazz.useDataBinding()
-        val useRoomNotifier = clazz.useRoomNotifier()
-        if (!useRoomNotifier && !useDataBinding) return
         clazz.asFileBuilder()
             .addType(
                 clazz.asTypeBuilder()

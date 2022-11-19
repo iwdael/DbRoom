@@ -3,12 +3,9 @@ package com.iwdael.dbroom.compiler.maker
 import androidx.room.*
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
-import com.iwdael.dbroom.annotations.UseFlow
+import com.iwdael.dbroom.compiler.*
+import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.compat.*
-import com.iwdael.dbroom.compiler.packageName
-import com.iwdael.dbroom.compiler.roomFields
-import com.iwdael.dbroom.compiler.roomPackage
-import com.iwdael.dbroom.compiler.roomTableName
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
@@ -276,11 +273,9 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                 .build()
         )
         .returns(
-            useFlow(
-                ParameterizedTypeName.get(
-                    ClassName.get("java.util", "List"),
-                    clazz.asTypeName()
-                )
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
             )
         )
         .build()
@@ -307,11 +302,9 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                 ).build()
             })
             .returns(
-                useFlow(
-                    ParameterizedTypeName.get(
-                        ClassName.get("java.util", "List"),
-                        clazz.asTypeName()
-                    )
+                ParameterizedTypeName.get(
+                    ClassName.get("java.util", "List"),
+                    clazz.asTypeName()
                 )
             )
             .build()
@@ -330,24 +323,109 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
         )
         .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
         .returns(
-            useFlow(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
+        )
+        .build()
+
+    private fun rawQuery2() = MethodSpec.methodBuilder("rawQuery")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .addAnnotation(
+            AnnotationSpec.builder(RawQuery::class.java)
+                .addMember(
+                    "observedEntities",
+                    "{\$T.class}",
+                    clazz.asTypeName()
+                )
+                .build()
+        )
+        .addParameter(clazz.sqlQueryClassName(), "query")
+        .addStatement(
+            "return rawQuery(new \$T(query.selection, query.bindArgs))",
+            ClassName.get("androidx.sqlite.db", "SimpleSQLiteQuery")
+        )
+        .returns(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
+        )
+        .build()
+
+    private fun findAllNotifier() = MethodSpec.methodBuilder("findAllNotifier")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .returns(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
+        )
+        .addStatement(
+            "return \$T.collectionConvert(findAll(), \$T::from)",
+            UTILS,
+            clazz.notifierClassName()
+        )
+        .build()
+
+    private fun findsNotifier() = clazz.getQuery().map { pair ->
+        MethodSpec.methodBuilder("${pair.first}Notifier")
+            .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+            .addParameters(pair.second.map {
+                ParameterSpec.builder(
+                    it.asTypeName(),
+                    it.name
+                ).build()
+            })
+            .addStatement(
+                "return \$T.collectionConvert(${pair.first}(${
+                    pair.second.map { it.name }.joinToString(", ")
+                }), \$T::from)",
+                UTILS,
+                clazz.notifierClassName()
+            )
+            .returns(
                 ParameterizedTypeName.get(
                     ClassName.get("java.util", "List"),
                     clazz.asTypeName()
                 )
             )
+            .build()
+    }
+
+    private fun rawQueryNotifier() = MethodSpec.methodBuilder("rawQueryNotifier")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
+        .addStatement(
+            "return \$T.collectionConvert(rawQuery(sql), \$T::from)",
+            UTILS,
+            clazz.notifierClassName()
+        )
+        .returns(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
         )
         .build()
 
+    private fun rawQuery2Notifier() = MethodSpec.methodBuilder("rawQueryNotifier")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .addParameter(clazz.sqlQueryClassName(), "query")
+        .addStatement(
+            "return \$T.collectionConvert(rawQuery(query), \$T::from)",
+            UTILS,
+            clazz.notifierClassName()
+        )
+        .returns(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
+        )
+        .build()
 
-    private fun useFlow(typeName: TypeName): TypeName {
-        return if (hasFlow())
-            ParameterizedTypeName.get(flow(), typeName)
-        else typeName
-    }
-
-    private fun flow() = ClassName.get("kotlinx.coroutines.flow", "Flow")
-    private fun hasFlow() = clazz.getAnnotation(UseFlow::class.java) != null
 
     override fun generate(filer: Filer) {
         JavaFile
@@ -369,6 +447,18 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                     .addMethod(findAll())
                     .addMethods(finds())
                     .addMethod(rawQuery())
+                    .addMethod(rawQuery2())
+                    .apply {
+                        val useDataBinding = clazz.useDataBinding()
+                        val useRoom = clazz.useRoom()
+                        val useNotify = clazz.useNotifier()
+                        if (useNotify && (useDataBinding || useRoom)) {
+                            this.addMethod(findAllNotifier())
+                                .addMethods(findsNotifier())
+                                .addMethod(rawQueryNotifier())
+                                .addMethod(rawQuery2Notifier())
+                        }
+                    }
                     .build()
             )
             .addFileComment(FILE_COMMENT)

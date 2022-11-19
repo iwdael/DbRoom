@@ -5,4 +5,4 @@ package com.iwdael.dbroom.annotations
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-annotation class UseFlow 
+annotation class UseRoom

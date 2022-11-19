@@ -97,7 +97,7 @@ class AnnotationProcessor : AbstractProcessor() {
             .forEach {
                 EntityRoomGenerator(it).generate(processingEnv.filer)
 //                EntityObservableGenerator(it).generate(processingEnv.filer)
-                EntityObservableGenerator(it).generate(processingEnv.filer)
+                EntityNotifierGenerator(it).generate(processingEnv.filer)
             }
         processed = true
         return false

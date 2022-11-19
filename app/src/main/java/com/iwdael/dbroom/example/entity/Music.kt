@@ -7,20 +7,23 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.iwdael.dbroom.annotations.Find
 import com.iwdael.dbroom.annotations.UseDataBinding
-import com.iwdael.dbroom.annotations.UseRoomNotifier
+import com.iwdael.dbroom.annotations.UseNotifier
+import com.iwdael.dbroom.annotations.UseRoom
 import kotlin.Long
 import kotlin.String
 
 @Entity
 @UseDataBinding
-@UseRoomNotifier
+@UseRoom
+@UseNotifier
 open class Music : BaseObservable() {
   @PrimaryKey
-  @Bindable
   open var id: Long? = null
 
   @Bindable
+  @Find("findByName")
   open var name: String? = null
 
   @Bindable

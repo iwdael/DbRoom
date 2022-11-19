@@ -2,7 +2,6 @@ package com.iwdael.dbroom.example
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import com.iwdael.dbroom.example.entity.Music
 
 /**

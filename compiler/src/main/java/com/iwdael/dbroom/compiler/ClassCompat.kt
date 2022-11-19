@@ -8,7 +8,8 @@ import com.iwdael.annotationprocessorparser.Field
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asClassName
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.annotations.UseDataBinding
-import com.iwdael.dbroom.annotations.UseRoomNotifier
+import com.iwdael.dbroom.annotations.UseNotifier
+import com.iwdael.dbroom.annotations.UseRoom
 import com.iwdael.dbroom.compiler.compat.bestGuessClassName
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.TypeName
@@ -52,8 +53,8 @@ fun Class.packageName(): String {
 }
 
 
-fun Class.observerClassName(): ClassName {
-    return "${className}Observable".bestGuessClassName().asClassName()
+fun Class.notifierClassName(): ClassName {
+    return "${className}Notifier".bestGuessClassName().asClassName()
 }
 
 
@@ -61,8 +62,12 @@ fun Class.useDataBinding(): Boolean {
     return getAnnotation(UseDataBinding::class.java) != null
 }
 
-fun Class.useRoomNotifier(): Boolean {
-    return getAnnotation(UseRoomNotifier::class.java) != null
+fun Class.useRoom(): Boolean {
+    return getAnnotation(UseRoom::class.java) != null
+}
+
+fun Class.useNotifier(): Boolean {
+    return getAnnotation(UseNotifier::class.java) != null
 }
 
 fun Class.columnClassName(): ClassName {
