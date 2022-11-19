@@ -7,7 +7,7 @@ import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
 import com.iwdael.dbroom.compiler.JavaClass.BYTE_PACKING
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_BYTE_PACKING
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BYTE_PACKING
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -22,8 +22,8 @@ import javax.lang.model.element.Modifier
  */
 class ConditionPackingByteGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE_BYTE_PACKING.simpleName()
-    override fun packageName(): String = WHERE_BYTE_PACKING.packageName()
+    override fun simpleClassName(): String = CONDITION_BYTE_PACKING.simpleName()
+    override fun packageName(): String = CONDITION_BYTE_PACKING.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile

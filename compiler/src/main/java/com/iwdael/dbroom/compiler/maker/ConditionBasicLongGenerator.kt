@@ -8,7 +8,7 @@ import com.iwdael.dbroom.compiler.JavaClass.LONG_BASIC
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
 import com.iwdael.dbroom.compiler.JavaClass.LONG_PACKING
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_LONG_BASIC
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_LONG_BASIC
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -22,8 +22,8 @@ import javax.lang.model.element.Modifier
  */
 class ConditionBasicLongGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE_LONG_BASIC.simpleName()
-    override fun packageName(): String = WHERE_LONG_BASIC.packageName()
+    override fun simpleClassName(): String = CONDITION_LONG_BASIC.simpleName()
+    override fun packageName(): String = CONDITION_LONG_BASIC.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile

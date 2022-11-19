@@ -8,7 +8,7 @@ import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_BOOLEAN_BASIC
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BOOLEAN_BASIC
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -22,8 +22,8 @@ import javax.lang.model.element.Modifier
  */
 class ConditionBasicBooleanGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE_BOOLEAN_BASIC.simpleName()
-    override fun packageName(): String = WHERE_BOOLEAN_BASIC.packageName()
+    override fun simpleClassName(): String = CONDITION_BOOLEAN_BASIC.simpleName()
+    override fun packageName(): String = CONDITION_BOOLEAN_BASIC.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile

@@ -127,23 +127,23 @@ fun Field.columnClassName(): ClassName {
 
 fun Field.whereClassName(): ClassName {
     return when (asTypeName()) {
-        TypeName.BOOLEAN -> JavaClass.WHERE_BOOLEAN_BASIC
-        JavaClass.BOOLEAN_PACKING -> JavaClass.WHERE_BOOLEAN_PACKING
-        TypeName.BYTE -> JavaClass.WHERE_BYTE_BASIC
-        JavaClass.BYTE_PACKING -> JavaClass.WHERE_BYTE_PACKING
-        TypeName.CHAR -> JavaClass.WHERE_CHAR_BASIC
-        JavaClass.CHAR_PACKING -> JavaClass.WHERE_CHAR_PACKING
-        TypeName.DOUBLE -> JavaClass.WHERE_DOUBLE_BASIC
-        JavaClass.DOUBLE_PACKING -> JavaClass.WHERE_DOUBLE_PACKING
-        TypeName.FLOAT -> JavaClass.WHERE_FLOAT_BASIC
-        JavaClass.FLOAT_PACKING -> JavaClass.WHERE_FLOAT_PACKING
-        TypeName.INT -> JavaClass.WHERE_INTEGER_BASIC
-        JavaClass.INT_PACKING -> JavaClass.WHERE_INTEGER_PACKING
-        TypeName.LONG -> JavaClass.WHERE_LONG_BASIC
-        JavaClass.LONG_PACKING -> JavaClass.WHERE_LONG_PACKING
-        TypeName.SHORT -> JavaClass.WHERE_SHORT_BASIC
-        JavaClass.SHORT_PACKING -> JavaClass.WHERE_SHORT_PACKING
-        ClassName.get(String::class.java) -> JavaClass.WHERE_STRING_PACKING
-        else -> JavaClass.WHERE_STRING_PACKING
+        TypeName.BOOLEAN -> JavaClass.CONDITION_BOOLEAN_BASIC
+        JavaClass.BOOLEAN_PACKING -> JavaClass.CONDITION_BOOLEAN_PACKING
+        TypeName.BYTE -> JavaClass.CONDITION_BYTE_BASIC
+        JavaClass.BYTE_PACKING -> JavaClass.CONDITION_BYTE_PACKING
+        TypeName.CHAR -> JavaClass.CONDITION_CHAR_BASIC
+        JavaClass.CHAR_PACKING -> JavaClass.CONDITION_CHAR_PACKING
+        TypeName.DOUBLE -> JavaClass.CONDITION_DOUBLE_BASIC
+        JavaClass.DOUBLE_PACKING -> JavaClass.CONDITION_DOUBLE_PACKING
+        TypeName.FLOAT -> JavaClass.CONDITION_FLOAT_BASIC
+        JavaClass.FLOAT_PACKING -> JavaClass.CONDITION_FLOAT_PACKING
+        TypeName.INT -> JavaClass.CONDITION_INTEGER_BASIC
+        JavaClass.INT_PACKING -> JavaClass.CONDITION_INTEGER_PACKING
+        TypeName.LONG -> JavaClass.CONDITION_LONG_BASIC
+        JavaClass.LONG_PACKING -> JavaClass.CONDITION_LONG_PACKING
+        TypeName.SHORT -> JavaClass.CONDITION_SHORT_BASIC
+        JavaClass.SHORT_PACKING -> JavaClass.CONDITION_SHORT_PACKING
+        ClassName.get(String::class.java) -> JavaClass.CONDITION_STRING_PACKING
+        else -> JavaClass.CONDITION_STRING_PACKING
     }
 }
