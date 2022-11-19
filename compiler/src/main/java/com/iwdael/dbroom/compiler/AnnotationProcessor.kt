@@ -35,7 +35,6 @@ class AnnotationProcessor : AbstractProcessor() {
             .map { Class(it) }
             .apply {
                 ObservableCreatorGenerator(this).generate(processingEnv.filer)
-                DBGenerator(this).generate(processingEnv.filer)
                 UseGenerator(this).generate()
             }
             .apply {
@@ -60,37 +59,11 @@ class AnnotationProcessor : AbstractProcessor() {
 
                 ColumnPackingGenerator().generate(processingEnv.filer)
                 ColumnBasicGenerator().generate(processingEnv.filer)
-
-//                ColumnBasicCharGenerator().generate(processingEnv.filer)
-//                ColumnPackingCharGenerator().generate(processingEnv.filer)
-//
-//                ColumnBasicBooleanGenerator().generate(processingEnv.filer)
-//                ColumnPackingBooleanGenerator().generate(processingEnv.filer)
-//
-//                ColumnBasicShortGenerator().generate(processingEnv.filer)
-//                ColumnPackingShortGenerator().generate(processingEnv.filer)
-//
-//                ColumnBasicByteGenerator().generate(processingEnv.filer)
-//                ColumnPackingByteGenerator().generate(processingEnv.filer)
-//
-//                ColumnBasicIntGenerator().generate(processingEnv.filer)
-//                ColumnPackingIntGenerator().generate(processingEnv.filer)
-//
-//                ColumnBasicLongGenerator().generate(processingEnv.filer)
-//                ColumnPackingLongGenerator().generate(processingEnv.filer)
-//
-//                ColumnBasicFloatGenerator().generate(processingEnv.filer)
-//                ColumnPackingFloatGenerator().generate(processingEnv.filer)
-//
-//                ColumnBasicDoubleGenerator().generate(processingEnv.filer)
-//                ColumnPackingDoubleGenerator().generate(processingEnv.filer)
-//
-//                ColumnPackingStringGenerator().generate(processingEnv.filer)
-
                 ColumnGenerator().generate(processingEnv.filer)
+
                 CreatorGenerator().generate(processingEnv.filer)
                 NextBuilderGenerator().generate(processingEnv.filer)
-                WhereNextBuilderGenerator().generate(processingEnv.filer)
+                Condition2BuilderGenerator().generate(processingEnv.filer)
                 WhereGenerator().generate(processingEnv.filer)
                 WherePackingStringGenerator().generate(processingEnv.filer)
                 WherePackingIntegerGenerator().generate(processingEnv.filer)

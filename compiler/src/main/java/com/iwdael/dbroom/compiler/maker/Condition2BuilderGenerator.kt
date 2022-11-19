@@ -16,9 +16,9 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class WhereNextBuilderGenerator : Generator {
+class Condition2BuilderGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = CONDITION_BUILDER_2.simpleName()
+    override fun simpleClassName(): String = CONDITION_BUILDER_2.simpleName()
     override fun packageName() = CONDITION_BUILDER_2.packageName()
 
     override fun generate(filer: Filer) {
