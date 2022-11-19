@@ -11,8 +11,9 @@ interface Generator {
     companion object {
         const val ROOT_PACKAGE = "com.iwdael.dbroom"
     }
-    fun classFull(): String
-    fun simpleClassName(): String
-    fun packageName(): String
+
+    val classNameGen: String
+    val simpleClassNameGen: String
+    val packageNameGen: String
     fun generate(filer: Filer)
 }

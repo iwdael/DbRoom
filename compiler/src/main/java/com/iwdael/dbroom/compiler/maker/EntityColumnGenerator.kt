@@ -44,14 +44,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class EntityColumnGenerator(private val clazz: Class) : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = clazz.columnClassName().simpleName()
-    override fun packageName() = clazz.columnClassName().packageName()
-
+    override val simpleClassNameGen: String = clazz.columnClassName().simpleName()
+    override val packageNameGen: String = clazz.columnClassName().packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addFields(
                         clazz.fields

@@ -16,14 +16,15 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class CallBackGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = CALLBACK.simpleName()
-    override fun packageName() = CALLBACK.packageName()
+    override val simpleClassNameGen: String = CALLBACK.simpleName()
+    override val packageNameGen: String = CALLBACK.packageName()
+    override val classNameGen = "${packageNameGen}.${simpleClassNameGen}"
+
 
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.interfaceBuilder(simpleClassName())
+                packageNameGen, TypeSpec.interfaceBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(

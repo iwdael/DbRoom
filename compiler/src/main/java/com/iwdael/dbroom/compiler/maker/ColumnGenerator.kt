@@ -13,14 +13,14 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ColumnGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = COLUMN.simpleName()
-    override fun packageName() = COLUMN.packageName()
+    override val simpleClassNameGen: String = COLUMN.simpleName()
+    override val packageNameGen: String = COLUMN.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
 
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                     .addField(

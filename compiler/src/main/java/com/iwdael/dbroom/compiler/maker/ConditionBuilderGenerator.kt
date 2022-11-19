@@ -1,10 +1,10 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
-import com.iwdael.dbroom.compiler.JavaClass.CREATOR
-import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER
+import com.iwdael.dbroom.compiler.JavaClass.CREATOR
+import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -17,14 +17,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ConditionBuilderGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = CONDITION_BUILDER.simpleName()
-    override fun packageName() = CONDITION_BUILDER.packageName()
-
+    override val simpleClassNameGen: String = CONDITION_BUILDER.simpleName()
+    override val packageNameGen: String = CONDITION_BUILDER.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("N"))
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addTypeVariable(TypeVariableName.get("Q"))

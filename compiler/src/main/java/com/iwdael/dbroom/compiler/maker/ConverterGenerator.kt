@@ -14,17 +14,14 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ConverterGenerator(private val generator: List<Method>) : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-
-    override fun simpleClassName() = "Converter"
-
-    override fun packageName() = Generator.ROOT_PACKAGE
-
+    override val simpleClassNameGen: String = "Converter"
+    override val packageNameGen: String = Generator.ROOT_PACKAGE
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(),
-                TypeSpec.classBuilder(simpleClassName())
+                packageNameGen,
+                TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(
                         MethodSpec

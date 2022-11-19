@@ -1,7 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.bestGuessClassName
 import com.iwdael.dbroom.compiler.compat.charLower
@@ -16,14 +16,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class UtilsGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = UTILS.simpleName()
-    override fun packageName() = UTILS.packageName()
-
+    override val simpleClassNameGen: String = UTILS.simpleName()
+    override val packageNameGen: String = UTILS.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC)
                     .addField(
                         FieldSpec.builder(String::class.java, "SELECT")
@@ -147,33 +146,59 @@ class UtilsGenerator : Generator {
                                 StringBuilder::class.java,
                                 StringBuilder::class.java
                             )
-                            .beginControlFlow("if(!${CONDITION.simpleName().charLower()}s.isEmpty())")
+                            .beginControlFlow(
+                                "if(!${
+                                    CONDITION.simpleName().charLower()
+                                }s.isEmpty())"
+                            )
                             .addStatement("builder.append(WHERE).append(SPACE)")
                             .endControlFlow()
 
-                            .beginControlFlow("for (\$T<?, ?, ?, ?> ${CONDITION.simpleName().charLower()} : ${CONDITION.simpleName().charLower()}s)",
-                                CONDITION)
+                            .beginControlFlow(
+                                "for (\$T<?, ?, ?, ?> ${
+                                    CONDITION.simpleName().charLower()
+                                } : ${CONDITION.simpleName().charLower()}s)",
+                                CONDITION
+                            )
 
                             .beginControlFlow(
-                                "if (\$T.equals(${CONDITION.simpleName().charLower()}.assign, \$T.BETWEEN))",
+                                "if (\$T.equals(${
+                                    CONDITION.simpleName().charLower()
+                                }.assign, \$T.BETWEEN))",
                                 "java.util.Objects".bestGuessClassName(),
                                 CONDITION
                             )
                             .addStatement(
-                                "builder.append(${CONDITION.simpleName().charLower()}.column).append(SPACE)" +
-                                        ".append(${CONDITION.simpleName().charLower()}.assign).append(SPACE)" +
+                                "builder.append(${
+                                    CONDITION.simpleName().charLower()
+                                }.column).append(SPACE)" +
+                                        ".append(${
+                                            CONDITION.simpleName().charLower()
+                                        }.assign).append(SPACE)" +
                                         ".append('?').append(SPACE)" +
                                         ".append(AND).append(SPACE)" +
                                         ".append('?').append(SPACE)"
                             )
-                            .nextControlFlow("else if (Objects.equals(${CONDITION.simpleName().charLower()}.assign, \$T.IN))",
-                                CONDITION)
+                            .nextControlFlow(
+                                "else if (Objects.equals(${
+                                    CONDITION.simpleName().charLower()
+                                }.assign, \$T.IN))",
+                                CONDITION
+                            )
                             .addStatement(
-                                "builder.append(${CONDITION.simpleName().charLower()}.column).append(SPACE)" +
-                                        ".append(${CONDITION.simpleName().charLower()}.assign).append(SPACE)" +
+                                "builder.append(${
+                                    CONDITION.simpleName().charLower()
+                                }.column).append(SPACE)" +
+                                        ".append(${
+                                            CONDITION.simpleName().charLower()
+                                        }.assign).append(SPACE)" +
                                         ".append('(')"
                             )
-                            .addStatement("int count = ${CONDITION.simpleName().charLower()}.value.size()")
+                            .addStatement(
+                                "int count = ${
+                                    CONDITION.simpleName().charLower()
+                                }.value.size()"
+                            )
                             .beginControlFlow("for (int index = 0; index < count; index++)")
                             .addStatement("builder.append(\"?\")")
                             .beginControlFlow("if (index != count - 1)")
@@ -183,13 +208,25 @@ class UtilsGenerator : Generator {
                             .addStatement("builder.append(')').append(SPACE)")
                             .nextControlFlow("else")
                             .addStatement(
-                                "builder.append(${CONDITION.simpleName().charLower()}.column).append(SPACE)" +
-                                        ".append(${CONDITION.simpleName().charLower()}.assign).append(SPACE)" +
+                                "builder.append(${
+                                    CONDITION.simpleName().charLower()
+                                }.column).append(SPACE)" +
+                                        ".append(${
+                                            CONDITION.simpleName().charLower()
+                                        }.assign).append(SPACE)" +
                                         ".append('?').append(SPACE)"
                             )
                             .endControlFlow()
-                            .beginControlFlow("if (${CONDITION.simpleName().charLower()}.next != null)")
-                            .addStatement("builder.append(${CONDITION.simpleName().charLower()}.next.operator).append(SPACE)")
+                            .beginControlFlow(
+                                "if (${
+                                    CONDITION.simpleName().charLower()
+                                }.next != null)"
+                            )
+                            .addStatement(
+                                "builder.append(${
+                                    CONDITION.simpleName().charLower()
+                                }.next.operator).append(SPACE)"
+                            )
                             .endControlFlow()
                             .endControlFlow()
 

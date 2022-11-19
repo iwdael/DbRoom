@@ -19,11 +19,9 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class EntityRoomGenerator(private val clazz: Class) : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = "${clazz.classSimpleName}Room"
-    override fun packageName() = clazz.roomPackage()
-
-
+    override val simpleClassNameGen: String = "${clazz.classSimpleName}Room"
+    override val packageNameGen: String = clazz.roomPackage()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     private fun replaceArray() = MethodSpec.methodBuilder("replace")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
@@ -354,7 +352,7 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.interfaceBuilder(simpleClassName())
+                packageNameGen, TypeSpec.interfaceBuilder(simpleClassNameGen)
                     .addAnnotation(Dao::class.java)
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(replace())

@@ -3,13 +3,13 @@ package com.iwdael.dbroom.compiler.maker
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
-import com.iwdael.dbroom.compiler.JavaClass.CREATOR
-import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER
+import com.iwdael.dbroom.compiler.JavaClass.CREATOR
+import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
+import com.iwdael.dbroom.compiler.columnClassName
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
-import com.iwdael.dbroom.compiler.columnClassName
 import com.iwdael.dbroom.compiler.whereBuilderClassName
 import com.iwdael.dbroom.compiler.whereClassName
 import com.squareup.javapoet.*
@@ -22,16 +22,15 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class EntityConditionBuilderGenerator(private val clazz: Class) : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = clazz.whereBuilderClassName().simpleName()
-    override fun packageName() = clazz.whereBuilderClassName().packageName()
-
+    override val simpleClassNameGen: String = clazz.whereBuilderClassName().simpleName()
+    override val packageNameGen: String = clazz.whereBuilderClassName().packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
 
 
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("N"))
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addTypeVariable(TypeVariableName.get("Q"))

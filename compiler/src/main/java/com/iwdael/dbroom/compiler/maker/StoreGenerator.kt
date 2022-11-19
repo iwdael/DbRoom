@@ -16,17 +16,14 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class StoreGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-
-    override fun simpleClassName() = "Store"
-
-    override fun packageName() = Generator.ROOT_PACKAGE
-
+    override val simpleClassNameGen: String = "Store"
+    override val packageNameGen: String = Generator.ROOT_PACKAGE
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(),
-                TypeSpec.classBuilder(simpleClassName())
+                packageNameGen,
+                TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(
                         AnnotationSpec.builder(Entity::class.java)

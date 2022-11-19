@@ -6,8 +6,8 @@ import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.JavaClass.CONTEXT
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_DATABASE
-import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.maker.Generator.Companion.ROOT_PACKAGE
 import com.iwdael.dbroom.compiler.roomClassName
@@ -26,10 +26,9 @@ class DbRoomGenerator(
     private val dao: List<Class>,
     private val method: Method?
 ) : Generator {
-
-    override fun classFull() = "$ROOT_PACKAGE.${simpleClassName()}"
-    override fun simpleClassName() = "DbRoom"
-    override fun packageName() = ROOT_PACKAGE
+    override val simpleClassNameGen: String = "DbRoom"
+    override val packageNameGen: String = ROOT_PACKAGE
+    override val classNameGen: String = "$ROOT_PACKAGE.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         val init = MethodSpec.methodBuilder("init")
             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
@@ -71,7 +70,7 @@ class DbRoomGenerator(
 
         val instance = MethodSpec.methodBuilder("instance")
             .addModifiers(Modifier.STATIC, Modifier.PRIVATE)
-            .returns(ClassName.get(packageName(), simpleClassName()))
+            .returns(ClassName.get(packageNameGen, simpleClassNameGen))
             .addStatement("if (instance == null) throw new RuntimeException(\"Please initialize DbRoom first\")")
             .addStatement("return instance")
             .build()
@@ -136,7 +135,7 @@ class DbRoomGenerator(
             .addStatement("return val")
             .build()
 
-        val classTypeSpec = TypeSpec.classBuilder(simpleClassName())
+        val classTypeSpec = TypeSpec.classBuilder(simpleClassNameGen)
             .addModifiers(Modifier.ABSTRACT)
             .addModifiers(Modifier.PUBLIC)
             .addAnnotation(
@@ -160,7 +159,7 @@ class DbRoomGenerator(
                     .build()
             )
             .addField(
-                ClassName.get(packageName(), simpleClassName()),
+                ClassName.get(packageNameGen, simpleClassNameGen),
                 "instance",
                 Modifier.PRIVATE,
                 Modifier.STATIC,
@@ -214,7 +213,7 @@ class DbRoomGenerator(
             }
             .build()
         JavaFile
-            .builder(packageName(), classTypeSpec)
+            .builder(packageNameGen, classTypeSpec)
             .addFileComment(FILE_COMMENT)
             .build()
             .write(filer)

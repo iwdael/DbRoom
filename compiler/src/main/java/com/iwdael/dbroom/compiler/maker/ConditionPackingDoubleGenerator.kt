@@ -2,12 +2,12 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_DOUBLE_PACKING
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.DOUBLE_PACKING
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
 import com.iwdael.dbroom.compiler.JavaClass.PACKING_COLUMN
-import com.iwdael.dbroom.compiler.JavaClass.CONDITION
-import com.iwdael.dbroom.compiler.JavaClass.CONDITION_DOUBLE_PACKING
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -21,14 +21,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ConditionPackingDoubleGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = CONDITION_DOUBLE_PACKING.simpleName()
-    override fun packageName(): String = CONDITION_DOUBLE_PACKING.packageName()
-
+    override val simpleClassNameGen: String = CONDITION_DOUBLE_PACKING.simpleName()
+    override val packageNameGen: String = CONDITION_DOUBLE_PACKING.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("N"))
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addTypeVariable(TypeVariableName.get("Q"))

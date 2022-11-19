@@ -65,7 +65,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 CreatorGenerator().generate(processingEnv.filer)
                 NextBuilderGenerator().generate(processingEnv.filer)
                 ConditionBuilder2Generator().generate(processingEnv.filer)
-                WhereGenerator().generate(processingEnv.filer)
+                ConditionGenerator().generate(processingEnv.filer)
                 ConditionPackingStringGenerator().generate(processingEnv.filer)
                 ConditionPackingIntegerGenerator().generate(processingEnv.filer)
                 ConditionBasicIntegerGenerator().generate(processingEnv.filer)
@@ -88,7 +88,6 @@ class AnnotationProcessor : AbstractProcessor() {
                 ConditionBuilderGenerator().generate(processingEnv.filer)
             }
             .map {
-                EntityDbGenerator(it).generate(processingEnv.filer)
                 EntityColumnGenerator(it).generate(processingEnv.filer)
                 EntityConditionBuilderGenerator(it).generate(processingEnv.filer)
                 EntityCondition2BuilderGenerator(it).generate(processingEnv.filer)
@@ -98,7 +97,6 @@ class AnnotationProcessor : AbstractProcessor() {
             .forEach {
                 EntityRoomGenerator(it).generate(processingEnv.filer)
                 EntityObservableGenerator(it).generate(processingEnv.filer)
-                EntityRoomCompatGenerator(it).generate(processingEnv.filer)
             }
         processed = true
         return false

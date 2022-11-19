@@ -2,8 +2,8 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.compiler.*
-import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -16,14 +16,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class EntitySqlGenerator(private val clazz: Class) : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = clazz.sqlClassName().simpleName()
-    override fun packageName(): String = clazz.sqlClassName().packageName()
-
+    override val simpleClassNameGen: String = clazz.sqlClassName().simpleName()
+    override val packageNameGen: String = clazz.sqlClassName().packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addType(
                         TypeSpec.classBuilder(clazz.sqlQueryClassName())
@@ -113,7 +112,10 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                 MethodSpec.methodBuilder("toSelection")
                                     .addModifiers(Modifier.PRIVATE)
                                     .returns(String::class.java)
-                                    .addStatement("return \$T.toSelection(\"${clazz.roomTableName()}\", fields, wheres)", UTILS)
+                                    .addStatement(
+                                        "return \$T.toSelection(\"${clazz.roomTableName()}\", fields, wheres)",
+                                        UTILS
+                                    )
                                     .build()
                             )
                             .addMethod(

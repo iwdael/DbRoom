@@ -1,14 +1,14 @@
 package com.iwdael.dbroom.compiler.maker
 
+import com.iwdael.dbroom.compiler.JavaClass.BASIC_COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.BOOLEAN_BASIC
 import com.iwdael.dbroom.compiler.JavaClass.BOOLEAN_PACKING
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
-import com.iwdael.dbroom.compiler.JavaClass.BASIC_COLUMN
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BOOLEAN_BASIC
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
-import com.iwdael.dbroom.compiler.JavaClass.CONDITION
-import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BOOLEAN_BASIC
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -21,14 +21,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ConditionBasicBooleanGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = CONDITION_BOOLEAN_BASIC.simpleName()
-    override fun packageName(): String = CONDITION_BOOLEAN_BASIC.packageName()
-
+    override val simpleClassNameGen: String = CONDITION_BOOLEAN_BASIC.simpleName()
+    override val packageNameGen: String = CONDITION_BOOLEAN_BASIC.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("N"))
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addTypeVariable(TypeVariableName.get("Q"))

@@ -16,17 +16,16 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class EntityObservableGenerator(private val clazz: Class) : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = "${clazz.classSimpleName}Observable"
-    override fun packageName() = clazz.roomPackage()
-
+    override val simpleClassNameGen: String = "${clazz.classSimpleName}Observable"
+    override val packageNameGen: String = clazz.roomPackage()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         val useDataBinding = clazz.useDataBinding()
         val useRoomNotifier = clazz.useRoomNotifier()
         JavaFile
             .builder(
-                packageName(),
-                TypeSpec.classBuilder(simpleClassName())
+                packageNameGen,
+                TypeSpec.classBuilder(simpleClassNameGen)
                     .superclass(JavaClass.BASE_OBSERVABLE)
                     .addModifiers(Modifier.PUBLIC)
                     .addField(

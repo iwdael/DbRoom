@@ -4,7 +4,10 @@ import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.roomFields
-import com.squareup.javapoet.*
+import com.squareup.javapoet.FieldSpec
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.TypeName
+import com.squareup.javapoet.TypeSpec
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
@@ -14,14 +17,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class DBGenerator(private val generator: List<Class>) : Generator {
-    override fun classFull() = "com.iwdael.dbroom.DB"
-    override fun simpleClassName() = "DB"
-    override fun packageName() = "com.iwdael.dbroom"
-
+    override val simpleClassNameGen: String = "DB"
+    override val packageNameGen: String = "com.iwdael.dbroom"
+    override val classNameGen: String = "com.iwdael.dbroom.DB"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .apply {
                         generator.flatMap { it.roomFields() }

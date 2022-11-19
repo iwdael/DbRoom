@@ -21,18 +21,14 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/DbRoom
  */
 class ObservableCreatorGenerator(private val classes: List<Class>) : Generator {
-    override fun classFull() =
-        "${ROOM_OBSERVABLE_CREATOR.packageName()}.${ROOM_OBSERVABLE_CREATOR.simpleName()}"
-
-    override fun simpleClassName() = "RoomObservableCreator"
-
-    override fun packageName() = "com.iwdael.dbroom"
-
+    override val simpleClassNameGen: String = ROOM_OBSERVABLE_CREATOR.simpleName()
+    override val packageNameGen: String = ROOM_OBSERVABLE_CREATOR.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
-                    .addSuperinterface("${packageName()}.core.ObservableCreator".bestGuessClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
+                    .addSuperinterface("${packageNameGen}.core.ObservableCreator".bestGuessClassName())
                     .addModifiers(Modifier.PUBLIC)
                     .addMethod(
                         MethodSpec.methodBuilder("create")

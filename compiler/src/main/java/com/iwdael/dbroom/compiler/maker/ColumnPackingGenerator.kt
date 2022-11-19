@@ -1,6 +1,5 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.PACKING_COLUMN
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
@@ -15,14 +14,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ColumnPackingGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = PACKING_COLUMN.simpleName()
-    override fun packageName() = PACKING_COLUMN.packageName()
-
+    override val simpleClassNameGen: String = PACKING_COLUMN.simpleName()
+    override val packageNameGen: String = PACKING_COLUMN.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("T"))
                     .superclass(ParameterizedTypeName.get(COLUMN, TypeVariableName.get("T")))
                     .addModifiers(Modifier.PUBLIC)

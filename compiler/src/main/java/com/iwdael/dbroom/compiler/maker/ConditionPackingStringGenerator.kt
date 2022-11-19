@@ -21,14 +21,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class ConditionPackingStringGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = CONDITION_STRING_PACKING.simpleName()
-    override fun packageName(): String = CONDITION_STRING_PACKING.packageName()
-
+    override val simpleClassNameGen: String = CONDITION_STRING_PACKING.simpleName()
+    override val packageNameGen: String = CONDITION_STRING_PACKING.packageName()
+    override val classNameGen:String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("N"))
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addTypeVariable(TypeVariableName.get("Q"))

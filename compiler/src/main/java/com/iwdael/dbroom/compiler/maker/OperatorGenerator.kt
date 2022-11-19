@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -13,14 +14,13 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class OperatorGenerator : Generator {
-    override fun classFull() = "com.iwdael.dbroom.Operator"
-    override fun simpleClassName() = "Operator"
-    override fun packageName() = "com.iwdael.dbroom"
-
+    override val simpleClassNameGen: String = OPERATOR.simpleName()
+    override val packageNameGen: String = OPERATOR.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(), TypeSpec.classBuilder(simpleClassName())
+                packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addTypeVariable(TypeVariableName.get("N"))
                     .addTypeVariable(TypeVariableName.get("T"))
                     .addTypeVariable(TypeVariableName.get("R"))

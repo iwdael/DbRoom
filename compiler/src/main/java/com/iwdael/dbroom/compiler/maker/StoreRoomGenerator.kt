@@ -15,12 +15,9 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class StoreRoomGenerator : Generator {
-    override fun classFull() = "${packageName()}.${simpleClassName()}"
-
-    override fun simpleClassName() = "StoreRoom"
-
-    override fun packageName() = Generator.ROOT_PACKAGE
-
+    override val simpleClassNameGen: String = "StoreRoom"
+    override val packageNameGen: String = Generator.ROOT_PACKAGE
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     private fun store() = MethodSpec.methodBuilder("store")
         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
         .addParameter(String::class.java, "name")
@@ -56,8 +53,8 @@ class StoreRoomGenerator : Generator {
     override fun generate(filer: Filer) {
         JavaFile
             .builder(
-                packageName(),
-                TypeSpec.classBuilder(simpleClassName())
+                packageNameGen,
+                TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                     .addAnnotation(Dao::class.java)
                     .addMethod(store())
