@@ -34,7 +34,6 @@ class AnnotationProcessor : AbstractProcessor() {
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
             .map { Class(it) }
             .apply {
-                ObservableCreatorGenerator(this).generate(processingEnv.filer)
                 DBGenerator(this).generate(processingEnv.filer)
                 UseGenerator(this).generate()
             }
@@ -86,6 +85,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 UtilsGenerator().generate(processingEnv.filer)
                 OperatorGenerator().generate(processingEnv.filer)
                 ConditionBuilderGenerator().generate(processingEnv.filer)
+                RoomNotifierGenerator().generate(processingEnv.filer)
             }
             .map {
                 EntityColumnGenerator(it).generate(processingEnv.filer)
@@ -96,6 +96,7 @@ class AnnotationProcessor : AbstractProcessor() {
             }
             .forEach {
                 EntityRoomGenerator(it).generate(processingEnv.filer)
+//                EntityObservableGenerator(it).generate(processingEnv.filer)
                 EntityObservableGenerator(it).generate(processingEnv.filer)
             }
         processed = true

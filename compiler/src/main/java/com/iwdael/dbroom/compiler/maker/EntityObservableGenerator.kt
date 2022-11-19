@@ -1,9 +1,17 @@
 package com.iwdael.dbroom.compiler.maker
 
+import androidx.databinding.Bindable
 import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.asMethodBuilder
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickModifier
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
+import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
 import com.iwdael.dbroom.compiler.*
+import com.iwdael.dbroom.compiler.JavaClass.ROOM_NOTIFIER
+import com.iwdael.dbroom.compiler.JavaClass.ROOM_NOTIFIER_NOTIFIER
+import com.iwdael.dbroom.compiler.JavaClass.debug
 import com.iwdael.dbroom.compiler.compat.*
 import com.squareup.javapoet.*
 import java.lang.ref.WeakReference
@@ -16,9 +24,10 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class EntityObservableGenerator(private val clazz: Class) : Generator {
-    override val simpleClassNameGen: String = "${clazz.classSimpleName}Observable"
-    override val packageNameGen: String = clazz.roomPackage()
+    override val simpleClassNameGen: String = clazz.observerClassName().simpleName()
+    override val packageNameGen: String = clazz.observerClassName().packageName()
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
+    private val observable = ClassName.bestGuess("androidx.databinding.Observable")
     override fun generate(filer: Filer) {
         val useDataBinding = clazz.useDataBinding()
         val useRoomNotifier = clazz.useRoomNotifier()
@@ -26,13 +35,12 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
             .builder(
                 packageNameGen,
                 TypeSpec.classBuilder(simpleClassNameGen)
-                    .superclass(JavaClass.BASE_OBSERVABLE)
+                    .superclass(clazz.asTypeName())
                     .addModifiers(Modifier.PUBLIC)
-                    .addField(
-                        FieldSpec.builder(clazz.asTypeName(), clazz.classSimpleName.charLower())
-                            .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
-                            .build()
-                    )
+                    .apply {
+                        if (useDataBinding)
+                            addSuperinterface(observable)
+                    }
                     .apply {
                         if (useDataBinding) {
                             addField(
@@ -82,69 +90,80 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                         }
                     }
                     .apply {
-                        clazz.roomFields()
-                            .filter { it.getAnnotation(PrimaryKey::class.java) == null }
-                            .forEach {
-                                addField(
-                                    FieldSpec.builder(TypeName.INT, "${it.name}RoomVersion")
-                                        .addModifiers(Modifier.PUBLIC)
-                                        .initializer("-1")
-                                        .build()
-                                )
-                                addField(
-                                    FieldSpec.builder(TypeName.INT, "${it.name}EntityVersion")
-                                        .addModifiers(Modifier.PUBLIC)
-                                        .initializer("-1")
-                                        .build()
-                                )
-                            }
+                        if (useRoomNotifier) {
+                            clazz.roomFields()
+                                .filter { it.getAnnotation(PrimaryKey::class.java) == null }
+                                .forEach {
+                                    addField(
+                                        FieldSpec.builder(TypeName.INT, "${it.name}RoomVersion")
+                                            .addModifiers(Modifier.PRIVATE)
+                                            .initializer("-1")
+                                            .build()
+                                    )
+                                    addField(
+                                        FieldSpec.builder(TypeName.INT, "${it.name}EntityVersion")
+                                            .addModifiers(Modifier.PRIVATE)
+                                            .initializer("-1")
+                                            .build()
+                                    )
+                                }
+                        }
                     }
                     .apply {
-                        val weak = ParameterizedTypeName.get(
-                            ClassName.get(WeakReference::class.java),
-                            clazz.asTypeName()
-                        )
-                        val list = ParameterizedTypeName.get(ClassName.get(List::class.java), weak)
-                        addField(
-                            FieldSpec.builder(list, "${clazz.classSimpleName.charLower()}Container")
-                                .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
-                                .initializer("new \$T<>()", ClassName.get(ArrayList::class.java))
-                                .build()
-                        )
-                    }
-                    .addFields(
-                        clazz.fields
-                            .filter { it.getAnnotation(PrimaryKey::class.java) == null }
-                            .map {
+                        if (useRoomNotifier) {
+                            val weak = ParameterizedTypeName.get(
+                                ClassName.get(WeakReference::class.java),
+                                clazz.observerClassName()
+                            )
+                            val list =
+                                ParameterizedTypeName.get(ClassName.get(List::class.java), weak)
+                            addField(
                                 FieldSpec.builder(
-                                    "java.lang.Object".bestGuessClassName(),
-                                    "${it.name}Lock",
-                                    Modifier.STATIC,
-                                    Modifier.FINAL,
-                                    Modifier.PRIVATE
+                                    list,
+                                    "${clazz.classSimpleName.charLower()}Container"
                                 )
-                                    .initializer("new Object()")
+                                    .addModifiers(Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                                    .initializer(
+                                        "new \$T<>()",
+                                        ClassName.get(ArrayList::class.java)
+                                    )
                                     .build()
-                            }
-                    )
+                            )
+                        }
+                    }
+                    .apply {
+                        if (useRoomNotifier) {
+                            addFields(
+                                clazz.fields
+                                    .filter { it.getAnnotation(PrimaryKey::class.java) == null }
+                                    .map {
+                                        FieldSpec.builder(
+                                            "java.lang.Object".bestGuessClassName(),
+                                            "${it.name}Lock",
+                                            Modifier.STATIC,
+                                            Modifier.FINAL,
+                                            Modifier.PRIVATE
+                                        )
+                                            .initializer("new Object()")
+                                            .build()
+                                    }
+                            )
+                        }
+                    }
                     .addMethod(
                         MethodSpec
                             .methodBuilder("notifyPropertyChanged")
-                            .addAnnotation(Override::class.java)
                             .addModifiers(Modifier.PUBLIC)
                             .addParameter(
                                 ParameterSpec.builder(
                                     TypeName.INT, "fieldId"
                                 ).build()
                             )
-                            .addStatement("cleanCache()")
-                            .beginControlFlow("if (${clazz.classSimpleName.charLower()}.${clazz.roomPrimaryKeyField().getter.name}() == null)")
-                            .addStatement(
-                                "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
-                                JavaClass.LOGGER
-                            )
-                            .addStatement("return")
-                            .endControlFlow()
+                            .apply {
+                                if (useRoomNotifier) {
+                                    addStatement("cleanCache()")
+                                }
+                            }
                             .apply {
                                 if (clazz.roomFields()
                                         .none { it.getAnnotation(PrimaryKey::class.java) == null }
@@ -179,7 +198,7 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                         beginControlFlow("synchronized (this)")
                                             .beginControlFlow("if (callbacks != null)")
                                             .addStatement(
-                                                "callbacks.notifyCallbacks(${clazz.classSimpleName.charLower()}, \$T.${it.name.charLower()}, null)",
+                                                "callbacks.notifyCallbacks(this, \$T.${it.name.charLower()}, null)",
                                                 ClassName.get(
                                                     "androidx.databinding.library.baseAdapters",
                                                     "BR"
@@ -190,40 +209,61 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                     }
                                     .apply {
                                         if (!useRoomNotifier) return@apply
-                                        this.addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
+                                        this.beginControlFlow("if (this.${clazz.roomPrimaryKeyField().getter.name}() == null)")
+                                            .apply {
+                                                if (debug)
+                                                    addStatement(
+                                                        "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
+                                                        JavaClass.LOGGER
+                                                    )
+                                            }
+                                            .addStatement("return")
+                                            .endControlFlow()
                                             .beginControlFlow("synchronized (${it.name}Lock)")
                                             .beginControlFlow("if (${it.name}EntityVersion == -1)")
                                             .addStatement("int maxVersion = 0")
-                                            .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfInit = ${clazz.classSimpleName.charLower()}OfAll()")
-                                            .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : ${clazz.classSimpleName.charLower()}OfInit)")
-                                            .addStatement("${clazz.classSimpleName} entity = reference.get()")
-                                            .addStatement("if (entity == null) continue")
                                             .addStatement(
-                                                "\$T observer = from(entity)",
-                                                clazz.observerClassName().asTypeName()
+                                                "\$T ${clazz.classSimpleName.charLower()}OfInit " +
+                                                        "= ${clazz.classSimpleName.charLower()}OfAll()",
+                                                listWeakObservable()
                                             )
-                                            .addStatement("maxVersion = Math.max(observer.${it.name}EntityVersion, maxVersion)")
+                                            .beginControlFlow(
+                                                "for (\$T reference : ${clazz.classSimpleName.charLower()}OfInit)",
+                                                weakObservable()
+                                            )
+                                            .addStatement(
+                                                "\$T entity = reference.get()",
+                                                clazz.observerClassName()
+                                            )
+                                            .addStatement("if (entity == null) continue")
+                                            .addStatement("maxVersion = Math.max(entity.${it.name}EntityVersion, maxVersion)")
                                             .endControlFlow()
                                             .addStatement("${it.name}EntityVersion = maxVersion")
                                             .addStatement("return")
                                             .endControlFlow()
                                             .addStatement("${it.name}EntityVersion++")
-                                            .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfAll = ${clazz.classSimpleName.charLower()}OfAll()")
-                                            .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : ${clazz.classSimpleName.charLower()}OfAll)")
-                                            .addStatement("${clazz.classSimpleName} entity = reference.get()")
-                                            .addStatement("if (entity == null) continue")
                                             .addStatement(
-                                                "\$T observer = from(entity)",
-                                                clazz.observerClassName().asTypeName()
+                                                "\$T ${clazz.classSimpleName.charLower()}OfAll " +
+                                                        "= ${clazz.classSimpleName.charLower()}OfAll()",
+                                                listWeakObservable()
                                             )
-                                            .beginControlFlow("if (${it.name}EntityVersion > observer.${it.name}EntityVersion)")
-                                            .addStatement("observer.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
-                                            .addStatement("observer.${it.name}RoomVersion = ${it.name}EntityVersion")
+                                            .beginControlFlow(
+                                                "for (\$T reference : ${clazz.classSimpleName.charLower()}OfAll)",
+                                                weakObservable()
+                                            )
+                                            .addStatement(
+                                                "\$T entity = reference.get()",
+                                                clazz.observerClassName()
+                                            )
+                                            .addStatement("if (entity == null) continue")
+                                            .beginControlFlow("if (${it.name}EntityVersion > entity.${it.name}EntityVersion)")
+                                            .addStatement("entity.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
+                                            .addStatement("entity.${it.name}RoomVersion = ${it.name}EntityVersion")
                                             .apply {
                                                 val getter = it.getter
                                                 val setter = it.setter
                                                 addStatement(
-                                                    "entity.${setter.name}(${clazz.classSimpleName.charLower()}.${getter.name}())"
+                                                    "entity.${setter.name}(this.${getter.name}())"
                                                 )
                                             }
                                             .endControlFlow()
@@ -233,7 +273,11 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                             .addStatement("${it.name}RoomVersion = ${it.name}EntityVersion - 1")
                                             .addCode(
                                                 CodeBlock.builder()
-                                                    .beginControlFlow("notifyRoom(new RoomNotifier()")
+                                                    .beginControlFlow(
+                                                        "\$T.notifyRoom(new \$T()",
+                                                        ROOM_NOTIFIER,
+                                                        ROOM_NOTIFIER_NOTIFIER
+                                                    )
                                                     .add("@Override\n")
                                                     .beginControlFlow("public void notifier()")
                                                     .beginControlFlow("if (${it.name}EntityVersion - ${it.name}RoomVersion == 1)")
@@ -244,28 +288,36 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                                             clazz.roomPrimaryKeyField().getter
                                                         addStatement(
                                                             "\$T.${clazz.classSimpleName.charLower()}().update${it.name.charUpper()}(" +
-                                                                    "${clazz.classSimpleName.charLower()}.${keyGetter.name}() ," +
-                                                                    "${clazz.classSimpleName.charLower()}.${getter.name}()" +
+                                                                    "\$T.this.${keyGetter.name}() ," +
+                                                                    "\$T.this.${getter.name}()" +
                                                                     ")",
-                                                            dbRoomClassName()
+                                                            dbRoomClassName(),
+                                                            clazz.observerClassName(),
+                                                            clazz.observerClassName()
                                                         )
                                                     }
-                                                    .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfRoom = ${clazz.classSimpleName.charLower()}OfAll()")
-                                                    .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : ${clazz.classSimpleName.charLower()}OfRoom)")
-                                                    .addStatement("${clazz.classSimpleName} entity = reference.get()")
-                                                    .addStatement("if (entity == null) continue")
                                                     .addStatement(
-                                                        "\$T observer = from(entity)",
-                                                        clazz.observerClassName().asTypeName()
+                                                        "\$T ${clazz.classSimpleName.charLower()}OfRoom = ${clazz.classSimpleName.charLower()}OfAll()",
+                                                        listWeakObservable()
                                                     )
-                                                    .beginControlFlow("if (${it.name}EntityVersion > observer.${it.name}EntityVersion)")
-                                                    .addStatement("observer.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
-                                                    .addStatement("observer.${it.name}RoomVersion = ${it.name}EntityVersion")
+                                                    .beginControlFlow(
+                                                        "for (\$T reference : ${clazz.classSimpleName.charLower()}OfRoom)",
+                                                        weakObservable()
+                                                    )
+                                                    .addStatement(
+                                                        "\$T entity = reference.get()",
+                                                        clazz.observerClassName()
+                                                    )
+                                                    .addStatement("if (entity == null) continue")
+                                                    .beginControlFlow("if (${it.name}EntityVersion > entity.${it.name}EntityVersion)")
+                                                    .addStatement("entity.${it.name}EntityVersion = ${it.name}EntityVersion - 1")
+                                                    .addStatement("entity.${it.name}RoomVersion = ${it.name}EntityVersion")
                                                     .apply {
                                                         val getter = it.getter
                                                         val setter = it.setter
                                                         addStatement(
-                                                            "entity.${setter.name}(${clazz.classSimpleName.charLower()}.${getter.name}())"
+                                                            "entity.${setter.name}(\$T.this.${getter.name}())",
+                                                            clazz.observerClassName()
                                                         )
                                                     }
                                                     .endControlFlow()
@@ -283,95 +335,143 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
                                     .build()
                             }
                     )
+                    .apply {
+                        if (useDataBinding || useRoomNotifier) {
+                            addMethods(
+                                clazz.fields
+                                    .filter { it.getAnnotation(PrimaryKey::class.java) == null }
+                                    .map {
+                                        it.setter.asMethodBuilder()
+                                            .stickParameter()
+                                            .stickModifier()
+                                            .addAnnotation(Bindable::class.java)
+                                            .addStatement("super.${it.setter.name}(${it.setter.parameter.first().name})")
+                                            .addStatement("notifyPropertyChanged(DB.${it.name})")
+                                            .build()
+                                    }
+                            )
+                        }
+                    }
+                    .apply {
+                        if (useDataBinding) {
+                            addMethods(
+                                clazz.fields
+                                    .filter { it.getAnnotation(PrimaryKey::class.java) == null }
+                                    .map {
+                                        it.getter.asMethodBuilder()
+                                            .stickParameter()
+                                            .stickModifier()
+                                            .stickReturn()
+                                            .addAnnotation(Bindable::class.java)
+                                            .addStatement("return super.${it.getter.name}()")
+                                            .build()
+                                    }
+                            )
+                        }
+                    }
                     .addMethod(
                         MethodSpec.constructorBuilder()
-                            .addModifiers(Modifier.PUBLIC)
-                            .addParameter(
-                                clazz.asTypeName(),
-                                clazz.classSimpleName.charLower()
-                            )
-                            .addStatement("this.${clazz.classSimpleName.charLower()} = ${clazz.classSimpleName.charLower()}")
-                            .addStatement("${clazz.classSimpleName.charLower()}Container.add(new WeakReference(${clazz.classSimpleName.charLower()}))")
-                            .build()
-                    )
-                    .addMethod(
-                        MethodSpec.methodBuilder("cleanCache")
                             .addModifiers(Modifier.PRIVATE)
-                            .addStatement("int size = ${clazz.classSimpleName.charLower()}Container.size()")
-                            .beginControlFlow("for (int index = size - 1; index >= 0; index--)")
-                            .beginControlFlow("if (null == ${clazz.classSimpleName.charLower()}Container.get(index).get())")
-                            .addStatement("${clazz.classSimpleName.charLower()}Container.remove(index)")
-                            .endControlFlow()
-                            .endControlFlow()
+                            .apply {
+                                if (useRoomNotifier) {
+                                    addStatement("${clazz.classSimpleName.charLower()}Container.add(new WeakReference(this))")
+                                }
+                            }
                             .build()
                     )
-                    .addMethod(
-                        MethodSpec.methodBuilder("from")
-                            .addModifiers(Modifier.PRIVATE)
-                            .addParameter(
-                                ParameterSpec.builder(
-                                    clazz.asTypeName(), "entity"
-                                ).build()
+                    .apply {
+                        if (useRoomNotifier) {
+                            addMethod(
+                                MethodSpec.methodBuilder("cleanCache")
+                                    .addModifiers(Modifier.PRIVATE)
+                                    .addStatement("int size = ${clazz.classSimpleName.charLower()}Container.size()")
+                                    .beginControlFlow("for (int index = size - 1; index >= 0; index--)")
+                                    .beginControlFlow("if (null == ${clazz.classSimpleName.charLower()}Container.get(index).get())")
+                                    .addStatement("${clazz.classSimpleName.charLower()}Container.remove(index)")
+                                    .endControlFlow()
+                                    .endControlFlow()
+                                    .build()
                             )
-                            .returns(clazz.observerClassName().asTypeName())
-                            .addStatement(
-                                "\$T roomObservable = null",
-                                JavaClass.ROOM_OBSERVABLE
-                            )
-                            .addStatement("Object target = entity")
-                            .beginControlFlow("if (target instanceof RoomObservable)")
-                            .addStatement("roomObservable = (RoomObservable) target")
-                            .endControlFlow()
-                            .addStatement("if (roomObservable == null) return null")
-                            .addStatement("return (${clazz.classSimpleName}Observable) roomObservable.getDbObservable()")
-                            .build()
-                    )
-                    .addMethod(
-                        MethodSpec.methodBuilder("${clazz.classSimpleName.charLower()}OfAll")
-                            .returns(
-                                ParameterizedTypeName.get(
-                                    ClassName.get(List::class.java),
-                                    ParameterizedTypeName.get(
-                                        ClassName.get(WeakReference::class.java),
-                                        clazz.asTypeName()
+                            addMethod(
+                                MethodSpec.methodBuilder("${clazz.classSimpleName.charLower()}OfAll")
+                                    .returns(
+                                        ParameterizedTypeName.get(
+                                            ClassName.get(List::class.java),
+                                            ParameterizedTypeName.get(
+                                                ClassName.get(WeakReference::class.java),
+                                                clazz.observerClassName()
+                                            )
+                                        )
                                     )
-                                )
+                                    .addStatement("return new ArrayList(${clazz.classSimpleName.charLower()}Container)")
+                                    .build()
                             )
-                            .addStatement("return new ArrayList(${clazz.classSimpleName.charLower()}Container)")
-                            .build()
-                    )
+                        }
+                    }
                     .addMethod(
                         MethodSpec.methodBuilder("notifyPropertiesChange")
                             .addModifiers(Modifier.PUBLIC)
                             .apply {
-                                addStatement("if (from(${clazz.classSimpleName.charLower()}) == null) return")
-                                    .beginControlFlow("if (${clazz.classSimpleName.charLower()}.${clazz.roomPrimaryKeyField().getter.name}() == null)")
-                                    .addStatement(
-                                        "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
-                                        JavaClass.LOGGER
-                                    )
-                                    .addStatement("return")
-                                    .endControlFlow()
+                                if (useRoomNotifier) {
+                                    beginControlFlow("if (this.${clazz.roomPrimaryKeyField().getter.name}() == null)")
+                                        .apply {
+                                            if (debug)
+                                                addStatement(
+                                                    "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
+                                                    JavaClass.LOGGER
+                                                )
+                                        }
+                                        .addStatement("return")
+                                        .endControlFlow()
+                                }
                                 clazz.roomFields()
                                     .filter { it.getAnnotation(PrimaryKey::class.java) == null }
                                     .forEach { it ->
-                                        this.beginControlFlow("if (${it.name}EntityVersion == -1)")
-                                            .addStatement("int maxVersion = 0")
-                                            .addStatement("List<WeakReference<${clazz.classSimpleName}>> ${clazz.classSimpleName.charLower()}OfInit = ${clazz.classSimpleName.charLower()}OfAll()")
-                                            .beginControlFlow("for (WeakReference<${clazz.classSimpleName}> reference : ${clazz.classSimpleName.charLower()}OfInit)")
-                                            .addStatement("${clazz.classSimpleName} entity = reference.get()")
-                                            .addStatement("if (entity == null) continue")
-                                            .addStatement(
-                                                "\$T observer = from(entity)",
-                                                clazz.observerClassName().asTypeName()
-                                            )
-                                            .addStatement("maxVersion = Math.max(observer.${it.name}EntityVersion, maxVersion)")
-                                            .endControlFlow()
-                                            .addStatement("${it.name}EntityVersion = maxVersion")
-                                            .endControlFlow()
-                                            .addStatement("notifyPropertyChanged(DB.${it.name})")
+                                        if (useRoomNotifier) {
+                                            this.beginControlFlow("if (${it.name}EntityVersion == -1)")
+                                                .addStatement("int maxVersion = 0")
+                                                .addStatement(
+                                                    "\$T ${clazz.classSimpleName.charLower()}OfInit = ${clazz.classSimpleName.charLower()}OfAll()",
+                                                    listWeakObservable()
+                                                )
+                                                .beginControlFlow(
+                                                    "for (\$T reference : ${clazz.classSimpleName.charLower()}OfInit)",
+                                                    weakObservable()
+                                                )
+                                                .addStatement(
+                                                    "\$T entity = reference.get()",
+                                                    clazz.observerClassName()
+                                                )
+                                                .addStatement("if (entity == null) continue")
+                                                .addStatement("maxVersion = Math.max(entity.${it.name}EntityVersion, maxVersion)")
+                                                .endControlFlow()
+                                                .addStatement("${it.name}EntityVersion = maxVersion")
+                                                .endControlFlow()
+                                        }
+                                        addStatement("notifyPropertyChanged(DB.${it.name})")
                                     }
                             }
+                            .build()
+                    )
+                    .addMethod(
+                        MethodSpec.methodBuilder("from")
+                            .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                            .addParameter(clazz.asTypeName(), clazz.classSimpleName.charLower())
+                            .returns(clazz.observerClassName())
+                            .beginControlFlow("if (${clazz.classSimpleName.charLower()} == null)")
+                            .addStatement("return null")
+                            .endControlFlow()
+                            .addStatement(
+                                "\$T observable = new \$T()",
+                                clazz.observerClassName(),
+                                clazz.observerClassName()
+                            )
+                            .apply {
+                                clazz.fields.forEach {
+                                    addStatement("observable.${it.setter.name}(${clazz.classSimpleName.charLower()}.${it.getter.name}())")
+                                }
+                            }
+                            .addStatement("return observable")
                             .build()
                     )
                     .build()
@@ -381,6 +481,19 @@ class EntityObservableGenerator(private val clazz: Class) : Generator {
             .write(filer)
     }
 
-    fun dbClassName() = ClassName.get("com.iwdael.dbroom", "DB")
-    fun dbRoomClassName() = ClassName.get("com.iwdael.dbroom", "DbRoom")
+    private fun dbClassName() = ClassName.get("com.iwdael.dbroom", "DB")
+    private fun dbRoomClassName() = ClassName.get("com.iwdael.dbroom", "DbRoom")
+
+    private fun listWeakObservable() = ParameterizedTypeName.get(
+        ClassName.get(List::class.java),
+        ParameterizedTypeName.get(
+            ClassName.get(WeakReference::class.java),
+            clazz.observerClassName()
+        )
+    )
+
+    private fun weakObservable() = ParameterizedTypeName.get(
+        ClassName.get(WeakReference::class.java),
+        clazz.observerClassName()
+    )
 }

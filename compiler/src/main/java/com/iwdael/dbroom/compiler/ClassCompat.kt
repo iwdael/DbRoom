@@ -9,6 +9,7 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.asClassName
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.annotations.UseRoomNotifier
+import com.iwdael.dbroom.compiler.compat.bestGuessClassName
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.TypeName
 
@@ -51,12 +52,8 @@ fun Class.packageName(): String {
 }
 
 
-fun Class.observerPackage(): String {
-    return packageName() + ""
-}
-
-fun Class.observerClassName(): String {
-    return observerPackage() + ".${classSimpleName}Observable"
+fun Class.observerClassName(): ClassName {
+    return "${className}Observable".bestGuessClassName().asClassName()
 }
 
 

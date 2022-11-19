@@ -35,7 +35,7 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                 .build()
         )
         .addParameter(
-            ArrayTypeName.of(ClassName.get(clazz.packageName(), clazz.classSimpleName)),
+            ArrayTypeName.of(clazz.asTypeName()),
             "entity"
         )
         .varargs(true)

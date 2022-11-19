@@ -9,13 +9,12 @@ import com.squareup.javapoet.TypeName
  * @project : https://github.com/iwdael/dbroom
  */
 object JavaClass {
+    val debug = false;
     val BASE_OBSERVABLE: ClassName = ClassName.bestGuess("com.iwdael.dbroom.core.BaseObservable")
     val ROOM_OBSERVABLE: ClassName = ClassName.get("com.iwdael.dbroom.core", "RoomObservable")
     val ROOM_DATABASE: ClassName = ClassName.get("androidx.room", "RoomDatabase")
     val CONTEXT: ClassName = ClassName.get("android.content", "Context")
-    val ROOM_OBSERVABLE_CREATOR: ClassName =
-        ClassName.get("com.iwdael.dbroom", "RoomObservableCreator")
-    val LOGGER: ClassName = ClassName.get("com.iwdael.dbroom.core", "Logger")
+    val LOGGER: ClassName = ClassName.get("android.util", "Log")
     val PACKING_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingColumn")
     val BASIC_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicColumn")
     val BASIC_CHAR_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicCharColumn")
@@ -119,4 +118,7 @@ object JavaClass {
     val CONVERTER: ClassName = ClassName.get("com.iwdael.dbroom", "Converter")
     val DB_ROOM: ClassName = ClassName.get("com.iwdael.dbroom", "DbRoom")
     val STORE: ClassName = ClassName.get("com.iwdael.dbroom", "Store")
+    val ROOM_NOTIFIER: ClassName = ClassName.get("com.iwdael.dbroom", "RoomNotifier")
+    val ROOM_NOTIFIER_NOTIFIER: ClassName =
+        ClassName.get("${ROOM_NOTIFIER.packageName()}.${ROOM_NOTIFIER.simpleName()}", "Notifier")
 }
