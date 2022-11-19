@@ -11,7 +11,7 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
 import com.iwdael.annotationprocessorparser.poet.srcPath
 import com.iwdael.dbroom.annotations.UseGenerator
-import com.iwdael.dbroom.compiler.JavaClass.roomObservable
+import com.iwdael.dbroom.compiler.JavaClass.ROOM_OBSERVABLE
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.packageName
 import com.iwdael.dbroom.compiler.roomFields
@@ -37,7 +37,7 @@ class UseJavaGenerator(val clazz: Class) {
         JavaFile
             .builder(
                 clazz.packageName(), TypeSpec.classBuilder(clazz.classSimpleName)
-                    .superclass(roomObservable)
+                    .superclass(ROOM_OBSERVABLE)
                     .addModifiers(*clazz.modifiers.toTypedArray())
                     .addAnnotations(clazz.annotations
                         .filter { it.className != UseGenerator::class.java.name }

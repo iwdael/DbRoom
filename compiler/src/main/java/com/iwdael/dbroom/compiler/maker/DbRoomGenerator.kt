@@ -4,8 +4,8 @@ import androidx.room.Database
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
-import com.iwdael.dbroom.compiler.JavaClass.context
-import com.iwdael.dbroom.compiler.JavaClass.roomDatabase
+import com.iwdael.dbroom.compiler.JavaClass.CONTEXT
+import com.iwdael.dbroom.compiler.JavaClass.ROOM_DATABASE
 import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
@@ -34,7 +34,7 @@ class DbRoomGenerator(
         val init = MethodSpec.methodBuilder("init")
             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
             .returns(Void.TYPE)
-            .addParameter(context, "context")
+            .addParameter(CONTEXT, "context")
             .addStatement("if (instance != null) return")
             .addCode(
                 CodeBlock.builder()
@@ -166,7 +166,7 @@ class DbRoomGenerator(
                 Modifier.STATIC,
                 Modifier.VOLATILE
             )
-            .superclass(roomDatabase)
+            .superclass(ROOM_DATABASE)
             .addMethod(init)
             .addMethod(instance)
             .addMethod(store)

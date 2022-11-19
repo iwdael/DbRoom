@@ -3,8 +3,8 @@ package com.iwdael.dbroom.compiler
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.TypeConverter
-import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.Class
+import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.dbroom.annotations.DbRoomCreator
 import com.iwdael.dbroom.compiler.maker.*
 import javax.annotation.processing.AbstractProcessor
@@ -32,10 +32,10 @@ class AnnotationProcessor : AbstractProcessor() {
             }
         StoreGenerator().generate(processingEnv.filer)
         (env.getElementsAnnotatedWith(Entity::class.java) ?: arrayListOf())
-            .map{ Class(it)}
+            .map { Class(it) }
             .apply {
                 ObservableCreatorGenerator(this).generate(processingEnv.filer)
-                DBGenerator( this).generate(processingEnv.filer)
+                DBGenerator(this).generate(processingEnv.filer)
                 UseGenerator(this).generate()
             }
             .apply {
@@ -56,9 +56,69 @@ class AnnotationProcessor : AbstractProcessor() {
                     if (method.returnClassName != "androidx.room.RoomDatabase") throw Exception("The return value of this method(${method.parent.className}.${method.name}) can only be RoomDatabase.(androidx.room.RoomDatabase)")
                 }
                 DbRoomGenerator(this, dao, method).generate(processingEnv.filer)
+                CallBackGenerator().generate(processingEnv.filer)
+
+                ColumnPackingGenerator().generate(processingEnv.filer)
+                ColumnBasicGenerator().generate(processingEnv.filer)
+
+//                ColumnBasicCharGenerator().generate(processingEnv.filer)
+//                ColumnPackingCharGenerator().generate(processingEnv.filer)
+//
+//                ColumnBasicBooleanGenerator().generate(processingEnv.filer)
+//                ColumnPackingBooleanGenerator().generate(processingEnv.filer)
+//
+//                ColumnBasicShortGenerator().generate(processingEnv.filer)
+//                ColumnPackingShortGenerator().generate(processingEnv.filer)
+//
+//                ColumnBasicByteGenerator().generate(processingEnv.filer)
+//                ColumnPackingByteGenerator().generate(processingEnv.filer)
+//
+//                ColumnBasicIntGenerator().generate(processingEnv.filer)
+//                ColumnPackingIntGenerator().generate(processingEnv.filer)
+//
+//                ColumnBasicLongGenerator().generate(processingEnv.filer)
+//                ColumnPackingLongGenerator().generate(processingEnv.filer)
+//
+//                ColumnBasicFloatGenerator().generate(processingEnv.filer)
+//                ColumnPackingFloatGenerator().generate(processingEnv.filer)
+//
+//                ColumnBasicDoubleGenerator().generate(processingEnv.filer)
+//                ColumnPackingDoubleGenerator().generate(processingEnv.filer)
+//
+//                ColumnPackingStringGenerator().generate(processingEnv.filer)
+
+                ColumnGenerator().generate(processingEnv.filer)
+                CreatorGenerator().generate(processingEnv.filer)
+                NextBuilderGenerator().generate(processingEnv.filer)
+                WhereNextBuilderGenerator().generate(processingEnv.filer)
+                WhereGenerator().generate(processingEnv.filer)
+                WherePackingStringGenerator().generate(processingEnv.filer)
+                WherePackingIntegerGenerator().generate(processingEnv.filer)
+                WhereBasicIntegerGenerator().generate(processingEnv.filer)
+                WherePackingFloatGenerator().generate(processingEnv.filer)
+                WhereBasicFloatGenerator().generate(processingEnv.filer)
+                WherePackingShortGenerator().generate(processingEnv.filer)
+                WhereBasicShortGenerator().generate(processingEnv.filer)
+                WherePackingCharGenerator().generate(processingEnv.filer)
+                WhereBasicCharGenerator().generate(processingEnv.filer)
+                WherePackingDoubleGenerator().generate(processingEnv.filer)
+                WhereBasicDoubleGenerator().generate(processingEnv.filer)
+                WherePackingLongGenerator().generate(processingEnv.filer)
+                WhereBasicLongGenerator().generate(processingEnv.filer)
+                WherePackingByteGenerator().generate(processingEnv.filer)
+                WhereBasicByteGenerator().generate(processingEnv.filer)
+                WherePackingBooleanGenerator().generate(processingEnv.filer)
+                WhereBasicBooleanGenerator().generate(processingEnv.filer)
+                UtilsGenerator().generate(processingEnv.filer)
+                OperatorGenerator().generate(processingEnv.filer)
+                WhereBuilderGenerator().generate(processingEnv.filer)
             }
             .map {
                 EntityDbGenerator(it).generate(processingEnv.filer)
+                EntityColumnGenerator(it).generate(processingEnv.filer)
+                EntityWhereBuilderGenerator(it).generate(processingEnv.filer)
+                EntityWhereNextBuilderGenerator(it).generate(processingEnv.filer)
+                EntitySqlGenerator(it).generate(processingEnv.filer)
                 it
             }
             .forEach {
