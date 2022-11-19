@@ -5,7 +5,7 @@ import com.iwdael.dbroom.compiler.JavaClass.COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -19,8 +19,8 @@ import javax.lang.model.element.Modifier
  */
 class WhereGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE.simpleName()
-    override fun packageName(): String = WHERE.packageName()
+    override fun simpleClassName(): String = CONDITION.simpleName()
+    override fun packageName(): String = CONDITION.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile
@@ -95,7 +95,7 @@ class WhereGenerator : Generator {
                             ParameterizedTypeName.get(
                                 CALLBACK,
                                 ParameterizedTypeName.get(
-                                    WHERE,
+                                    CONDITION,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
                                     TypeVariableName.get("?"),
@@ -190,7 +190,7 @@ class WhereGenerator : Generator {
                                 ParameterizedTypeName.get(
                                     CALLBACK,
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("N"),
                                         TypeVariableName.get("T"),
                                         TypeVariableName.get("?"),

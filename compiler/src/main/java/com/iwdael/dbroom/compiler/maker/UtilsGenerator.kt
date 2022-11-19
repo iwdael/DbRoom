@@ -1,9 +1,10 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass.UTILS
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.bestGuessClassName
+import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
@@ -61,7 +62,7 @@ class UtilsGenerator : Generator {
                                 ParameterizedTypeName.get(
                                     ClassName.get(List::class.java),
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("?"),
                                         TypeVariableName.get("?"),
                                         TypeVariableName.get("?"),
@@ -99,7 +100,7 @@ class UtilsGenerator : Generator {
                                 ParameterizedTypeName.get(
                                     ClassName.get(List::class.java),
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("?"),
                                         TypeVariableName.get("?"),
                                         TypeVariableName.get("?"),
@@ -117,7 +118,7 @@ class UtilsGenerator : Generator {
                             )
                             .beginControlFlow(
                                 "for (\$T<?, ?, ?, ?> where : wheres)",
-                                WHERE
+                                CONDITION
                             )
                             .addStatement("bindArgs.addAll(where.value)")
                             .endControlFlow()
@@ -132,44 +133,47 @@ class UtilsGenerator : Generator {
                                 ParameterizedTypeName.get(
                                     ClassName.get(List::class.java),
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("?"),
                                         TypeVariableName.get("?"),
                                         TypeVariableName.get("?"),
                                         TypeVariableName.get("?")
                                     )
                                 ),
-                                "wheres"
+                                "${CONDITION.simpleName().charLower()}s"
                             )
                             .addStatement(
                                 "\$T builder = new \$T()",
                                 StringBuilder::class.java,
                                 StringBuilder::class.java
                             )
-                            .beginControlFlow("if(!wheres.isEmpty())")
+                            .beginControlFlow("if(!${CONDITION.simpleName().charLower()}s.isEmpty())")
                             .addStatement("builder.append(WHERE).append(SPACE)")
                             .endControlFlow()
 
-                            .beginControlFlow("for (Where<?, ?, ?, ?> where : wheres)")
+                            .beginControlFlow("for (\$T<?, ?, ?, ?> ${CONDITION.simpleName().charLower()} : ${CONDITION.simpleName().charLower()}s)",
+                                CONDITION)
 
                             .beginControlFlow(
-                                "if (\$T.equals(where.assign, Where.BETWEEN))",
-                                "java.util.Objects".bestGuessClassName()
+                                "if (\$T.equals(${CONDITION.simpleName().charLower()}.assign, \$T.BETWEEN))",
+                                "java.util.Objects".bestGuessClassName(),
+                                CONDITION
                             )
                             .addStatement(
-                                "builder.append(where.column).append(SPACE)" +
-                                        ".append(where.assign).append(SPACE)" +
+                                "builder.append(${CONDITION.simpleName().charLower()}.column).append(SPACE)" +
+                                        ".append(${CONDITION.simpleName().charLower()}.assign).append(SPACE)" +
                                         ".append('?').append(SPACE)" +
                                         ".append(AND).append(SPACE)" +
                                         ".append('?').append(SPACE)"
                             )
-                            .nextControlFlow("else if (Objects.equals(where.assign, Where.IN))")
+                            .nextControlFlow("else if (Objects.equals(${CONDITION.simpleName().charLower()}.assign, \$T.IN))",
+                                CONDITION)
                             .addStatement(
-                                "builder.append(where.column).append(SPACE)" +
-                                        ".append(where.assign).append(SPACE)" +
+                                "builder.append(${CONDITION.simpleName().charLower()}.column).append(SPACE)" +
+                                        ".append(${CONDITION.simpleName().charLower()}.assign).append(SPACE)" +
                                         ".append('(')"
                             )
-                            .addStatement("int count = where.value.size()")
+                            .addStatement("int count = ${CONDITION.simpleName().charLower()}.value.size()")
                             .beginControlFlow("for (int index = 0; index < count; index++)")
                             .addStatement("builder.append(\"?\")")
                             .beginControlFlow("if (index != count - 1)")
@@ -179,13 +183,13 @@ class UtilsGenerator : Generator {
                             .addStatement("builder.append(')').append(SPACE)")
                             .nextControlFlow("else")
                             .addStatement(
-                                "builder.append(where.column).append(SPACE)" +
-                                        ".append(where.assign).append(SPACE)" +
+                                "builder.append(${CONDITION.simpleName().charLower()}.column).append(SPACE)" +
+                                        ".append(${CONDITION.simpleName().charLower()}.assign).append(SPACE)" +
                                         ".append('?').append(SPACE)"
                             )
                             .endControlFlow()
-                            .beginControlFlow("if (where.next != null)")
-                            .addStatement("builder.append(where.next.operator).append(SPACE)")
+                            .beginControlFlow("if (${CONDITION.simpleName().charLower()}.next != null)")
+                            .addStatement("builder.append(${CONDITION.simpleName().charLower()}.next.operator).append(SPACE)")
                             .endControlFlow()
                             .endControlFlow()
 

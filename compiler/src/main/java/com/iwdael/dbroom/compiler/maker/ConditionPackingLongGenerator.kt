@@ -2,16 +2,16 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
-import com.iwdael.dbroom.compiler.JavaClass.BASIC_COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
-import com.iwdael.dbroom.compiler.JavaClass.LONG_BASIC
-import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
 import com.iwdael.dbroom.compiler.JavaClass.LONG_PACKING
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_LONG_BASIC
+import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
+import com.iwdael.dbroom.compiler.JavaClass.PACKING_COLUMN
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.WHERE_LONG_PACKING
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
+import java.util.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
@@ -20,10 +20,10 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class WhereBasicLongGenerator : Generator {
+class ConditionPackingLongGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE_LONG_BASIC.simpleName()
-    override fun packageName(): String = WHERE_LONG_BASIC.packageName()
+    override fun simpleClassName(): String = WHERE_LONG_PACKING.simpleName()
+    override fun packageName(): String = WHERE_LONG_PACKING.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile
@@ -35,7 +35,7 @@ class WhereBasicLongGenerator : Generator {
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .superclass(
                         ParameterizedTypeName.get(
-                            WHERE,
+                            CONDITION,
                             TypeVariableName.get("N"),
                             TypeVariableName.get("T"),
                             LONG_PACKING,
@@ -48,7 +48,7 @@ class WhereBasicLongGenerator : Generator {
                             .addParameter(TypeVariableName.get("T"), "target")
                             .addParameter(
                                 ParameterizedTypeName.get(
-                                    BASIC_COLUMN,
+                                    PACKING_COLUMN,
                                     LONG_PACKING
                                 ), "column"
                             )
@@ -56,7 +56,7 @@ class WhereBasicLongGenerator : Generator {
                                 ParameterizedTypeName.get(
                                     CALLBACK,
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("N"),
                                         TypeVariableName.get("T"),
                                         TypeVariableName.get("?"),
@@ -88,7 +88,7 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("equal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value")
+                            .addParameter(LONG_PACKING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = EQUAL")
@@ -107,7 +107,7 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("unequal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value")
+                            .addParameter(LONG_PACKING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = UNEQUAL")
@@ -126,7 +126,7 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greater")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value")
+                            .addParameter(LONG_PACKING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER")
@@ -145,7 +145,7 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greaterEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value")
+                            .addParameter(LONG_PACKING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER_EQUAL")
@@ -164,7 +164,7 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("less")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value")
+                            .addParameter(LONG_PACKING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS")
@@ -183,7 +183,7 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("lessEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value")
+                            .addParameter(LONG_PACKING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS_EQUAL")
@@ -202,8 +202,8 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("between")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value1")
-                            .addParameter(LONG_BASIC, "value2")
+                            .addParameter(LONG_PACKING, "value1")
+                            .addParameter(LONG_PACKING, "value2")
                             .addStatement("this.value.add(value1)")
                             .addStatement("this.value.add(value2)")
                             .addStatement("this.callBack.call(this)")
@@ -223,7 +223,7 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("like")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(LONG_BASIC, "value")
+                            .addParameter(LONG_PACKING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = BETWEEN")
@@ -242,11 +242,12 @@ class WhereBasicLongGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("in")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(ArrayTypeName.of(LONG_BASIC), "values")
+                            .addParameter(ArrayTypeName.of(LONG_PACKING), "value")
                             .varargs()
-                            .beginControlFlow("for (\$T value : values)", LONG_BASIC)
-                            .addStatement("this.value.add(value)")
-                            .endControlFlow()
+                            .addStatement(
+                                "this.value.addAll(\$T.asList(value))",
+                                Arrays::class.java
+                            )
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = IN")
                             .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, LONG_PACKING)

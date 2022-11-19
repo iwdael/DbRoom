@@ -4,11 +4,11 @@ import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
 import com.iwdael.dbroom.compiler.JavaClass.BASIC_COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
-import com.iwdael.dbroom.compiler.JavaClass.DOUBLE_BASIC
+import com.iwdael.dbroom.compiler.JavaClass.INT_BASIC
+import com.iwdael.dbroom.compiler.JavaClass.INT_PACKING
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
-import com.iwdael.dbroom.compiler.JavaClass.DOUBLE_PACKING
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_DOUBLE_BASIC
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.WHERE_INTEGER_BASIC
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -20,10 +20,10 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class WhereBasicDoubleGenerator : Generator {
+class ConditionBasicIntegerGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE_DOUBLE_BASIC.simpleName()
-    override fun packageName(): String = WHERE_DOUBLE_BASIC.packageName()
+    override fun simpleClassName(): String = WHERE_INTEGER_BASIC.simpleName()
+    override fun packageName(): String = WHERE_INTEGER_BASIC.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile
@@ -35,10 +35,10 @@ class WhereBasicDoubleGenerator : Generator {
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .superclass(
                         ParameterizedTypeName.get(
-                            WHERE,
+                            CONDITION,
                             TypeVariableName.get("N"),
                             TypeVariableName.get("T"),
-                            DOUBLE_PACKING,
+                            INT_PACKING,
                             TypeVariableName.get("Q")
                         )
                     )
@@ -49,14 +49,14 @@ class WhereBasicDoubleGenerator : Generator {
                             .addParameter(
                                 ParameterizedTypeName.get(
                                     BASIC_COLUMN,
-                                    DOUBLE_PACKING
+                                    INT_PACKING
                                 ), "column"
                             )
                             .addParameter(
                                 ParameterizedTypeName.get(
                                     CALLBACK,
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("N"),
                                         TypeVariableName.get("T"),
                                         TypeVariableName.get("?"),
@@ -88,17 +88,17 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("equal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value")
+                            .addParameter(INT_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = EQUAL")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -107,17 +107,17 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("unequal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value")
+                            .addParameter(INT_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = UNEQUAL")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -126,17 +126,17 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greater")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value")
+                            .addParameter(INT_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -145,17 +145,17 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greaterEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value")
+                            .addParameter(INT_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER_EQUAL")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -164,17 +164,17 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("less")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value")
+                            .addParameter(INT_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -183,17 +183,17 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("lessEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value")
+                            .addParameter(INT_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS_EQUAL")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -202,19 +202,19 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("between")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value1")
-                            .addParameter(DOUBLE_BASIC, "value2")
+                            .addParameter(INT_BASIC, "value1")
+                            .addParameter(INT_BASIC, "value2")
                             .addStatement("this.value.add(value1)")
                             .addStatement("this.value.add(value2)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = BETWEEN")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -223,17 +223,17 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("like")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(DOUBLE_BASIC, "value")
+                            .addParameter(INT_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = BETWEEN")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -242,20 +242,20 @@ class WhereBasicDoubleGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("in")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(ArrayTypeName.of(DOUBLE_BASIC), "values")
+                            .addParameter(ArrayTypeName.of(INT_BASIC), "values")
                             .varargs()
-                            .beginControlFlow("for (\$T value : values)", DOUBLE_BASIC)
+                            .beginControlFlow("for (\$T value : values)", INT_BASIC)
                             .addStatement("this.value.add(value)")
                             .endControlFlow()
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = IN")
-                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, INT_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    DOUBLE_PACKING,
+                                    INT_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )

@@ -3,7 +3,7 @@ package com.iwdael.dbroom.compiler.maker
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
@@ -41,7 +41,7 @@ class ConditionBuilderGenerator : Generator {
                                 ParameterizedTypeName.get(
                                     CALLBACK,
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("N"),
                                         TypeVariableName.get("T"),
                                         TypeVariableName.get("?"),
@@ -87,7 +87,7 @@ class ConditionBuilderGenerator : Generator {
                                 ParameterizedTypeName.get(
                                     CALLBACK,
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("N"),
                                         TypeVariableName.get("T"),
                                         TypeVariableName.get("?"),

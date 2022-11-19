@@ -3,7 +3,7 @@ package com.iwdael.dbroom.compiler.maker
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.dbroom.compiler.*
 import com.iwdael.dbroom.compiler.JavaClass.UTILS
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -26,7 +26,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                 packageName(), TypeSpec.classBuilder(simpleClassName())
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addType(
-                        TypeSpec.classBuilder("Query")
+                        TypeSpec.classBuilder(clazz.sqlQueryClassName())
                             .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
                             .addField(
                                 FieldSpec.builder(String::class.java, "selection")
@@ -66,7 +66,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                     ParameterizedTypeName.get(
                                         ClassName.get(List::class.java),
                                         ParameterizedTypeName.get(
-                                            WHERE,
+                                            CONDITION,
                                             TypeVariableName.get("?"),
                                             TypeVariableName.get("?"),
                                             TypeVariableName.get("?"),
@@ -102,9 +102,10 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                         )
                                     )
                                     .addStatement(
-                                        "return new \$T<>(this, wheres::add, \$T::new, builder -> new Query(builder.toSelection(), builder.toBindArgs()))",
+                                        "return new \$T<>(this, wheres::add, \$T::new, builder -> new \$T(builder.toSelection(), builder.toBindArgs()))",
                                         clazz.whereBuilderClassName(),
-                                        clazz.whereBuilder2ClassName()
+                                        clazz.whereBuilder2ClassName(),
+                                        clazz.sqlQueryClassName()
                                     )
                                     .build()
                             )

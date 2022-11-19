@@ -1,14 +1,17 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass
-import com.iwdael.dbroom.compiler.JavaClass.FLOAT_PACKING
+import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
+import com.iwdael.dbroom.compiler.JavaClass.BASIC_COLUMN
+import com.iwdael.dbroom.compiler.JavaClass.CREATOR
+import com.iwdael.dbroom.compiler.JavaClass.DOUBLE_BASIC
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_FLOAT_PACKING
+import com.iwdael.dbroom.compiler.JavaClass.DOUBLE_PACKING
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.WHERE_DOUBLE_BASIC
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
-import java.util.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
@@ -17,10 +20,10 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class WherePackingFloatGenerator : Generator {
+class ConditionBasicDoubleGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE_FLOAT_PACKING.simpleName()
-    override fun packageName(): String = WHERE_FLOAT_PACKING.packageName()
+    override fun simpleClassName(): String = WHERE_DOUBLE_BASIC.simpleName()
+    override fun packageName(): String = WHERE_DOUBLE_BASIC.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile
@@ -32,10 +35,10 @@ class WherePackingFloatGenerator : Generator {
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .superclass(
                         ParameterizedTypeName.get(
-                            WHERE,
+                            CONDITION,
                             TypeVariableName.get("N"),
                             TypeVariableName.get("T"),
-                            FLOAT_PACKING,
+                            DOUBLE_PACKING,
                             TypeVariableName.get("Q")
                         )
                     )
@@ -45,15 +48,15 @@ class WherePackingFloatGenerator : Generator {
                             .addParameter(TypeVariableName.get("T"), "target")
                             .addParameter(
                                 ParameterizedTypeName.get(
-                                    JavaClass.PACKING_COLUMN,
-                                    JavaClass.FLOAT_PACKING
+                                    BASIC_COLUMN,
+                                    DOUBLE_PACKING
                                 ), "column"
                             )
                             .addParameter(
                                 ParameterizedTypeName.get(
-                                    JavaClass.CALLBACK,
+                                    CALLBACK,
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("N"),
                                         TypeVariableName.get("T"),
                                         TypeVariableName.get("?"),
@@ -73,7 +76,7 @@ class WherePackingFloatGenerator : Generator {
                             )
                             .addParameter(
                                 ParameterizedTypeName.get(
-                                    JavaClass.CREATOR,
+                                    CREATOR,
                                     TypeVariableName.get("T"),
                                     TypeVariableName.get("Q"),
                                 ),
@@ -85,21 +88,17 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("equal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value")
+                            .addParameter(DOUBLE_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = EQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -108,21 +107,17 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("unequal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value")
+                            .addParameter(DOUBLE_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = UNEQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -131,21 +126,17 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greater")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value")
+                            .addParameter(DOUBLE_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -154,21 +145,17 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greaterEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value")
+                            .addParameter(DOUBLE_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER_EQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -177,21 +164,17 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("less")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value")
+                            .addParameter(DOUBLE_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -200,21 +183,17 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("lessEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value")
+                            .addParameter(DOUBLE_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS_EQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -223,23 +202,19 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("between")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value1")
-                            .addParameter(FLOAT_PACKING, "value2")
+                            .addParameter(DOUBLE_BASIC, "value1")
+                            .addParameter(DOUBLE_BASIC, "value2")
                             .addStatement("this.value.add(value1)")
                             .addStatement("this.value.add(value2)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = BETWEEN")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -248,21 +223,17 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("like")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(FLOAT_PACKING, "value")
+                            .addParameter(DOUBLE_BASIC, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = BETWEEN")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -271,25 +242,20 @@ class WherePackingFloatGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("in")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(ArrayTypeName.of(FLOAT_PACKING), "value")
+                            .addParameter(ArrayTypeName.of(DOUBLE_BASIC), "values")
                             .varargs()
-                            .addStatement(
-                                "this.value.addAll(\$T.asList(value))",
-                                Arrays::class.java
-                            )
+                            .beginControlFlow("for (\$T value : values)", DOUBLE_BASIC)
+                            .addStatement("this.value.add(value)")
+                            .endControlFlow()
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = IN")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                FLOAT_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, DOUBLE_PACKING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    FLOAT_PACKING,
+                                    DOUBLE_PACKING,
                                     TypeVariableName.get("Q"),
                                 )
                             )

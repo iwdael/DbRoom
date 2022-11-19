@@ -1,6 +1,6 @@
 package com.iwdael.dbroom.compiler.maker
 
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -41,7 +41,7 @@ class OperatorGenerator : Generator {
                     .addField(
                         FieldSpec.builder(
                             ParameterizedTypeName.get(
-                                WHERE,
+                                CONDITION,
                                 TypeVariableName.get("N"),
                                 TypeVariableName.get("T"),
                                 TypeVariableName.get("R"),
@@ -63,7 +63,7 @@ class OperatorGenerator : Generator {
                             .addModifiers(Modifier.PROTECTED)
                             .addParameter(
                                 ParameterizedTypeName.get(
-                                    WHERE,
+                                    CONDITION,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
                                     TypeVariableName.get("R"),

@@ -1,18 +1,17 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.dbroom.compiler.JavaClass
-import com.iwdael.dbroom.compiler.JavaClass.BOOLEAN_BASIC
-import com.iwdael.dbroom.compiler.JavaClass.BOOLEAN_PACKING
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
-import com.iwdael.dbroom.compiler.JavaClass.BASIC_COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
-import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.OPERATOR
-import com.iwdael.dbroom.compiler.JavaClass.WHERE
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_BOOLEAN_BASIC
+import com.iwdael.dbroom.compiler.JavaClass.PACKING_COLUMN
+import com.iwdael.dbroom.compiler.JavaClass.STRING
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.WHERE_STRING_PACKING
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
+import java.util.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
@@ -21,10 +20,10 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class WhereBasicBooleanGenerator : Generator {
+class ConditionPackingStringGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName(): String = WHERE_BOOLEAN_BASIC.simpleName()
-    override fun packageName(): String = WHERE_BOOLEAN_BASIC.packageName()
+    override fun simpleClassName(): String = WHERE_STRING_PACKING.simpleName()
+    override fun packageName(): String = WHERE_STRING_PACKING.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile
@@ -36,10 +35,10 @@ class WhereBasicBooleanGenerator : Generator {
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .superclass(
                         ParameterizedTypeName.get(
-                            WHERE,
+                            CONDITION,
                             TypeVariableName.get("N"),
                             TypeVariableName.get("T"),
-                            BOOLEAN_PACKING,
+                            STRING,
                             TypeVariableName.get("Q")
                         )
                     )
@@ -49,15 +48,15 @@ class WhereBasicBooleanGenerator : Generator {
                             .addParameter(TypeVariableName.get("T"), "target")
                             .addParameter(
                                 ParameterizedTypeName.get(
-                                    BASIC_COLUMN,
-                                    BOOLEAN_PACKING
+                                    PACKING_COLUMN,
+                                    STRING
                                 ), "column"
                             )
                             .addParameter(
                                 ParameterizedTypeName.get(
                                     CALLBACK,
                                     ParameterizedTypeName.get(
-                                        WHERE,
+                                        CONDITION,
                                         TypeVariableName.get("N"),
                                         TypeVariableName.get("T"),
                                         TypeVariableName.get("?"),
@@ -68,7 +67,7 @@ class WhereBasicBooleanGenerator : Generator {
                             )
                             .addParameter(
                                 ParameterizedTypeName.get(
-                                    NEXT_BUILDER,
+                                    JavaClass.NEXT_BUILDER,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
                                     TypeVariableName.get("Q")
@@ -89,21 +88,17 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("equal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value")
+                            .addParameter(STRING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = EQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -112,21 +107,17 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("unequal")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value")
+                            .addParameter(STRING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = UNEQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -135,21 +126,17 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greater")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value")
+                            .addParameter(STRING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -158,21 +145,17 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("greaterEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value")
+                            .addParameter(STRING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = GREATER_EQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -181,21 +164,17 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("less")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value")
+                            .addParameter(STRING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -204,21 +183,17 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("lessEqual")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value")
+                            .addParameter(STRING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = LESS_EQUAL")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -227,23 +202,19 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("between")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value1")
-                            .addParameter(BOOLEAN_BASIC, "value2")
+                            .addParameter(STRING, "value1")
+                            .addParameter(STRING, "value2")
                             .addStatement("this.value.add(value1)")
                             .addStatement("this.value.add(value2)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = BETWEEN")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -252,21 +223,17 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("like")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(BOOLEAN_BASIC, "value")
+                            .addParameter(STRING, "value")
                             .addStatement("this.value.add(value)")
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = BETWEEN")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
@@ -275,24 +242,21 @@ class WhereBasicBooleanGenerator : Generator {
                     .addMethod(
                         MethodSpec.methodBuilder("in")
                             .addModifiers(Modifier.PUBLIC)
-                            .addParameter(ArrayTypeName.of(BOOLEAN_BASIC), "values")
+                            .addParameter(ArrayTypeName.of(STRING), "value")
                             .varargs()
-                            .beginControlFlow("for (\$T value : values)", BOOLEAN_BASIC)
-                            .addStatement("this.value.add(value)")
-                            .endControlFlow()
+                            .addStatement(
+                                "this.value.addAll(\$T.asList(value))",
+                                Arrays::class.java
+                            )
                             .addStatement("this.callBack.call(this)")
                             .addStatement("this.assign = IN")
-                            .addStatement(
-                                "return new \$T<N, T, \$T, Q>(this)",
-                                OPERATOR,
-                                BOOLEAN_PACKING
-                            )
+                            .addStatement("return new \$T<N, T, \$T, Q>(this)", OPERATOR, STRING)
                             .returns(
                                 ParameterizedTypeName.get(
                                     OPERATOR,
                                     TypeVariableName.get("N"),
                                     TypeVariableName.get("T"),
-                                    BOOLEAN_PACKING,
+                                    STRING,
                                     TypeVariableName.get("Q"),
                                 )
                             )
