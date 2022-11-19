@@ -4,7 +4,7 @@ import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.WHERE
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_BUILDER
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
@@ -16,10 +16,10 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class WhereBuilderGenerator : Generator {
+class ConditionBuilderGenerator : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = WHERE_BUILDER.simpleName()
-    override fun packageName() = WHERE_BUILDER.packageName()
+    override fun simpleClassName() = CONDITION_BUILDER.simpleName()
+    override fun packageName() = CONDITION_BUILDER.packageName()
 
     override fun generate(filer: Filer) {
         JavaFile

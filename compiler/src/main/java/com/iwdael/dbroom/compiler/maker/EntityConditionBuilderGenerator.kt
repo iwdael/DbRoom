@@ -2,12 +2,11 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
-import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.WHERE
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_BUILDER
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.columnClassName
@@ -22,7 +21,7 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class EntityWhereBuilderGenerator(private val clazz: Class) : Generator {
+class EntityConditionBuilderGenerator(private val clazz: Class) : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
     override fun simpleClassName(): String = clazz.whereBuilderClassName().simpleName()
     override fun packageName() = clazz.whereBuilderClassName().packageName()
@@ -38,7 +37,7 @@ class EntityWhereBuilderGenerator(private val clazz: Class) : Generator {
                     .addTypeVariable(TypeVariableName.get("Q"))
                     .superclass(
                         ParameterizedTypeName.get(
-                            WHERE_BUILDER,
+                            CONDITION_BUILDER,
                             TypeVariableName.get("N"),
                             TypeVariableName.get("T"),
                             TypeVariableName.get("Q")

@@ -93,8 +93,8 @@ fun Class.whereBuilderClassName(): ClassName {
     return "${this.className}ConditionBuilder".asTypeName().asClassName()
 }
 
-fun Class.whereNextBuilderClassName(): ClassName {
-    return "${this.className}WhereNextBuilder".asTypeName().asClassName()
+fun Class.whereBuilder2ClassName(): ClassName {
+    return "${this.className}Condition2Builder".asTypeName().asClassName()
 }
 
 fun Field.columnClassName(): ClassName {

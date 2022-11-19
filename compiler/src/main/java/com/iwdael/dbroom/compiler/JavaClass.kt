@@ -76,8 +76,8 @@ object JavaClass {
     val WHERE_BOOLEAN_PACKING: ClassName = ClassName.get("com.iwdael.dbroom", "WherePackingBoolean")
     val WHERE_BOOLEAN_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "WhereBasicBoolean")
 
-    val WHERE_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBuilder")
-    val WHERE_NEXT_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom", "WhereNextBuilder")
+    val CONDITION_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBuilder")
+    val CONDITION_BUILDER_2: ClassName = ClassName.get("com.iwdael.dbroom", "Condition2Builder")
     val CREATOR: ClassName = ClassName.get("com.iwdael.dbroom", "Creator")
     val NEXT_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom", "NextBuilder")
     val CALLBACK: ClassName = ClassName.get("com.iwdael.dbroom", "CallBack")

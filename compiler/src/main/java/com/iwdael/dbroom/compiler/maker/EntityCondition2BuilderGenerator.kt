@@ -6,12 +6,12 @@ import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.JavaClass.WHERE
-import com.iwdael.dbroom.compiler.JavaClass.WHERE_NEXT_BUILDER
+import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER_2
 import com.iwdael.dbroom.compiler.columnClassName
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.whereClassName
-import com.iwdael.dbroom.compiler.whereNextBuilderClassName
+import com.iwdael.dbroom.compiler.whereBuilder2ClassName
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
@@ -21,10 +21,10 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class EntityWhereNextBuilderGenerator(private val clazz: Class) : Generator {
+class EntityCondition2BuilderGenerator(private val clazz: Class) : Generator {
     override fun classFull() = "${packageName()}.${simpleClassName()}"
-    override fun simpleClassName() = clazz.whereNextBuilderClassName().simpleName()
-    override fun packageName() = clazz.whereNextBuilderClassName().packageName()
+    override fun simpleClassName() = clazz.whereBuilder2ClassName().simpleName()
+    override fun packageName() = clazz.whereBuilder2ClassName().packageName()
 
     override fun generate(filer: Filer) {
         JavaFile
@@ -37,7 +37,7 @@ class EntityWhereNextBuilderGenerator(private val clazz: Class) : Generator {
                     .addModifiers(Modifier.FINAL)
                     .superclass(
                         ParameterizedTypeName.get(
-                            WHERE_NEXT_BUILDER,
+                            CONDITION_BUILDER_2,
                             TypeVariableName.get("N"),
                             TypeVariableName.get("T"),
                             TypeVariableName.get("Q")

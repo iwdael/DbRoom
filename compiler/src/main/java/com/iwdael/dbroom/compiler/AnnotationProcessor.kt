@@ -111,13 +111,13 @@ class AnnotationProcessor : AbstractProcessor() {
                 WhereBasicBooleanGenerator().generate(processingEnv.filer)
                 UtilsGenerator().generate(processingEnv.filer)
                 OperatorGenerator().generate(processingEnv.filer)
-                WhereBuilderGenerator().generate(processingEnv.filer)
+                ConditionBuilderGenerator().generate(processingEnv.filer)
             }
             .map {
                 EntityDbGenerator(it).generate(processingEnv.filer)
                 EntityColumnGenerator(it).generate(processingEnv.filer)
-                EntityWhereBuilderGenerator(it).generate(processingEnv.filer)
-                EntityWhereNextBuilderGenerator(it).generate(processingEnv.filer)
+                EntityConditionBuilderGenerator(it).generate(processingEnv.filer)
+                EntityCondition2BuilderGenerator(it).generate(processingEnv.filer)
                 EntitySqlGenerator(it).generate(processingEnv.filer)
                 it
             }

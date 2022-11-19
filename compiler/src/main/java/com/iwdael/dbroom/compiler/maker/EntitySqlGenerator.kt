@@ -92,7 +92,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                         ParameterizedTypeName.get(
                                             clazz.whereBuilderClassName(),
                                             ParameterizedTypeName.get(
-                                                clazz.whereNextBuilderClassName(),
+                                                clazz.whereBuilder2ClassName(),
                                                 TypeVariableName.get("?"),
                                                 clazz.sqlQueryBuilderClassName(),
                                                 clazz.sqlQueryClassName()
@@ -104,7 +104,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                     .addStatement(
                                         "return new \$T<>(this, wheres::add, \$T::new, builder -> new Query(builder.toSelection(), builder.toBindArgs()))",
                                         clazz.whereBuilderClassName(),
-                                        clazz.whereNextBuilderClassName()
+                                        clazz.whereBuilder2ClassName()
                                     )
                                     .build()
                             )
