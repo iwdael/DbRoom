@@ -9,7 +9,7 @@ import com.squareup.javapoet.TypeName
  * @project : https://github.com/iwdael/dbroom
  */
 object JavaClass {
-    val debug = false;
+    const val DEBUG = true
     val BASE_OBSERVABLE: ClassName = ClassName.bestGuess("androidx.databinding.BaseObservable")
     val ROOM_DATABASE: ClassName = ClassName.get("androidx.room", "RoomDatabase")
     val CONTEXT: ClassName = ClassName.get("android.content", "Context")

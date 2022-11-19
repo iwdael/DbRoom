@@ -452,7 +452,7 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                         val useDataBinding = clazz.useDataBinding()
                         val useRoom = clazz.useRoom()
                         val useNotify = clazz.useNotifier()
-                        if (useNotify && (useDataBinding || useRoom)) {
+                        if ((useDataBinding || useRoom)) {
                             this.addMethod(findAllNotifier())
                                 .addMethods(findsNotifier())
                                 .addMethod(rawQueryNotifier())

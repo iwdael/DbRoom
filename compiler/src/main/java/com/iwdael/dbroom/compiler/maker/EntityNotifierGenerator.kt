@@ -10,9 +10,10 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
 import com.iwdael.dbroom.compiler.*
 import com.iwdael.dbroom.compiler.JavaClass.BR
 import com.iwdael.dbroom.compiler.JavaClass.DB_ROOM
+import com.iwdael.dbroom.compiler.JavaClass.LOGGER
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_NOTIFIER
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_NOTIFIER_NOTIFIER
-import com.iwdael.dbroom.compiler.JavaClass.debug
+import com.iwdael.dbroom.compiler.JavaClass.DEBUG
 import com.iwdael.dbroom.compiler.compat.*
 import com.squareup.javapoet.*
 import java.lang.ref.WeakReference
@@ -281,7 +282,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                     .apply {
                                         beginControlFlow("if (this.${clazz.roomPrimaryKeyField().getter.name}() == null)")
                                             .apply {
-                                                if (debug)
+                                                if (DEBUG)
                                                     addStatement(
                                                         "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
                                                         JavaClass.LOGGER
@@ -404,7 +405,17 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                 MethodSpec.methodBuilder("notify${it.name.charUpper()}Changed")
                     .addModifiers(Modifier.PRIVATE)
                     .beginControlFlow("synchronized (${it.name}Lock)")
-
+                    .apply {
+                        if (DEBUG)
+                            this.addStatement(
+                                "\$T.v(\"DbRoom\", \$N + \$S + \$S + \$N)",
+                                LOGGER,
+                                "this.hashCode()",
+                                ":",
+                                "notify${it.name.charUpper()}Changed value: ",
+                                "this.${it.getter.name}()"
+                            )
+                    }
                     //dataBinding
                     .apply {
                         if (useDataBinding)
@@ -423,6 +434,17 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                         it.name
                     )
                     .addStatement("\$NEntityVersion = 0", it.name)
+                    .apply {
+                        if (DEBUG)
+                            this.addStatement(
+                                "\$T.v(\"DbRoom\", \$N + \$S + \$S + \$S)",
+                                LOGGER,
+                                "this.hashCode()",
+                                ":",
+                                "notify${it.name.charUpper()}Changed state: ",
+                                "init"
+                            )
+                    }
                     .addStatement("return")
                     .endControlFlow()
 
@@ -455,7 +477,18 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                     .endControlFlow()
                     .addStatement("\$NEntityVersion = maxVersion", it.name)
                     .endControlFlow()
-                    .addStatement("nameEntityVersion++")
+                    .apply {
+                        if (DEBUG)
+                            this.addStatement(
+                                "\$T.v(\"DbRoom\", \$N + \$S + \$S + \$N)",
+                                LOGGER,
+                                "this.hashCode()",
+                                ":",
+                                "notify${it.name.charUpper()}Changed version: ",
+                                "${it.name}EntityVersion"
+                            )
+                    }
+                    .addStatement("\$NEntityVersion++", it.name)
                     .addStatement(
                         "\$T<\$T<\$T>> \$NOfAll = \$NOfAll()",
                         List::class.java,
@@ -492,94 +525,118 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                     .endControlFlow()
                     .apply {
                         if (!useRoom) return@apply
+                        if (DEBUG) {
+                            this.addStatement(
+                                "\$T.v(\"DbRoom\", \$N + \$S + \$S + \$N + \$S + \$N)",
+                                LOGGER,
+                                "this.hashCode()",
+                                ":",
+                                "notify${it.name.charUpper()}Changed entityV: ",
+                                "${it.name}EntityVersion" ,
+                                " ,roomV:",
+                                "${it.name}RoomVersion" ,
+                            )
+                        }
                         this
-                            .addStatement(
-                                "if (\$NRoomVersion >= \$NEntityVersion) return",
-                                it.name,
-                                it.name
-                            )
-                            .addStatement("\$NRoomVersion = \$NEntityVersion - 1", it.name, it.name)
-                            .addStatement(
-                                "\$T.notifyRoom(\$L)",
-                                ROOM_NOTIFIER,
-                                TypeSpec.anonymousClassBuilder("")
-                                    .addSuperinterface(ROOM_NOTIFIER_NOTIFIER)
-                                    .addMethod(
-                                        MethodSpec.methodBuilder("notifier")
-                                            .addModifiers(Modifier.PUBLIC)
-                                            .addAnnotation(Override::class.java)
-                                            .beginControlFlow(
-                                                "if (\$NEntityVersion - \$NRoomVersion == 1)",
-                                                it.name,
-                                                it.name
-                                            )
-                                            .addStatement(
-                                                "\$NRoomVersion = \$NEntityVersion",
-                                                it.name,
-                                                it.name
-                                            )
-                                            .addStatement(
-                                                "\$T.\$N().update\$N(\$T.this.\$N(), \$T.this.\$N())",
-                                                DB_ROOM,
-                                                clazz.classSimpleName.charLower(),
-                                                it.name.charUpper(),
-                                                clazz.notifierClassName(),
-                                                clazz.roomPrimaryKeyField().getter.name,
-                                                clazz.notifierClassName(),
-                                                it.getter.name
-                                            )
-                                            .addStatement(
-                                                "\$T<\$T<\$T>> \$NOfRoom = \$NOfAll()",
-                                                List::class.java,
-                                                WeakReference::class.java,
-                                                clazz.notifierClassName(),
-                                                it.name,
-                                                clazz.classSimpleName.charLower()
-                                            )
-                                            .beginControlFlow(
-                                                "for (\$T<\$T> reference : \$NOfRoom)",
-                                                WeakReference::class.java,
-                                                clazz.notifierClassName(),
-                                                it.name
-                                            )
-                                            .addStatement(
-                                                "\$T notifier = reference.get()",
-                                                clazz.notifierClassName()
-                                            )
-                                            .addStatement(
-                                                "if (notifier == null || \$T.this.\$N() != notifier.\$N()) continue",
-                                                clazz.notifierClassName(),
-                                                clazz.roomPrimaryKeyField().getter.name,
-                                                clazz.roomPrimaryKeyField().getter.name
-                                            )
-                                            .beginControlFlow(
-                                                "if (\$NEntityVersion > notifier.\$NEntityVersion)",
-                                                it.name,
-                                                it.name
-                                            )
-                                            .addStatement(
-                                                "notifier.\$NEntityVersion = \$NEntityVersion - 1",
-                                                it.name,
-                                                it.name
-                                            )
-                                            .addStatement(
-                                                "notifier.\$NRoomVersion = \$NEntityVersion",
-                                                it.name,
-                                                it.name
-                                            )
-                                            .addStatement(
-                                                "notifier.\$N(\$T.this.\$N())",
-                                                it.setter.name,
-                                                clazz.notifierClassName(),
-                                                it.getter.name
-                                            )
-                                            .endControlFlow()
-                                            .endControlFlow()
-                                            .endControlFlow()
-                                            .build()
-                                    )
-                                    .build()
-                            )
+                        .addStatement(
+                            "if (\$NRoomVersion >= \$NEntityVersion) return",
+                            it.name,
+                            it.name
+                        )
+                        .addStatement("\$NRoomVersion = \$NEntityVersion - 1", it.name, it.name)
+                        .addStatement(
+                            "\$T.notifyRoom(\$L)",
+                            ROOM_NOTIFIER,
+                            TypeSpec.anonymousClassBuilder("")
+                                .addSuperinterface(ROOM_NOTIFIER_NOTIFIER)
+                                .addMethod(
+                                    MethodSpec.methodBuilder("notifier")
+                                        .addModifiers(Modifier.PUBLIC)
+                                        .addAnnotation(Override::class.java)
+                                        .beginControlFlow(
+                                            "if (\$NEntityVersion - \$NRoomVersion == 1)",
+                                            it.name,
+                                            it.name
+                                        )
+                                        .apply {
+                                            if (DEBUG) {
+                                                this.addStatement(
+                                                    "\$T.v(\"DbRoom\", \$N + \$S + \$S + \$N )",
+                                                    LOGGER,
+                                                    "${clazz.notifierClassName().simpleName()}.this.hashCode()",
+                                                    ":",
+                                                    "notify${it.name.charUpper()}Changed room insert: ",
+                                                    "${clazz.notifierClassName().simpleName()}.this.${it.getter.name}()"
+                                                )
+                                            }
+                                        }
+                                        .addStatement(
+                                            "\$NRoomVersion = \$NEntityVersion",
+                                            it.name,
+                                            it.name
+                                        )
+                                        .addStatement(
+                                            "\$T.\$N().update\$N(\$T.this.\$N(), \$T.this.\$N())",
+                                            DB_ROOM,
+                                            clazz.classSimpleName.charLower(),
+                                            it.name.charUpper(),
+                                            clazz.notifierClassName(),
+                                            clazz.roomPrimaryKeyField().getter.name,
+                                            clazz.notifierClassName(),
+                                            it.getter.name
+                                        )
+                                        .addStatement(
+                                            "\$T<\$T<\$T>> \$NOfRoom = \$NOfAll()",
+                                            List::class.java,
+                                            WeakReference::class.java,
+                                            clazz.notifierClassName(),
+                                            it.name,
+                                            clazz.classSimpleName.charLower()
+                                        )
+                                        .beginControlFlow(
+                                            "for (\$T<\$T> reference : \$NOfRoom)",
+                                            WeakReference::class.java,
+                                            clazz.notifierClassName(),
+                                            it.name
+                                        )
+                                        .addStatement(
+                                            "\$T notifier = reference.get()",
+                                            clazz.notifierClassName()
+                                        )
+                                        .addStatement(
+                                            "if (notifier == null || \$T.this.\$N() != notifier.\$N()) continue",
+                                            clazz.notifierClassName(),
+                                            clazz.roomPrimaryKeyField().getter.name,
+                                            clazz.roomPrimaryKeyField().getter.name
+                                        )
+                                        .beginControlFlow(
+                                            "if (\$NEntityVersion > notifier.\$NEntityVersion)",
+                                            it.name,
+                                            it.name
+                                        )
+                                        .addStatement(
+                                            "notifier.\$NEntityVersion = \$NEntityVersion - 1",
+                                            it.name,
+                                            it.name
+                                        )
+                                        .addStatement(
+                                            "notifier.\$NRoomVersion = \$NEntityVersion",
+                                            it.name,
+                                            it.name
+                                        )
+                                        .addStatement(
+                                            "notifier.\$N(\$T.this.\$N())",
+                                            it.setter.name,
+                                            clazz.notifierClassName(),
+                                            it.getter.name
+                                        )
+                                        .endControlFlow()
+                                        .endControlFlow()
+                                        .endControlFlow()
+                                        .build()
+                                )
+                                .build()
+                        )
                     }
                     .endControlFlow()//synchronized
                     .build()
