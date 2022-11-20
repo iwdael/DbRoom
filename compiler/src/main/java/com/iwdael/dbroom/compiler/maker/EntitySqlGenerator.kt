@@ -9,7 +9,6 @@ import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
-import java.util.HashMap
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
 
@@ -48,9 +47,17 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                             .returns(clazz.sqlDeleterBuilderClassName())
                             .build()
                     )
+                    .addMethod(
+                        MethodSpec.methodBuilder("newInserter")
+                            .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
+                            .addStatement("return new \$T()", clazz.sqlInserterBuilderClassName())
+                            .returns(clazz.sqlInserterBuilderClassName())
+                            .build()
+                    )
                     .addType(createSQLTypeSpec(clazz.sqlFinderClassName()))
                     .addType(createSQLTypeSpec(clazz.sqlDeleterClassName()))
                     .addType(createSQLTypeSpec(clazz.sqlUpdaterClassName()))
+                    .addType(createSQLTypeSpec(clazz.sqlInserterClassName()))
                     .addType(
                         TypeSpec.classBuilder(clazz.sqlFinderBuilderClassName())
                             .addModifiers(Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC)
@@ -223,11 +230,14 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                 FieldSpec.builder(
                                     ParameterizedTypeName.get(
                                         ClassName.get(Map::class.java),
-                                        ParameterizedTypeName.get(COLUMN,TypeVariableName.get("?")),
+                                        ParameterizedTypeName.get(
+                                            COLUMN,
+                                            TypeVariableName.get("?")
+                                        ),
                                         ClassName.get(Object::class.java)
                                     ), "columns"
                                 )
-                                    .addModifiers(Modifier.FINAL,Modifier.PRIVATE)
+                                    .addModifiers(Modifier.FINAL, Modifier.PRIVATE)
                                     .initializer("new \$T<>()", ClassName.get(HashMap::class.java))
                                     .build()
                             )
@@ -257,7 +267,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                 clazz.roomFields()
                                     .distinctBy { it.asTypeName() }
                                     .map {
-                                        MethodSpec.methodBuilder("append")
+                                        MethodSpec.methodBuilder("appending")
                                             .addParameter(it.columnClassName(), "column")
                                             .addParameter(it.asTypeName(), "field")
                                             .addStatement("columns.put(column, field)")
@@ -313,6 +323,72 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                     .addModifiers(Modifier.PRIVATE)
                                     .returns(ArrayTypeName.of(Object::class.java))
                                     .addStatement("return \$T.toBindArgs(wheres)", UTILS)
+                                    .build()
+                            )
+                            .build()
+                    )
+
+                    .addType(
+                        TypeSpec.classBuilder(clazz.sqlInserterBuilderClassName())
+                            .addModifiers(Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC)
+                            .addField(
+                                FieldSpec.builder(
+                                    ParameterizedTypeName.get(
+                                        ClassName.get(Map::class.java),
+                                        ParameterizedTypeName.get(
+                                            COLUMN,
+                                            TypeVariableName.get("?")
+                                        ),
+                                        ClassName.get(Object::class.java)
+                                    ), "columns"
+                                )
+                                    .addModifiers(Modifier.FINAL, Modifier.PRIVATE)
+                                    .initializer("new \$T<>()", ClassName.get(HashMap::class.java))
+                                    .build()
+                            )
+                            .addMethod(
+                                MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE)
+                                    .build()
+                            )
+                            .addMethods(
+                                clazz.roomFields()
+                                    .distinctBy { it.asTypeName() }
+                                    .map {
+                                        MethodSpec.methodBuilder("appending")
+                                            .addParameter(it.columnClassName(), "column")
+                                            .addParameter(it.asTypeName(), "field")
+                                            .addStatement("columns.put(column, field)")
+                                            .addStatement("return this")
+                                            .addModifiers(Modifier.PUBLIC)
+                                            .returns(clazz.sqlInserterBuilderClassName())
+                                            .build()
+                                    }
+                            )
+                            .addMethod(
+                                MethodSpec.methodBuilder("build")
+                                    .addModifiers(Modifier.PUBLIC)
+                                    .addStatement(
+                                        "return new \$T(toSelection(), toBindArgs())",
+                                        clazz.sqlInserterClassName()
+                                    )
+                                    .returns(clazz.sqlInserterClassName())
+                                    .build()
+                            )
+                            .addMethod(
+                                MethodSpec.methodBuilder("toSelection")
+                                    .addModifiers(Modifier.PRIVATE)
+                                    .returns(String::class.java)
+                                    .addStatement(
+                                        "return \$T.toInserterSelection(\"${clazz.roomTableName()}\", columns)",
+                                        UTILS
+                                    )
+                                    .build()
+                            )
+                            .addMethod(
+                                MethodSpec.methodBuilder("toBindArgs")
+                                    .addModifiers(Modifier.PRIVATE)
+                                    .returns(ArrayTypeName.of(Object::class.java))
+                                    .addStatement("return \$T.toBindArgs(columns)", UTILS)
                                     .build()
                             )
                             .build()

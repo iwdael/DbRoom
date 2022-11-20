@@ -111,6 +111,13 @@ fun Class.sqlUpdaterClassName(): ClassName {
     return "${this.className}SQL.Updater".asTypeName().asClassName()
 }
 
+fun Class.sqlInserterBuilderClassName(): ClassName {
+    return "${this.className}SQL.InsertBuilder".asTypeName().asClassName()
+}
+fun Class.sqlInserterClassName(): ClassName {
+    return "${this.className}SQL.Inserter".asTypeName().asClassName()
+}
+
 
 fun Class.whereBuilderClassName(): ClassName {
     return "${this.className}ConditionBuilder".asTypeName().asClassName()

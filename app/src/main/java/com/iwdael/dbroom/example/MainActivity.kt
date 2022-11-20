@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.iwdael.dbroom.DbRoom
 import com.iwdael.dbroom.example.databinding.ActivityMainBindingImpl
-import com.iwdael.dbroom.example.entity.*
+import com.iwdael.dbroom.example.entity.AirTechColumn
+import com.iwdael.dbroom.example.entity.AirTechSQL
+import com.iwdael.dbroom.example.entity.Music
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,19 +17,34 @@ class MainActivity : AppCompatActivity() {
         val binding =
             DataBindingUtil.setContentView<ActivityMainBindingImpl>(this, R.layout.activity_main)
         DbRoom.init(this)
-        AirTechSQL
+        val finder = AirTechSQL
             .newFinder()
-            .fields()
+            .fields(AirTechColumn.double_,AirTechColumn.long_,AirTechColumn.float_)
             .where(AirTechColumn.byte_)
             .equal(1)
-            .build();
-       val updater = MusicSQL.newUpdater()
-            .append(MusicColumn.name,"Android")
-            .appended(MusicColumn.lyrics,"JC")
-            .where(MusicColumn.name)
-            .equal("SC")
             .build()
-        Log.v("DbRoom",updater.selection)
+        val updater = AirTechSQL.newUpdater()
+            .appending(AirTechColumn.byte_, 1)
+            .appended(AirTechColumn.short_, 1)
+            .where(AirTechColumn.double_)
+            .equal(0.0)
+            .build()
+        val inserter = AirTechSQL.newInserter()
+            .appending(AirTechColumn.byte_, 1)
+            .appending(AirTechColumn.double_, 1.0)
+            .build()
+        val deleter = AirTechSQL.newDeleter()
+            .fields(AirTechColumn.double_,AirTechColumn.long_,AirTechColumn.float_)
+            .where(AirTechColumn.byte_)
+            .equal(1)
+            .and()
+            .where(AirTechColumn.int_)
+            .unequal(10)
+            .build()
+        Log.v("DbRoom", inserter.selection)
+        Log.v("DbRoom", updater.selection)
+        Log.v("DbRoom", finder.selection)
+        Log.v("DbRoom", deleter.selection)
         Thread {
             DbRoom.music().deleteAll()
             DbRoom.music().insert(Music().apply {

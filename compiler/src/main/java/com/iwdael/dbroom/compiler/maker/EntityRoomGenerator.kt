@@ -45,13 +45,13 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"INSERT OR REPLACE INTO ${clazz.roomTableName()}(${
+                        "\"INSERT OR REPLACE INTO ${clazz.roomTableName()} (${
                             clazz.roomFields().joinToString(
-                                separator = " ,",
+                                separator = " , ",
                                 transform = { it.colName() })
-                        }) values(${
+                        }) VALUES (${
                             clazz.roomFields().joinToString(
-                                separator = " ,",
+                                separator = " , ",
                                 transform = { ":${it.name}" })
                         })\""
                     )
@@ -87,13 +87,13 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                 AnnotationSpec.builder(Query::class.java)
                     .addMember(
                         "value",
-                        "\"INSERT INTO ${clazz.roomTableName()}(${
+                        "\"INSERT INTO ${clazz.roomTableName()} (${
                             clazz.roomFields().joinToString(
-                                separator = " ,",
+                                separator = " , ",
                                 transform = { it.colName() })
-                        }) values(${
+                        }) VALUES (${
                             clazz.roomFields().joinToString(
-                                separator = " ,",
+                                separator = " , ",
                                 transform = { ":${it.name}" })
                         })\""
                     )
@@ -135,6 +135,31 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
             })
             .build()
     }
+
+    private fun insertSupportSQLiteQuery() = MethodSpec.methodBuilder("insert")
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .addAnnotation(
+            AnnotationSpec.builder(RawQuery::class.java)
+                .addMember(
+                    "observedEntities",
+                    "{\$T.class}",
+                    clazz.asTypeName()
+                )
+                .build()
+        )
+        .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
+        .returns(TypeName.INT)
+        .build()
+
+    private fun inserter() = MethodSpec.methodBuilder("insert")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .addParameter(clazz.sqlInserterClassName(), "inserter")
+        .addStatement(
+            "return insert(new \$T(inserter.selection, inserter.bindArgs))",
+            ClassName.get("androidx.sqlite.db", "SimpleSQLiteQuery")
+        )
+        .returns(TypeName.INT)
+        .build()
 
     private fun deleteArray() = MethodSpec.methodBuilder("delete")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
@@ -488,6 +513,8 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                     .addMethod(insert())
                     .addMethod(insertArray())
                     .addMethods(inserts())
+                    .addMethod(insertSupportSQLiteQuery())
+                    .addMethod(inserter())
 
                     .addMethod(deleteArray())
                     .addMethod(deleteAll())
