@@ -10,7 +10,7 @@ import com.squareup.javapoet.TypeName
  */
 object JavaClass {
     const val DEBUG = false
-    val BASE_OBSERVABLE: ClassName = ClassName.bestGuess("androidx.databinding.BaseObservable")
+    val BASE_NOTIFIER: ClassName = ClassName.get("com.iwdael.dbroom.core", "Notifier")
     val ROOM_DATABASE: ClassName = ClassName.get("androidx.room", "RoomDatabase")
     val CONTEXT: ClassName = ClassName.get("android.content", "Context")
     val LOGGER: ClassName = ClassName.get("android.util", "Log")
@@ -122,4 +122,5 @@ object JavaClass {
         ClassName.get("${ROOM_NOTIFIER.packageName()}.${ROOM_NOTIFIER.simpleName()}", "Notifier")
 
     val BR: ClassName = ClassName.get("androidx.databinding.library.baseAdapters", "BR")
+    val DB :ClassName= ClassName.get("com.iwdael.dbroom","DB")
 }

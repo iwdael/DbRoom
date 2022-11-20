@@ -3,7 +3,6 @@
 // @project : https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.example.entity
 
-import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -11,6 +10,7 @@ import com.iwdael.dbroom.annotations.Find
 import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.annotations.UseNotifier
 import com.iwdael.dbroom.annotations.UseRoom
+import com.iwdael.dbroom.core.Notifier
 import kotlin.Long
 import kotlin.String
 
@@ -18,12 +18,13 @@ import kotlin.String
 @UseDataBinding
 @UseRoom
 @UseNotifier
-open class Music : BaseObservable() {
+open class Music : Notifier {
   @PrimaryKey
+  @Bindable
   open var id: Long? = null
 
+  @Find(value = ["findByName"])
   @Bindable
-  @Find("findByName")
   open var name: String? = null
 
   @Bindable

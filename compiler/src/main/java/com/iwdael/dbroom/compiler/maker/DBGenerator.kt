@@ -1,6 +1,7 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
+import com.iwdael.dbroom.compiler.JavaClass.DB
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.roomFields
@@ -17,9 +18,9 @@ import javax.lang.model.element.Modifier
  * @project : https://github.com/iwdael/dbroom
  */
 class DBGenerator(private val generator: List<Class>) : Generator {
-    override val simpleClassNameGen: String = "DB"
-    override val packageNameGen: String = "com.iwdael.dbroom"
-    override val classNameGen: String = "com.iwdael.dbroom.DB"
+    override val simpleClassNameGen: String = DB.simpleName()
+    override val packageNameGen: String = DB.packageName()
+    override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     override fun generate(filer: Filer) {
         JavaFile
             .builder(

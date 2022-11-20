@@ -9,7 +9,7 @@ import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
 import com.iwdael.annotationprocessorparser.poet.filePath
 import com.iwdael.dbroom.annotations.UseGenerator
-import com.iwdael.dbroom.compiler.KotlinClass.BASE_OBSERVABLE
+import com.iwdael.dbroom.compiler.KotlinClass.BASE_NOTIFIER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
@@ -30,7 +30,7 @@ class UseKotlinGenerator(val clazz: Class) {
         clazz.asFileBuilder()
             .addType(
                 clazz.asTypeBuilder()
-                    .superclass(BASE_OBSERVABLE)
+                    .addSuperinterface(BASE_NOTIFIER)
                     .addModifiers(KModifier.OPEN)
                     .addAnnotations(
                         clazz.annotations

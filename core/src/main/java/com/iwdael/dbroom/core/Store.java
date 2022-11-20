@@ -3,6 +3,7 @@
 // @project : https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -25,7 +26,7 @@ public class Store {
   )
   public String value;
 
-  public Store(String name, String value) {
+  public Store(@NonNull String name, String value) {
     this.name = name;
     this.value = value;
   }

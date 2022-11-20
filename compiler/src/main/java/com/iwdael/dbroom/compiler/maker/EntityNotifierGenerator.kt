@@ -8,7 +8,9 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickModifier
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
 import com.iwdael.dbroom.compiler.*
+import com.iwdael.dbroom.compiler.JavaClass.BASE_NOTIFIER
 import com.iwdael.dbroom.compiler.JavaClass.BR
+import com.iwdael.dbroom.compiler.JavaClass.DB
 import com.iwdael.dbroom.compiler.JavaClass.DB_ROOM
 import com.iwdael.dbroom.compiler.JavaClass.LOGGER
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_NOTIFIER
@@ -29,7 +31,6 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
     override val simpleClassNameGen: String = clazz.notifierClassName().simpleName()
     override val packageNameGen: String = clazz.notifierClassName().packageName()
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
-    private val observable = ClassName.bestGuess("androidx.databinding.Observable")
     private val useDataBinding = clazz.useDataBinding()
     private val useRoom = clazz.useRoom()
     private val useNotifier = clazz.useNotifier()
@@ -41,7 +42,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                     .superclass(clazz.asTypeName())
                     .apply {
                         if (useDataBinding)
-                            addSuperinterface(observable)
+                            addSuperinterface(BASE_NOTIFIER)
                     }
                     .addModifiers(Modifier.PUBLIC)
                     //Property
@@ -200,13 +201,11 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                             .forEachIndexed { index, field ->
                                                 if (index == 0) {
                                                     beginControlFlow(
-                                                        "if (fieldId == \$T.${field.name})",
-                                                        dbClassName()
+                                                        "if (fieldId == \$T.${field.name})", DB
                                                     )
                                                 } else {
                                                     nextControlFlow(
-                                                        "else if (fieldId == \$T.${field.name})",
-                                                        dbClassName()
+                                                        "else if (fieldId == \$T.${field.name})", DB
                                                     )
                                                 }
                                                 addStatement("notify${field.name.charUpper()}Changed()")
@@ -237,7 +236,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                             .stickParameter()
                                             .stickModifier()
                                             .addStatement("super.${it.setter.name}(${it.setter.parameter.first().name})")
-                                            .addStatement("notifyPropertyChanged(DB.${it.name})")
+                                            .addStatement("notifyPropertyChanged(\$T.${it.name})",DB)
                                             .build()
                                     }
                             )
@@ -313,7 +312,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                                     .addStatement("${it.name}EntityVersion = maxVersion")
                                                     .endControlFlow()
 
-                                                addStatement("notifyPropertyChanged(DB.${it.name})")
+                                                addStatement("notifyPropertyChanged(\$T.${it.name})",DB)
                                             }
 
                                     }
@@ -642,8 +641,6 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                     .build()
             }
     }
-
-    private fun dbClassName() = ClassName.get("com.iwdael.dbroom", "DB")
 
     private fun listWeakObservable() = ParameterizedTypeName.get(
         ClassName.get(List::class.java),

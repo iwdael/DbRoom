@@ -46,7 +46,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                             )
                             .addMethod(
                                 MethodSpec.constructorBuilder()
-                                    .addModifiers(Modifier.PROTECTED)
+                                    .addModifiers(Modifier.PRIVATE)
                                     .addParameter(String::class.java, "selection")
                                     .addParameter(ArrayTypeName.of(Object::class.java), "bindArgs")
                                     .addStatement("this.selection = selection")
@@ -86,7 +86,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                     .build()
                             )
                             .addMethod(
-                                MethodSpec.constructorBuilder().addModifiers(Modifier.PROTECTED)
+                                MethodSpec.constructorBuilder().addModifiers(Modifier.PRIVATE)
                                     .build()
                             )
                             .addMethod(

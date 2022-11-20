@@ -3,22 +3,20 @@
 // @project : https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.example.entity;
 
-import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
-
 import com.iwdael.dbroom.annotations.UseDataBinding;
 import com.iwdael.dbroom.annotations.UseRoom;
+import com.iwdael.dbroom.core.Notifier;
 import java.lang.Long;
 import java.lang.String;
 
 @UseDataBinding
 @UseRoom
 @Entity
-@TypeConverters
-public class Movie extends BaseObservable {
+public class Movie implements Notifier {
   @PrimaryKey
   @Bindable
   private Long id;

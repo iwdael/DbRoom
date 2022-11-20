@@ -8,5 +8,5 @@ import com.squareup.kotlinpoet.ClassName
  * @project : https://github.com/iwdael/dbroom
  */
 object KotlinClass {
-    val BASE_OBSERVABLE = ClassName.bestGuess("androidx.databinding.BaseObservable")
+    val BASE_NOTIFIER = ClassName.bestGuess("com.iwdael.dbroom.core.Notifier")
 }

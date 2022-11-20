@@ -11,13 +11,12 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickParameter
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
 import com.iwdael.annotationprocessorparser.poet.srcPath
 import com.iwdael.dbroom.annotations.UseGenerator
-import com.iwdael.dbroom.compiler.JavaClass.BASE_OBSERVABLE
+import com.iwdael.dbroom.compiler.JavaClass.BASE_NOTIFIER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.packageName
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.javapoet.AnnotationSpec
-import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
 import java.io.File
@@ -34,7 +33,7 @@ class UseJavaGenerator(val clazz: Class) {
         JavaFile
             .builder(
                 clazz.packageName(), TypeSpec.classBuilder(clazz.classSimpleName)
-                    .superclass(BASE_OBSERVABLE)
+                    .addSuperinterface(BASE_NOTIFIER)
                     .addModifiers(*clazz.modifiers.toTypedArray())
                     .addAnnotations(clazz.annotations
                         .filter { it.className != UseGenerator::class.java.name }
