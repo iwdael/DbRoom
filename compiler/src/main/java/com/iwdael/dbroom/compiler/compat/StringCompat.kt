@@ -35,36 +35,6 @@ fun String.bestGuessClassName(): TypeName {
     }
 }
 
-fun String.simpleClassName(): String {
-    val last = this.lastIndexOf(".")
-    if (last == -1) return this
-    return this.substring(last + 1)
-}
-
-fun StringBuilder.setterLastLineIndex(clazz: String, methodName: String): Int {
-    var i = this.indexOf(methodName)
-    var index = i
-    if (index == -1) return -1
-    val count = this.length
-    index += methodName.length
-    while (index < count) {
-        val i1 = this.indexOf("(", index)
-        if (i1 == -1) return -1
-        if (i1 == -1) continue
-        index = i1 + 1
-        val i2 = this.indexOf(")", index)
-        if (i2 == -1) continue
-        val parameter = this.substring(index, i2).trim()
-        index = i2
-        if (!parameter.contains(clazz) || parameter.contains(",")) continue
-        val i3 = this.indexOf("}", index)
-        if (i3 == -1) continue
-        return i3
-    }
-    return -1
-
-}
-
 const val FILE_COMMENT =
     "@author  : iwdael\n" +
             "@mail    : iwdael@outlook.com\n" +

@@ -34,6 +34,7 @@ import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.interfaceColumnClassName
+import com.iwdael.dbroom.compiler.roomFields
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier
@@ -53,7 +54,7 @@ class EntityColumnGenerator(private val clazz: Class) : Generator {
                 packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addFields(
-                        clazz.fields
+                        clazz.roomFields()
                             .map {
                                 FieldSpec
                                     .builder(it.columnClassName(), it.name)
@@ -70,7 +71,7 @@ class EntityColumnGenerator(private val clazz: Class) : Generator {
                             .addModifiers(Modifier.PUBLIC).build()
                     )
                     .addTypes(
-                        clazz.fields
+                        clazz.roomFields()
                             .map { it.asTypeName() }
                             .toSet()
                             .map {

@@ -103,11 +103,11 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                     }
                                 )
                                 .addFields(
-                                    clazz.fields
+                                    clazz.roomFields()
                                         .filter { it.getAnnotation(PrimaryKey::class.java) == null }
                                         .map {
                                             FieldSpec.builder(
-                                                "java.lang.Object".bestGuessClassName(),
+                                                ClassName.get(Object::class.java),
                                                 "${it.name}Lock",
                                                 Modifier.STATIC,
                                                 Modifier.FINAL,
@@ -228,7 +228,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                     .apply {
                         if (useDataBinding || useRoom) {
                             addMethods(
-                                clazz.fields
+                                clazz.roomFields()
                                     .filter { it.getAnnotation(PrimaryKey::class.java) == null }
                                     .filter { it.getAnnotation(Bindable::class.java) != null }
                                     .map {
@@ -282,11 +282,11 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                 MethodSpec.methodBuilder("notifyPropertiesChanged")
                                     .addModifiers(Modifier.PUBLIC)
                                     .apply {
-                                        beginControlFlow("if (this.${clazz.roomPrimaryKeyField().getter.name}() == null)")
+                                        beginControlFlow("if (this.${clazz.primaryKey().getter.name}() == null)")
                                             .apply {
                                                 if (DEBUG)
                                                     addStatement(
-                                                        "\$T.w(\"DbRoom\", \"there is not ${clazz.roomPrimaryKeyField().name} in ${clazz.classSimpleName}\")",
+                                                        "\$T.w(\"DbRoom\", \"there is not ${clazz.primaryKey().name} in ${clazz.classSimpleName}\")",
                                                         JavaClass.LOGGER
                                                     )
                                             }
@@ -342,7 +342,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                     clazz.notifierClassName()
                                 )
                                 .apply {
-                                    clazz.fields.forEach {
+                                    clazz.roomFields().forEach {
                                         addStatement("notifier.${it.setter.name}(${clazz.classSimpleName.charLower()}.${it.getter.name}())")
                                     }
                                 }
@@ -366,7 +366,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                     clazz.asTypeName()
                                 )
                                 .apply {
-                                    clazz.fields.forEach {
+                                    clazz.roomFields().forEach {
                                         addStatement(
                                             "\$N.\$N(this.\$N())",
                                             clazz.classSimpleName.charLower(),
@@ -415,7 +415,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                             .methodBuilder("notifier")
                                             .addModifiers(Modifier.PUBLIC)
                                             .addStatement(
-                                                "\$T.music().updateName(\$T.this.${clazz.roomPrimaryKeyField().getter.name}(), \$T.this.${it.getter.name}())",
+                                                "\$T.music().updateName(\$T.this.${clazz.primaryKey().getter.name}(), \$T.this.${it.getter.name}())",
                                                 DB_ROOM,
                                                 clazz.notifierClassName(),
                                                 clazz.notifierClassName()
@@ -464,7 +464,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
 
                     .beginControlFlow(
                         "if (this.\$N() == null || \$NEntityVersion == -1)",
-                        clazz.roomPrimaryKeyField().getter.name,
+                        clazz.primaryKey().getter.name,
                         it.name
                     )
                     .addStatement("\$NEntityVersion = 0", it.name)
@@ -501,8 +501,8 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                     .addStatement("\$T notifier = reference.get()", clazz.notifierClassName())
                     .addStatement(
                         "if (notifier == null || this.\$N() != notifier.\$N()) continue",
-                        clazz.roomPrimaryKeyField().getter.name,
-                        clazz.roomPrimaryKeyField().getter.name
+                        clazz.primaryKey().getter.name,
+                        clazz.primaryKey().getter.name
                     )
                     .addStatement(
                         "maxVersion = \$T.max(notifier.\$NEntityVersion, maxVersion)",
@@ -540,8 +540,8 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                     .addStatement("\$T notifier = reference.get()", clazz.notifierClassName())
                     .addStatement(
                         "if (notifier == null || this.\$N() != notifier.\$N()) continue",
-                        clazz.roomPrimaryKeyField().getter.name,
-                        clazz.roomPrimaryKeyField().getter.name
+                        clazz.primaryKey().getter.name,
+                        clazz.primaryKey().getter.name
                     )
                     .beginControlFlow(
                         "if (\$NEntityVersion > notifier.\$NEntityVersion)",
@@ -619,7 +619,7 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                                 clazz.classSimpleName.charLower(),
                                                 it.name.charUpper(),
                                                 clazz.notifierClassName(),
-                                                clazz.roomPrimaryKeyField().getter.name,
+                                                clazz.primaryKey().getter.name,
                                                 clazz.notifierClassName(),
                                                 it.getter.name
                                             )
@@ -644,8 +644,8 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                             .addStatement(
                                                 "if (notifier == null || \$T.this.\$N() != notifier.\$N()) continue",
                                                 clazz.notifierClassName(),
-                                                clazz.roomPrimaryKeyField().getter.name,
-                                                clazz.roomPrimaryKeyField().getter.name
+                                                clazz.primaryKey().getter.name,
+                                                clazz.primaryKey().getter.name
                                             )
                                             .beginControlFlow(
                                                 "if (\$NEntityVersion > notifier.\$NEntityVersion)",

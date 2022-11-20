@@ -43,9 +43,15 @@ fun Class.roomFields(): List<Field> {
     return fields.filter { it.getAnnotation(Ignore::class.java) == null }
 }
 
-fun Class.roomPrimaryKeyField(): Field {
-    return roomFields().firstOrNull { it.getAnnotation(PrimaryKey::class.java) != null }
-        ?: throw Exception("Can not found @PrimaryKey:${className}")
+fun Class.primaryKey(): Field {
+    if (this.roomFields().none { it.getAnnotation(PrimaryKey::class.java) != null }) {
+        throw Exception("Can not found PrimaryKey(${this.className})")
+    }
+    val field = roomFields().first { it.getAnnotation(PrimaryKey::class.java) != null }
+    if (field.asTypeName()::class.java == TypeName::class.java) {
+        throw Exception("PrimaryKey cannot be a basic type(${this.className}.${field.name})")
+    }
+    return field
 }
 
 fun Class.packageName(): String {

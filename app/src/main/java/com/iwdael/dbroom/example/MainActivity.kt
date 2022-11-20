@@ -5,18 +5,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.iwdael.dbroom.DbRoom
 import com.iwdael.dbroom.example.databinding.ActivityMainBindingImpl
+import com.iwdael.dbroom.example.entity.AirTechColumn
+import com.iwdael.dbroom.example.entity.AirTechSQL
 import com.iwdael.dbroom.example.entity.Music
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        const val DB_KEY = "DB_KEY"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding =
             DataBindingUtil.setContentView<ActivityMainBindingImpl>(this, R.layout.activity_main)
         DbRoom.init(this)
+//        AirTechSQL
+//            .newQuery()
+//            .fields()
+//            .where(AirTechColumn.boolean_)
+//            .between()
+
         Thread {
             DbRoom.music().deleteAll()
             DbRoom.music().insert(Music().apply {

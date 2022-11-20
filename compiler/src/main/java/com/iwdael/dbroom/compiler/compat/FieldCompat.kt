@@ -4,10 +4,11 @@ import androidx.room.PrimaryKey
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.Field
 import com.iwdael.dbroom.annotations.Delete
-import com.iwdael.dbroom.annotations.Insert
 import com.iwdael.dbroom.annotations.Find
+import com.iwdael.dbroom.annotations.Insert
 import com.iwdael.dbroom.annotations.Update
 import com.iwdael.dbroom.compiler.roomFields
+import com.iwdael.dbroom.compiler.primaryKey
 
 /**
  * @author  : iwdael
@@ -80,6 +81,6 @@ fun Class.getQuery(): List<Pair<String, List<Field>>> {
 }
 
 fun Class.getUpdateFiled(): Pair<Field, List<Field>> {
-    return this.roomFields().filter { it.getAnnotation(PrimaryKey::class.java) != null }.first() to
+    return this.primaryKey() to
             this.roomFields().filter { it.getAnnotation(PrimaryKey::class.java) == null }
 }

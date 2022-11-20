@@ -81,7 +81,7 @@ class EntityConditionBuilderGenerator(private val clazz: Class) : Generator {
                             .build()
                     )
                     .addMethods(
-                        clazz.fields
+                        clazz.roomFields()
                             .distinctBy { it.asTypeName() }
                             .map {
                                 MethodSpec.methodBuilder("where")
