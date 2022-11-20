@@ -19,9 +19,6 @@ class MainActivity : AppCompatActivity() {
         AirTechSQL
             .newQuery()
             .fields()
-            .where(AirTechColumn.boolean_)
-            .equal( true)
-
         Thread {
             DbRoom.music().deleteAll()
             DbRoom.music().insert(Music().apply {

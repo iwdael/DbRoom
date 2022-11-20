@@ -10,6 +10,7 @@ import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.columnClassName
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
+import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.whereBuilderClassName
 import com.iwdael.dbroom.compiler.whereClassName
 import com.squareup.javapoet.*

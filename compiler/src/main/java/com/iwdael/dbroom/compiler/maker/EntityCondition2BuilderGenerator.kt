@@ -2,16 +2,13 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
-import com.iwdael.dbroom.compiler.JavaClass
+import com.iwdael.dbroom.compiler.*
 import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER_2
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
-import com.iwdael.dbroom.compiler.columnClassName
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
-import com.iwdael.dbroom.compiler.whereBuilder2ClassName
-import com.iwdael.dbroom.compiler.whereClassName
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
 import javax.lang.model.element.Modifier

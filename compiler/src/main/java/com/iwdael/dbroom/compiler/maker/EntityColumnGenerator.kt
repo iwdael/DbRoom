@@ -161,7 +161,7 @@ class EntityColumnGenerator(private val clazz: Class) : Generator {
             .addSuperinterface(clazz.interfaceColumnClassName())
             .addMethod(
                 MethodSpec.constructorBuilder()
-                    .addModifiers(Modifier.PROTECTED)
+                    .addModifiers(Modifier.PRIVATE)
                     .addParameter(String::class.java, "name")
                     .addStatement("super(name)")
                     .build()
@@ -180,7 +180,7 @@ class EntityColumnGenerator(private val clazz: Class) : Generator {
             .addSuperinterface(clazz.interfaceColumnClassName())
             .addMethod(
                 MethodSpec.constructorBuilder()
-                    .addModifiers(Modifier.PROTECTED)
+                    .addModifiers(Modifier.PRIVATE)
                     .addParameter(String::class.java, "name")
                     .addStatement("super(name)")
                     .build()
