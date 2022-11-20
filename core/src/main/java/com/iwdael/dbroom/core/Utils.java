@@ -7,11 +7,18 @@ import java.lang.Object;
 import java.lang.String;
 import java.lang.StringBuilder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class Utils {
+  protected static final String DELETE = "DELETE";
+
   protected static final String SELECT = "SELECT";
+
+  protected static final String UPDATE = "UPDATE";
 
   protected static final String WHERE = "WHERE";
 
@@ -19,10 +26,12 @@ public class Utils {
 
   protected static final String SPACE = " ";
 
+  protected static final String SET = "SET";
+
   protected static final String AND = "AND";
 
-  public static String toQuerySelection(String tableName, Object[] columns,
-      List<Condition<?, ?, ?, ?>> wheres) {
+  public static String toFinderSelection(String tableName, Object[] columns,
+                                         List<Condition<?, ?, ?, ?>> wheres) {
     StringBuilder builder = new StringBuilder();
     builder.append(SELECT).append(SPACE);
     for (Object column : columns) {
@@ -32,14 +41,41 @@ public class Utils {
       builder.append("*").append(SPACE);
     }
     builder.append(FROM).append(SPACE).append(tableName).append(SPACE);
-    if (wheres.isEmpty()) {
-      return builder.toString();
-    } else {
+    if (!wheres.isEmpty()) {
       builder.append(toWhere(wheres));
-      return builder.toString();
     }
+    return builder.toString();
   }
 
+  public static String toDeleterSelection(String tableName, Object[] columns,
+                                         List<Condition<?, ?, ?, ?>> wheres) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(DELETE).append(SPACE);
+    for (Object column : columns) {
+      builder.append(column).append(SPACE);
+    }
+    if (columns.length == 0) {
+      builder.append("*").append(SPACE);
+    }
+    builder.append(FROM).append(SPACE).append(tableName).append(SPACE);
+    if (!wheres.isEmpty()) {
+      builder.append(toWhere(wheres));
+    }
+    return builder.toString();
+  }
+  public static String toUpdaterSelection(String tableName, Map<Column<?>, Object> columns, List<Condition<?, ?, ?, ?>> wheres) {
+    StringBuilder builder = new StringBuilder();
+    builder.append(UPDATE).append(SPACE).append(tableName).append(SPACE).append(SET).append(SPACE);
+    Iterator<Column<?>> iterator = columns.keySet().iterator();
+    while (iterator.hasNext()){
+      builder.append(iterator.next()).append(SPACE).append("=").append(SPACE).append("?").append(SPACE);
+      if (iterator.hasNext()) builder.append(",").append(SPACE);
+    }
+    if (!wheres.isEmpty()) {
+      builder.append(toWhere(wheres));
+    }
+    return builder.toString();
+  }
   public static Object[] toBindArgs(List<Condition<?, ?, ?, ?>> wheres) {
     List<Object> bindArgs = new ArrayList<>();
     for (Condition<?, ?, ?, ?> where : wheres) {

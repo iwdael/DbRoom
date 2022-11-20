@@ -186,6 +186,31 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
         )
         .build()
 
+    private fun deleteSupportSQLiteQuery() = MethodSpec.methodBuilder("delete")
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .addAnnotation(
+            AnnotationSpec.builder(RawQuery::class.java)
+                .addMember(
+                    "observedEntities",
+                    "{\$T.class}",
+                    clazz.asTypeName()
+                )
+                .build()
+        )
+        .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
+        .returns(TypeName.INT)
+        .build()
+
+    private fun deleter() = MethodSpec.methodBuilder("delete")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .addParameter(clazz.sqlDeleterClassName(), "deleter")
+        .addStatement(
+            "return delete(new \$T(deleter.selection, deleter.bindArgs))",
+            ClassName.get("androidx.sqlite.db", "SimpleSQLiteQuery")
+        )
+        .returns(TypeName.INT)
+        .build()
+
     private fun updateArray() = MethodSpec.methodBuilder("update")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
@@ -265,6 +290,31 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
     }
 
 
+    private fun updateSupportSQLiteQuery() = MethodSpec.methodBuilder("update")
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .addAnnotation(
+            AnnotationSpec.builder(RawQuery::class.java)
+                .addMember(
+                    "observedEntities",
+                    "{\$T.class}",
+                    clazz.asTypeName()
+                )
+                .build()
+        )
+        .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
+        .returns(TypeName.INT)
+        .build()
+
+    private fun updater() = MethodSpec.methodBuilder("update")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .addParameter(clazz.sqlUpdaterClassName(), "updater")
+        .addStatement(
+            "return update(new \$T(updater.selection, updater.bindArgs))",
+            ClassName.get("androidx.sqlite.db", "SimpleSQLiteQuery")
+        )
+        .returns(TypeName.INT)
+        .build()
+
     private fun findAll() = MethodSpec.methodBuilder("findAll")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
@@ -277,6 +327,21 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                 ClassName.get("java.util", "List"),
                 clazz.asTypeName()
             )
+        )
+        .build()
+
+    private fun findAll2() = MethodSpec.methodBuilder("findAll2")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .returns(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
+        )
+        .addStatement(
+            "return \$T.collectionConvert(findAll(), \$T::from)",
+            UTILS,
+            clazz.notifierClassName()
         )
         .build()
 
@@ -310,65 +375,6 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
             .build()
     }
 
-    private fun findSupportSQLiteQuery() = MethodSpec.methodBuilder("find")
-        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-        .addAnnotation(
-            AnnotationSpec.builder(RawQuery::class.java)
-                .addMember(
-                    "observedEntities",
-                    "{\$T.class}",
-                    clazz.asTypeName()
-                )
-                .build()
-        )
-        .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
-        .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                clazz.asTypeName()
-            )
-        )
-        .build()
-
-    private fun findSqlQuery() = MethodSpec.methodBuilder("find")
-        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-        .addAnnotation(
-            AnnotationSpec.builder(RawQuery::class.java)
-                .addMember(
-                    "observedEntities",
-                    "{\$T.class}",
-                    clazz.asTypeName()
-                )
-                .build()
-        )
-        .addParameter(clazz.sqlFinderClassName(), "finder")
-        .addStatement(
-            "return find(new \$T(finder.selection, finder.bindArgs))",
-            ClassName.get("androidx.sqlite.db", "SimpleSQLiteQuery")
-        )
-        .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                clazz.asTypeName()
-            )
-        )
-        .build()
-
-    private fun findAll2() = MethodSpec.methodBuilder("findAll2")
-        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-        .returns(
-            ParameterizedTypeName.get(
-                ClassName.get("java.util", "List"),
-                clazz.asTypeName()
-            )
-        )
-        .addStatement(
-            "return \$T.collectionConvert(findAll(), \$T::from)",
-            UTILS,
-            clazz.notifierClassName()
-        )
-        .build()
-
     private fun finds2() = clazz.getQuery().map { pair ->
         MethodSpec.methodBuilder("${pair.first}2")
             .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
@@ -394,6 +400,26 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
             .build()
     }
 
+    private fun findSupportSQLiteQuery() = MethodSpec.methodBuilder("find")
+        .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+        .addAnnotation(
+            AnnotationSpec.builder(RawQuery::class.java)
+                .addMember(
+                    "observedEntities",
+                    "{\$T.class}",
+                    clazz.asTypeName()
+                )
+                .build()
+        )
+        .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
+        .returns(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
+        )
+        .build()
+
     private fun findSupportSQLiteQuery2() = MethodSpec.methodBuilder("find2")
         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
         .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
@@ -410,7 +436,31 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
         )
         .build()
 
-    private fun findSqlQuery2() = MethodSpec.methodBuilder("find2")
+    private fun finder() = MethodSpec.methodBuilder("find")
+        .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
+        .addAnnotation(
+            AnnotationSpec.builder(RawQuery::class.java)
+                .addMember(
+                    "observedEntities",
+                    "{\$T.class}",
+                    clazz.asTypeName()
+                )
+                .build()
+        )
+        .addParameter(clazz.sqlFinderClassName(), "finder")
+        .addStatement(
+            "return find(new \$T(finder.selection, finder.bindArgs))",
+            ClassName.get("androidx.sqlite.db", "SimpleSQLiteQuery")
+        )
+        .returns(
+            ParameterizedTypeName.get(
+                ClassName.get("java.util", "List"),
+                clazz.asTypeName()
+            )
+        )
+        .build()
+
+    private fun finder2() = MethodSpec.methodBuilder("find2")
         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
         .addParameter(clazz.sqlFinderClassName(), "finder")
         .addStatement(
@@ -438,21 +488,27 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                     .addMethod(insert())
                     .addMethod(insertArray())
                     .addMethods(inserts())
+
                     .addMethod(deleteArray())
                     .addMethod(deleteAll())
                     .addMethods(deletes())
+                    .addMethod(deleteSupportSQLiteQuery())
+                    .addMethod(deleter())
+
                     .addMethod(updateArray())
                     .addMethods(updateFiled())
                     .addMethods(updates())
+                    .addMethod(updateSupportSQLiteQuery())
+                    .addMethod(updater())
+
                     .addMethod(findAll())
                     .addMethod(findAll2())
                     .addMethods(finds())
                     .addMethods(finds2())
                     .addMethod(findSupportSQLiteQuery())
                     .addMethod(findSupportSQLiteQuery2())
-                    .addMethod(findSqlQuery())
-                    .addMethod(findSqlQuery2())
-
+                    .addMethod(finder())
+                    .addMethod(finder2())
                     .build()
             )
             .addFileComment(FILE_COMMENT)

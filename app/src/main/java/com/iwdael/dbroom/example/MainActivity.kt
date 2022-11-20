@@ -1,13 +1,12 @@
 package com.iwdael.dbroom.example
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.iwdael.dbroom.DbRoom
 import com.iwdael.dbroom.example.databinding.ActivityMainBindingImpl
-import com.iwdael.dbroom.example.entity.AirTechColumn
-import com.iwdael.dbroom.example.entity.AirTechSQL
-import com.iwdael.dbroom.example.entity.Music
+import com.iwdael.dbroom.example.entity.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +20,14 @@ class MainActivity : AppCompatActivity() {
             .fields()
             .where(AirTechColumn.byte_)
             .equal(1)
+            .build();
+       val updater = MusicSQL.newUpdater()
+            .append(MusicColumn.name,"Android")
+            .appended(MusicColumn.lyrics,"JC")
+            .where(MusicColumn.name)
+            .equal("SC")
             .build()
+        Log.v("DbRoom",updater.selection)
         Thread {
             DbRoom.music().deleteAll()
             DbRoom.music().insert(Music().apply {

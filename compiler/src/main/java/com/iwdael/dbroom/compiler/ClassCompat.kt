@@ -96,6 +96,21 @@ fun Class.sqlFinderClassName(): ClassName {
     return "${this.className}SQL.Finder".asTypeName().asClassName()
 }
 
+fun Class.sqlDeleterBuilderClassName(): ClassName {
+    return "${this.className}SQL.DeleteBuilder".asTypeName().asClassName()
+}
+
+fun Class.sqlDeleterClassName(): ClassName {
+    return "${this.className}SQL.Deleter".asTypeName().asClassName()
+}
+
+fun Class.sqlUpdaterBuilderClassName(): ClassName {
+    return "${this.className}SQL.UpdateBuilder".asTypeName().asClassName()
+}
+fun Class.sqlUpdaterClassName(): ClassName {
+    return "${this.className}SQL.Updater".asTypeName().asClassName()
+}
+
 
 fun Class.whereBuilderClassName(): ClassName {
     return "${this.className}ConditionBuilder".asTypeName().asClassName()
