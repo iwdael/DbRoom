@@ -6,7 +6,7 @@ package com.iwdael.dbroom.example.entity;
 import androidx.databinding.Bindable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
+
 import com.iwdael.dbroom.annotations.UseDataBinding;
 import com.iwdael.dbroom.annotations.UseRoom;
 import com.iwdael.dbroom.core.Notifier;

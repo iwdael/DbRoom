@@ -22,9 +22,9 @@ class MainActivity : AppCompatActivity() {
             DbRoom.music().insert(Music().apply {
                 name = "Android"
             })
-            val m1 = DbRoom.music().findAllNotifier().first()
-            val m2 = DbRoom.music().findAllNotifier().first()
-            val m3 = DbRoom.music().findAllNotifier().first()
+            val m1 = DbRoom.music().findAll2().first()
+            val m2 = DbRoom.music().findAll2().first()
+            val m3 = DbRoom.music().findAll2().first()
             binding.entity1 = m1
             binding.entity2 = m2
             Thread.sleep(5000)

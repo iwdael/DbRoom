@@ -15,4 +15,8 @@ public interface Notifier extends Observable {
     @Override
     default void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
     }
+
+    default Notifier to() {
+        return this;
+    }
 }
