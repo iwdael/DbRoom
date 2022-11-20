@@ -28,7 +28,7 @@ class StoreRoomGenerator : Generator {
             AnnotationSpec.builder(Query::class.java)
                 .addMember(
                     "value",
-                    "\"REPLACE INTO tb_store (store_name,store_value) VALUES(:name, :value)\""
+                    "\"REPLACE INTO db_store (store_name , store_value) VALUES(:name , :value)\""
                 )
                 .build()
         )
@@ -45,7 +45,7 @@ class StoreRoomGenerator : Generator {
             AnnotationSpec.builder(Query::class.java)
                 .addMember(
                     "value",
-                    "\"SELECT * FROM tb_store WHERE store_name =:name LIMIT 1\""
+                    "\"SELECT * FROM db_store WHERE store_name = :name LIMIT 1\""
                 )
                 .build()
         )
