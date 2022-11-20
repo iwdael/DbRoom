@@ -11,7 +11,7 @@ import java.lang.String;
 import org.jetbrains.annotations.NotNull;
 
 @Entity(
-    tableName = "tb_store"
+    tableName = "db_store"
 )
 public class Store {
   @PrimaryKey
