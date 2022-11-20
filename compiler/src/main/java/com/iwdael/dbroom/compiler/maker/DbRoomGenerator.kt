@@ -5,8 +5,10 @@ import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.JavaClass.CONTEXT
+import com.iwdael.dbroom.compiler.JavaClass.CONVERTER
 import com.iwdael.dbroom.compiler.JavaClass.DB_ROOM
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_DATABASE
+import com.iwdael.dbroom.compiler.JavaClass.STORE
 import com.iwdael.dbroom.compiler.JavaClass.STORE_ROOM
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.charLower
@@ -84,7 +86,7 @@ class DbRoomGenerator(
                     .build()
             )
             .addParameter(Object::class.java, "value")
-            .addStatement("instance().store().store(name, Converter.toString(value))")
+            .addStatement("instance().store().store(name, \$T.toString(value))", CONVERTER)
             .build()
 
         val obtain = MethodSpec.methodBuilder("obtain")
@@ -107,7 +109,7 @@ class DbRoomGenerator(
             .returns(TypeVariableName.get("T"))
             .addStatement("Store store = instance().store().obtain(name)")
             .addStatement("if (store == null) return _default")
-            .addStatement("T val = (T)Converter.toObject(store.value, _default.getClass())")
+            .addStatement("T val = (T)\$T.toObject(store.value, _default.getClass())", CONVERTER)
             .addStatement("if (val == null) return _default")
             .addStatement("return val")
             .build()
@@ -131,7 +133,7 @@ class DbRoomGenerator(
             .returns(TypeVariableName.get("T"))
             .addStatement("Store store = instance().store().obtain(name)")
             .addStatement("if (store == null) return null")
-            .addStatement("T val = (T)Converter.toObject(store.value, clazz)")
+            .addStatement("T val = (T)\$T.toObject(store.value, clazz)", CONVERTER)
             .addStatement("if (val == null) return null")
             .addStatement("return val")
             .build()
@@ -148,10 +150,10 @@ class DbRoomGenerator(
                                 val fmt = entities.joinToString(
                                     separator = ",",
                                     transform = { "\$T.class" },
-                                    postfix = if (entities.isNotEmpty()) ",Store.class}" else "Store.class}",
+                                    postfix = if (entities.isNotEmpty()) ",\$T.class}" else "\$T.class}",
                                     prefix = "{"
                                 )
-                                add(fmt, *entities.map { it.asTypeName() }.toTypedArray())
+                                add(fmt, *entities.map { it.asTypeName() }.toTypedArray(), STORE)
                             }
                             .build()
                     )

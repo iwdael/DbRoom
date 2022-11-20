@@ -39,6 +39,7 @@ class StoreGenerator : Generator {
                                     .addMember("name", CodeBlock.of("\"store_name\""))
                                     .build()
                             )
+                            .addModifiers(Modifier.PUBLIC)
                             .addAnnotation(NotNull::class.java)
                             .build()
                     ).addField(
@@ -48,6 +49,7 @@ class StoreGenerator : Generator {
                                     .addMember("name", CodeBlock.of("\"store_value\""))
                                     .build()
                             )
+                            .addModifiers(Modifier.PUBLIC)
                             .build()
                     )
                     .addMethod(

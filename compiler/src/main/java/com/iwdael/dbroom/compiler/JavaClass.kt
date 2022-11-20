@@ -9,88 +9,88 @@ import com.squareup.javapoet.TypeName
  * @project : https://github.com/iwdael/dbroom
  */
 object JavaClass {
-    const val DEBUG = true
+    const val DEBUG = false
     val BASE_OBSERVABLE: ClassName = ClassName.bestGuess("androidx.databinding.BaseObservable")
     val ROOM_DATABASE: ClassName = ClassName.get("androidx.room", "RoomDatabase")
     val CONTEXT: ClassName = ClassName.get("android.content", "Context")
     val LOGGER: ClassName = ClassName.get("android.util", "Log")
-    val PACKING_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingColumn")
-    val BASIC_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicColumn")
-    val BASIC_CHAR_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicCharColumn")
-    val PACKING_CHAR_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingCharColumn")
+    val PACKING_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingColumn")
+    val BASIC_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicColumn")
+    val BASIC_CHAR_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicCharColumn")
+    val PACKING_CHAR_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingCharColumn")
 
-    val BASIC_BOOLEAN_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicBooleanColumn")
+    val BASIC_BOOLEAN_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicBooleanColumn")
     val PACKING_BOOLEAN_COLUMN: ClassName =
-        ClassName.get("com.iwdael.dbroom", "PackingBooleanColumn")
+        ClassName.get("com.iwdael.dbroom.core", "PackingBooleanColumn")
 
-    val BASIC_SHORT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicShortColumn")
-    val PACKING_SHORT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingShortColumn")
+    val BASIC_SHORT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicShortColumn")
+    val PACKING_SHORT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingShortColumn")
 
-    val BASIC_BYTE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicByteColumn")
-    val PACKING_BYTE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingByteColumn")
+    val BASIC_BYTE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicByteColumn")
+    val PACKING_BYTE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingByteColumn")
 
-    val BASIC_INT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicIntColumn")
-    val PACKING_INT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingIntColumn")
+    val BASIC_INT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicIntColumn")
+    val PACKING_INT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingIntColumn")
 
-    val BASIC_LONG_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicLongColumn")
-    val PACKING_LONG_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingLongColumn")
+    val BASIC_LONG_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicLongColumn")
+    val PACKING_LONG_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingLongColumn")
 
-    val BASIC_FLOAT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicFloatColumn")
-    val PACKING_FLOAT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingFloatColumn")
+    val BASIC_FLOAT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicFloatColumn")
+    val PACKING_FLOAT_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingFloatColumn")
 
-    val BASIC_DOUBLE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "BasicDoubleColumn")
-    val PACKING_DOUBLE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingDoubleColumn")
+    val BASIC_DOUBLE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "BasicDoubleColumn")
+    val PACKING_DOUBLE_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingDoubleColumn")
 
-    val PACKING_STRING_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "PackingStringColumn")
+    val PACKING_STRING_COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "PackingStringColumn")
 
 
-    val COLUMN: ClassName = ClassName.get("com.iwdael.dbroom", "Column")
-    val UTILS: ClassName = ClassName.get("com.iwdael.dbroom", "Utils")
-    val OPERATOR: ClassName = ClassName.get("com.iwdael.dbroom", "Operator")
-    val CONDITION: ClassName = ClassName.get("com.iwdael.dbroom", "Condition")
+    val COLUMN: ClassName = ClassName.get("com.iwdael.dbroom.core", "Column")
+    val UTILS: ClassName = ClassName.get("com.iwdael.dbroom.core", "Utils")
+    val OPERATOR: ClassName = ClassName.get("com.iwdael.dbroom.core", "Operator")
+    val CONDITION: ClassName = ClassName.get("com.iwdael.dbroom.core", "Condition")
     val CONDITION_STRING_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingString")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingString")
 
     val CONDITION_INTEGER_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingInteger")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingInteger")
     val CONDITION_INTEGER_BASIC: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionBasicInteger")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionBasicInteger")
 
     val CONDITION_FLOAT_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingFloat")
-    val CONDITION_FLOAT_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicFloat")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingFloat")
+    val CONDITION_FLOAT_BASIC: ClassName = ClassName.get("com.iwdael.dbroom.core", "ConditionBasicFloat")
 
     val CONDITION_SHORT_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingShort")
-    val CONDITION_SHORT_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicShort")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingShort")
+    val CONDITION_SHORT_BASIC: ClassName = ClassName.get("com.iwdael.dbroom.core", "ConditionBasicShort")
 
     val CONDITION_CHAR_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingChar")
-    val CONDITION_CHAR_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicChar")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingChar")
+    val CONDITION_CHAR_BASIC: ClassName = ClassName.get("com.iwdael.dbroom.core", "ConditionBasicChar")
 
     val CONDITION_DOUBLE_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingDouble")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingDouble")
     val CONDITION_DOUBLE_BASIC: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionBasicDouble")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionBasicDouble")
 
     val CONDITION_LONG_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingLong")
-    val CONDITION_LONG_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicLong")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingLong")
+    val CONDITION_LONG_BASIC: ClassName = ClassName.get("com.iwdael.dbroom.core", "ConditionBasicLong")
 
     val CONDITION_BYTE_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingByte")
-    val CONDITION_BYTE_BASIC: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBasicByte")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingByte")
+    val CONDITION_BYTE_BASIC: ClassName = ClassName.get("com.iwdael.dbroom.core", "ConditionBasicByte")
 
     val CONDITION_BOOLEAN_PACKING: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionPackingBoolean")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionPackingBoolean")
     val CONDITION_BOOLEAN_BASIC: ClassName =
-        ClassName.get("com.iwdael.dbroom", "ConditionBasicBoolean")
+        ClassName.get("com.iwdael.dbroom.core", "ConditionBasicBoolean")
 
-    val CONDITION_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBuilder")
-    val CONDITION_BUILDER_2: ClassName = ClassName.get("com.iwdael.dbroom", "ConditionBuilder2")
-    val CREATOR: ClassName = ClassName.get("com.iwdael.dbroom", "Creator")
-    val NEXT_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom", "NextBuilder")
-    val CALLBACK: ClassName = ClassName.get("com.iwdael.dbroom", "CallBack")
+    val CONDITION_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom.core", "ConditionBuilder")
+    val CONDITION_BUILDER_2: ClassName = ClassName.get("com.iwdael.dbroom.core", "ConditionBuilder2")
+    val CREATOR: ClassName = ClassName.get("com.iwdael.dbroom.core", "Creator")
+    val NEXT_BUILDER: ClassName = ClassName.get("com.iwdael.dbroom.core", "NextBuilder")
+    val CALLBACK: ClassName = ClassName.get("com.iwdael.dbroom.core", "CallBack")
 
     val FLOAT_PACKING: ClassName = ClassName.get("java.lang", "Float")
     val INT_PACKING: ClassName = ClassName.get("java.lang", "Integer")
@@ -113,11 +113,11 @@ object JavaClass {
 
     val STRING: ClassName = ClassName.get(String::class.java)
 
-    val STORE_ROOM: ClassName = ClassName.get("com.iwdael.dbroom", "StoreRoom")
-    val CONVERTER: ClassName = ClassName.get("com.iwdael.dbroom", "Converter")
+    val STORE_ROOM: ClassName = ClassName.get("com.iwdael.dbroom.core", "StoreRoom")
+    val CONVERTER: ClassName = ClassName.get("com.iwdael.dbroom.core", "Converter")
     val DB_ROOM: ClassName = ClassName.get("com.iwdael.dbroom", "DbRoom")
-    val STORE: ClassName = ClassName.get("com.iwdael.dbroom", "Store")
-    val ROOM_NOTIFIER: ClassName = ClassName.get("com.iwdael.dbroom", "RoomNotifier")
+    val STORE: ClassName = ClassName.get("com.iwdael.dbroom.core", "Store")
+    val ROOM_NOTIFIER: ClassName = ClassName.get("com.iwdael.dbroom.core", "RoomNotifier")
     val ROOM_NOTIFIER_NOTIFIER: ClassName =
         ClassName.get("${ROOM_NOTIFIER.packageName()}.${ROOM_NOTIFIER.simpleName()}", "Notifier")
 
