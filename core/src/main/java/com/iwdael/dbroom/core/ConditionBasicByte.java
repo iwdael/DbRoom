@@ -62,13 +62,6 @@ public final class ConditionBasicByte<N, T, Q> extends Condition<N, T, Byte, Q> 
     return new Operator<N, T, Byte, Q>(this);
   }
 
-  public Operator<N, T, Byte, Q> like(byte value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Byte, Q>(this);
-  }
-
   public Operator<N, T, Byte, Q> in(byte... values) {
     for (byte value : values) {
       this.value.add(value);

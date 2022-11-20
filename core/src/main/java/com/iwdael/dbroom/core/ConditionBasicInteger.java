@@ -62,13 +62,6 @@ public final class ConditionBasicInteger<N, T, Q> extends Condition<N, T, Intege
     return new Operator<N, T, Integer, Q>(this);
   }
 
-  public Operator<N, T, Integer, Q> like(int value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Integer, Q>(this);
-  }
-
   public Operator<N, T, Integer, Q> in(int... values) {
     for (int value : values) {
       this.value.add(value);

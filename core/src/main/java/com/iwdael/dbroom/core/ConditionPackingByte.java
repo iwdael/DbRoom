@@ -63,13 +63,6 @@ public final class ConditionPackingByte<N, T, Q> extends Condition<N, T, Byte, Q
     return new Operator<N, T, Byte, Q>(this);
   }
 
-  public Operator<N, T, Byte, Q> like(Byte value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Byte, Q>(this);
-  }
-
   public Operator<N, T, Byte, Q> in(Byte... value) {
     this.value.addAll(Arrays.asList(value));
     this.callBack.call(this);

@@ -63,13 +63,6 @@ public final class ConditionPackingDouble<N, T, Q> extends Condition<N, T, Doubl
     return new Operator<N, T, Double, Q>(this);
   }
 
-  public Operator<N, T, Double, Q> like(Double value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Double, Q>(this);
-  }
-
   public Operator<N, T, Double, Q> in(Double... value) {
     this.value.addAll(Arrays.asList(value));
     this.callBack.call(this);

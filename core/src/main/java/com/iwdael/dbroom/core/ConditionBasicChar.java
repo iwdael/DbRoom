@@ -62,13 +62,6 @@ public final class ConditionBasicChar<N, T, Q> extends Condition<N, T, Character
     return new Operator<N, T, Character, Q>(this);
   }
 
-  public Operator<N, T, Character, Q> like(char value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Character, Q>(this);
-  }
-
   public Operator<N, T, Character, Q> in(char... values) {
     for (char value : values) {
       this.value.add(value);

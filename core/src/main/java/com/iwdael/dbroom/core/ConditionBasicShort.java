@@ -62,13 +62,6 @@ public final class ConditionBasicShort<N, T, Q> extends Condition<N, T, Short, Q
     return new Operator<N, T, Short, Q>(this);
   }
 
-  public Operator<N, T, Short, Q> like(short value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Short, Q>(this);
-  }
-
   public Operator<N, T, Short, Q> in(short... values) {
     for (short value : values) {
       this.value.add(value);

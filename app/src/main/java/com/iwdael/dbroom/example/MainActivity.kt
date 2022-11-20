@@ -16,11 +16,11 @@ class MainActivity : AppCompatActivity() {
         val binding =
             DataBindingUtil.setContentView<ActivityMainBindingImpl>(this, R.layout.activity_main)
         DbRoom.init(this)
-//        AirTechSQL
-//            .newQuery()
-//            .fields()
-//            .where(AirTechColumn.boolean_)
-//            .between()
+        AirTechSQL
+            .newQuery()
+            .fields()
+            .where(AirTechColumn.boolean_)
+            .equal( true)
 
         Thread {
             DbRoom.music().deleteAll()

@@ -63,13 +63,6 @@ public final class ConditionPackingChar<N, T, Q> extends Condition<N, T, Charact
     return new Operator<N, T, Character, Q>(this);
   }
 
-  public Operator<N, T, Character, Q> like(Character value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Character, Q>(this);
-  }
-
   public Operator<N, T, Character, Q> in(Character... value) {
     this.value.addAll(Arrays.asList(value));
     this.callBack.call(this);

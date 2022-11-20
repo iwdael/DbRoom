@@ -63,13 +63,6 @@ public final class ConditionPackingLong<N, T, Q> extends Condition<N, T, Long, Q
     return new Operator<N, T, Long, Q>(this);
   }
 
-  public Operator<N, T, Long, Q> like(Long value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Long, Q>(this);
-  }
-
   public Operator<N, T, Long, Q> in(Long... value) {
     this.value.addAll(Arrays.asList(value));
     this.callBack.call(this);

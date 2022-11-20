@@ -62,13 +62,6 @@ public final class ConditionBasicFloat<N, T, Q> extends Condition<N, T, Float, Q
     return new Operator<N, T, Float, Q>(this);
   }
 
-  public Operator<N, T, Float, Q> like(float value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Float, Q>(this);
-  }
-
   public Operator<N, T, Float, Q> in(float... values) {
     for (float value : values) {
       this.value.add(value);

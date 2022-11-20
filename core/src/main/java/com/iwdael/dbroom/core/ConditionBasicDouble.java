@@ -62,13 +62,6 @@ public final class ConditionBasicDouble<N, T, Q> extends Condition<N, T, Double,
     return new Operator<N, T, Double, Q>(this);
   }
 
-  public Operator<N, T, Double, Q> like(double value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Double, Q>(this);
-  }
-
   public Operator<N, T, Double, Q> in(double... values) {
     for (double value : values) {
       this.value.add(value);

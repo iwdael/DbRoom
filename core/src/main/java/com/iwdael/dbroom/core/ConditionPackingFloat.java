@@ -63,13 +63,6 @@ public final class ConditionPackingFloat<N, T, Q> extends Condition<N, T, Float,
     return new Operator<N, T, Float, Q>(this);
   }
 
-  public Operator<N, T, Float, Q> like(Float value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = BETWEEN;
-    return new Operator<N, T, Float, Q>(this);
-  }
-
   public Operator<N, T, Float, Q> in(Float... value) {
     this.value.addAll(Arrays.asList(value));
     this.callBack.call(this);
