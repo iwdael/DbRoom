@@ -88,12 +88,12 @@ fun Class.sqlClassName(): ClassName {
     return "${this.className}SQL".asTypeName().asClassName()
 }
 
-fun Class.sqlQueryBuilderClassName(): ClassName {
-    return "${this.className}SQL.QueryBuilder".asTypeName().asClassName()
+fun Class.sqlFinderBuilderClassName(): ClassName {
+    return "${this.className}SQL.FindBuilder".asTypeName().asClassName()
 }
 
-fun Class.sqlQueryClassName(): ClassName {
-    return "${this.className}SQL.Query".asTypeName().asClassName()
+fun Class.sqlFinderClassName(): ClassName {
+    return "${this.className}SQL.Finder".asTypeName().asClassName()
 }
 
 

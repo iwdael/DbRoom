@@ -25,14 +25,14 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                 packageNameGen, TypeSpec.classBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addMethod(
-                        MethodSpec.methodBuilder("newQuery")
+                        MethodSpec.methodBuilder("newFinder")
                             .addModifiers(Modifier.STATIC, Modifier.PUBLIC)
-                            .addStatement("return new \$T()", clazz.sqlQueryBuilderClassName())
-                            .returns(clazz.sqlQueryBuilderClassName())
+                            .addStatement("return new \$T()", clazz.sqlFinderBuilderClassName())
+                            .returns(clazz.sqlFinderBuilderClassName())
                             .build()
                     )
                     .addType(
-                        TypeSpec.classBuilder(clazz.sqlQueryClassName())
+                        TypeSpec.classBuilder(clazz.sqlFinderClassName())
                             .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC)
                             .addField(
                                 FieldSpec.builder(String::class.java, "selection")
@@ -57,7 +57,7 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                     )
 
                     .addType(
-                        TypeSpec.classBuilder(clazz.sqlQueryBuilderClassName())
+                        TypeSpec.classBuilder(clazz.sqlFinderBuilderClassName())
                             .addModifiers(Modifier.STATIC, Modifier.FINAL, Modifier.PUBLIC)
                             .addField(
                                 FieldSpec.builder(
@@ -104,18 +104,18 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                                             ParameterizedTypeName.get(
                                                 clazz.whereBuilder2ClassName(),
                                                 TypeVariableName.get("?"),
-                                                clazz.sqlQueryBuilderClassName(),
-                                                clazz.sqlQueryClassName()
+                                                clazz.sqlFinderBuilderClassName(),
+                                                clazz.sqlFinderClassName()
                                             ),
-                                            clazz.sqlQueryBuilderClassName(),
-                                            clazz.sqlQueryClassName()
+                                            clazz.sqlFinderBuilderClassName(),
+                                            clazz.sqlFinderClassName()
                                         )
                                     )
                                     .addStatement(
                                         "return new \$T<>(this, wheres::add, \$T::new, builder -> new \$T(builder.toSelection(), builder.toBindArgs()))",
                                         clazz.whereBuilderClassName(),
                                         clazz.whereBuilder2ClassName(),
-                                        clazz.sqlQueryClassName()
+                                        clazz.sqlFinderClassName()
                                     )
                                     .build()
                             )

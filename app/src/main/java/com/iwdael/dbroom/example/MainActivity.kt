@@ -17,8 +17,11 @@ class MainActivity : AppCompatActivity() {
             DataBindingUtil.setContentView<ActivityMainBindingImpl>(this, R.layout.activity_main)
         DbRoom.init(this)
         AirTechSQL
-            .newQuery()
+            .newFinder()
             .fields()
+            .where(AirTechColumn.byte_)
+            .equal(1)
+            .build()
         Thread {
             DbRoom.music().deleteAll()
             DbRoom.music().insert(Music().apply {

@@ -310,7 +310,7 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
             .build()
     }
 
-    private fun rawQuerySupportSQLiteQuery() = MethodSpec.methodBuilder("rawQuery")
+    private fun findSupportSQLiteQuery() = MethodSpec.methodBuilder("find")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(RawQuery::class.java)
@@ -330,7 +330,7 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
         )
         .build()
 
-    private fun rawQuerySqlQuery() = MethodSpec.methodBuilder("rawQuery")
+    private fun findSqlQuery() = MethodSpec.methodBuilder("find")
         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
         .addAnnotation(
             AnnotationSpec.builder(RawQuery::class.java)
@@ -341,9 +341,9 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                 )
                 .build()
         )
-        .addParameter(clazz.sqlQueryClassName(), "query")
+        .addParameter(clazz.sqlFinderClassName(), "finder")
         .addStatement(
-            "return rawQuery(new \$T(query.selection, query.bindArgs))",
+            "return find(new \$T(finder.selection, finder.bindArgs))",
             ClassName.get("androidx.sqlite.db", "SimpleSQLiteQuery")
         )
         .returns(
@@ -394,11 +394,11 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
             .build()
     }
 
-    private fun rawQuerySupportSQLiteQuery2() = MethodSpec.methodBuilder("rawQuery2")
+    private fun findSupportSQLiteQuery2() = MethodSpec.methodBuilder("find2")
         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
         .addParameter(ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery"), "sql")
         .addStatement(
-            "return \$T.collectionConvert(rawQuery(sql), \$T::from)",
+            "return \$T.collectionConvert(find(sql), \$T::from)",
             UTILS,
             clazz.notifierClassName()
         )
@@ -410,11 +410,11 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
         )
         .build()
 
-    private fun rawQuerySqlQuery2() = MethodSpec.methodBuilder("rawQuery2")
+    private fun findSqlQuery2() = MethodSpec.methodBuilder("find2")
         .addModifiers(Modifier.PUBLIC, Modifier.DEFAULT)
-        .addParameter(clazz.sqlQueryClassName(), "query")
+        .addParameter(clazz.sqlFinderClassName(), "finder")
         .addStatement(
-            "return \$T.collectionConvert(rawQuery(query), \$T::from)",
+            "return \$T.collectionConvert(find(finder), \$T::from)",
             UTILS,
             clazz.notifierClassName()
         )
@@ -448,10 +448,10 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                     .addMethod(findAll2())
                     .addMethods(finds())
                     .addMethods(finds2())
-                    .addMethod(rawQuerySupportSQLiteQuery())
-                    .addMethod(rawQuerySupportSQLiteQuery2())
-                    .addMethod(rawQuerySqlQuery())
-                    .addMethod(rawQuerySqlQuery2())
+                    .addMethod(findSupportSQLiteQuery())
+                    .addMethod(findSupportSQLiteQuery2())
+                    .addMethod(findSqlQuery())
+                    .addMethod(findSqlQuery2())
 
                     .build()
             )
