@@ -1,11 +1,14 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import java.lang.Double;
 import java.util.Arrays;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 public final class ConditionPackingDouble<N, T, Q> extends Condition<N, T, Double, Q> {
   public ConditionPackingDouble(T target, PackingColumn<Double> column,
       CallBack<Condition<N, T, ?, Q>> callBack, NextBuilder<N, T, Q> builder,

@@ -1,10 +1,13 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import java.lang.Double;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 public final class ConditionBasicDouble<N, T, Q> extends Condition<N, T, Double, Q> {
   public ConditionBasicDouble(T target, BasicColumn<Double> column,
       CallBack<Condition<N, T, ?, Q>> callBack, NextBuilder<N, T, Q> builder,

@@ -6,9 +6,11 @@ import com.iwdael.dbroom.compiler.JavaClass.CALLBACK
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
+import com.iwdael.dbroom.compiler.JavaClass.INDENT
 import com.iwdael.dbroom.compiler.JavaClass.NEXT_BUILDER
 import com.iwdael.dbroom.compiler.columnClassName
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.whereBuilderClassName
@@ -103,9 +105,11 @@ class EntityConditionBuilderGenerator(private val clazz: Class) : Generator {
                                     .build()
                             }
                     )
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(INDENT)
             .build()
             .write(filer)
     }

@@ -1,11 +1,14 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import java.lang.Character;
 import java.util.Arrays;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 public final class ConditionPackingChar<N, T, Q> extends Condition<N, T, Character, Q> {
   public ConditionPackingChar(T target, PackingColumn<Character> column,
       CallBack<Condition<N, T, ?, Q>> callBack, NextBuilder<N, T, Q> builder,

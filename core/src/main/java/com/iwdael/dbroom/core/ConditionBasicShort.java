@@ -1,10 +1,13 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import java.lang.Short;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 public final class ConditionBasicShort<N, T, Q> extends Condition<N, T, Short, Q> {
   public ConditionBasicShort(T target, BasicColumn<Short> column,
       CallBack<Condition<N, T, ?, Q>> callBack, NextBuilder<N, T, Q> builder,

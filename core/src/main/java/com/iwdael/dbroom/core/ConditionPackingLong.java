@@ -1,11 +1,14 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import java.lang.Long;
 import java.util.Arrays;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 public final class ConditionPackingLong<N, T, Q> extends Condition<N, T, Long, Q> {
   public ConditionPackingLong(T target, PackingColumn<Long> column,
       CallBack<Condition<N, T, ?, Q>> callBack, NextBuilder<N, T, Q> builder,

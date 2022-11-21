@@ -8,6 +8,7 @@ import com.iwdael.dbroom.compiler.JavaClass.CONDITION
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION_BUILDER_2
 import com.iwdael.dbroom.compiler.JavaClass.CREATOR
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
@@ -99,9 +100,11 @@ class EntityCondition2BuilderGenerator(private val clazz: Class) : Generator {
                                     .build()
                             }
                     )
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(JavaClass.INDENT)
             .build()
             .write(filer)
     }

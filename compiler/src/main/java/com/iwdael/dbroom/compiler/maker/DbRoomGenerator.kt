@@ -4,6 +4,7 @@ import androidx.room.Database
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.CONTEXT
 import com.iwdael.dbroom.compiler.JavaClass.CONVERTER
 import com.iwdael.dbroom.compiler.JavaClass.DB_ROOM
@@ -11,6 +12,7 @@ import com.iwdael.dbroom.compiler.JavaClass.ROOM_DATABASE
 import com.iwdael.dbroom.compiler.JavaClass.STORE
 import com.iwdael.dbroom.compiler.JavaClass.STORE_ROOM
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.charLower
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.roomClassName
@@ -214,10 +216,12 @@ class DbRoomGenerator(
                         .build()
                 )
             }
+            .addJavadoc(TYPE_COMMENT)
             .build()
         JavaFile
             .builder(packageNameGen, classTypeSpec)
             .addFileComment(FILE_COMMENT)
+            .indent(JavaClass.INDENT)
             .build()
             .write(filer)
 

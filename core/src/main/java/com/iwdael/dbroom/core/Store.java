@@ -1,6 +1,4 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import androidx.annotation.NonNull;
@@ -10,6 +8,11 @@ import androidx.room.PrimaryKey;
 import java.lang.String;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 @Entity(
     tableName = "db_store"
 )

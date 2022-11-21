@@ -36,6 +36,9 @@ fun String.bestGuessClassName(): TypeName {
 }
 
 const val FILE_COMMENT =
+    "Create by https://github.com/iwdael/dbroom"
+
+const val TYPE_COMMENT =
     "@author  : iwdael\n" +
             "@mail    : iwdael@outlook.com\n" +
             "@project : https://github.com/iwdael/dbroom"

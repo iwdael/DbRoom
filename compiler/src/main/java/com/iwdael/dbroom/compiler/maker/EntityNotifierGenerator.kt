@@ -13,6 +13,7 @@ import com.iwdael.dbroom.compiler.JavaClass.BR
 import com.iwdael.dbroom.compiler.JavaClass.DB
 import com.iwdael.dbroom.compiler.JavaClass.DB_ROOM
 import com.iwdael.dbroom.compiler.JavaClass.DEBUG
+import com.iwdael.dbroom.compiler.JavaClass.INDENT
 import com.iwdael.dbroom.compiler.JavaClass.LOGGER
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_NOTIFIER
 import com.iwdael.dbroom.compiler.JavaClass.ROOM_NOTIFIER_NOTIFIER
@@ -379,9 +380,11 @@ class EntityNotifierGenerator(private val clazz: Class) : Generator {
                                 .build()
                         )
                     }
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(INDENT)
             .build()
             .write(filer)
     }

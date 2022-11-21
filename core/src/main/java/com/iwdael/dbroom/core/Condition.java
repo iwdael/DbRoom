@@ -1,12 +1,15 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 public abstract class Condition<N, T, R, Q> {
   protected static final String EQUAL = "=";
 

@@ -2,8 +2,10 @@ package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Method
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
+import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.CONVERTER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
@@ -142,9 +144,11 @@ class ConverterGenerator(private val generator: List<Method>) : Generator {
                             .endControlFlow()
                             .addStatement("throw new RuntimeException(\"Type not supported: \" + clazz.getName())")
                             .build())
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(JavaClass.INDENT)
             .build()
             .write(filer)
 

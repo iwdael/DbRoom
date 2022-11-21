@@ -123,4 +123,5 @@ object JavaClass {
 
     val BR: ClassName = ClassName.get("androidx.databinding.library.baseAdapters", "BR")
     val DB :ClassName= ClassName.get("com.iwdael.dbroom","DB")
+    const val INDENT = "  "
 }

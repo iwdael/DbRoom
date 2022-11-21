@@ -9,8 +9,10 @@ import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeBuilder
 import com.iwdael.annotationprocessorparser.poet.KotlinPoet.asTypeName
 import com.iwdael.annotationprocessorparser.poet.filePath
 import com.iwdael.dbroom.annotations.UseGenerator
+import com.iwdael.dbroom.compiler.JavaClass.INDENT
 import com.iwdael.dbroom.compiler.KotlinClass.BASE_NOTIFIER
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
 import com.squareup.kotlinpoet.AnnotationSpec
@@ -64,9 +66,11 @@ class UseKotlinGenerator(val clazz: Class) {
                                 .build()
                         }
                     )
+                    .addKdoc(TYPE_COMMENT)
                     .build()
             )
             .addComment(FILE_COMMENT)
+            .indent(INDENT)
             .build()
             .toString()
             .replace("public ", "")

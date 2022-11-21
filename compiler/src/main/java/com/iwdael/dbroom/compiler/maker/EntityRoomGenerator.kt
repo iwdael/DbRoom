@@ -4,6 +4,7 @@ import androidx.room.*
 import com.iwdael.annotationprocessorparser.Class
 import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.*
+import com.iwdael.dbroom.compiler.JavaClass.INDENT
 import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.compat.*
 import com.squareup.javapoet.*
@@ -536,9 +537,11 @@ class EntityRoomGenerator(private val clazz: Class) : Generator {
                     .addMethod(findSupportSQLiteQuery2())
                     .addMethod(finder())
                     .addMethod(finder2())
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(INDENT)
             .build()
             .write(filer)
     }

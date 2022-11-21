@@ -31,6 +31,7 @@ import com.iwdael.dbroom.compiler.JavaClass.PACKING_STRING_COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.SHORT_PACKING
 import com.iwdael.dbroom.compiler.columnClassName
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.interfaceColumnClassName
@@ -143,9 +144,11 @@ class EntityColumnGenerator(private val clazz: Class) : Generator {
                                 }
                             }
                     )
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(JavaClass.INDENT)
             .build()
             .write(filer)
     }

@@ -1,6 +1,4 @@
-// @author  : iwdael
-// @mail    : iwdael@outlook.com
-// @project : https://github.com/iwdael/dbroom
+// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 import java.lang.Object;
@@ -13,6 +11,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * @author  : iwdael
+ * @mail    : iwdael@outlook.com
+ * @project : https://github.com/iwdael/dbroom
+ */
 public class Utils {
   protected static final String DELETE = "DELETE";
 

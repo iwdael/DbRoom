@@ -5,8 +5,10 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.asTypeName
 import com.iwdael.dbroom.compiler.*
 import com.iwdael.dbroom.compiler.JavaClass.COLUMN
 import com.iwdael.dbroom.compiler.JavaClass.CONDITION
+import com.iwdael.dbroom.compiler.JavaClass.INDENT
 import com.iwdael.dbroom.compiler.JavaClass.UTILS
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import javax.annotation.processing.Filer
@@ -393,9 +395,11 @@ class EntitySqlGenerator(private val clazz: Class) : Generator {
                             )
                             .build()
                     )
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(INDENT)
             .build()
             .write(filer)
     }

@@ -12,7 +12,9 @@ import com.iwdael.annotationprocessorparser.poet.JavaPoet.stickReturn
 import com.iwdael.annotationprocessorparser.poet.srcPath
 import com.iwdael.dbroom.annotations.UseGenerator
 import com.iwdael.dbroom.compiler.JavaClass.BASE_NOTIFIER
+import com.iwdael.dbroom.compiler.JavaClass.INDENT
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.packageName
 import com.iwdael.dbroom.compiler.roomFields
 import com.iwdael.dbroom.compiler.useDataBinding
@@ -85,9 +87,11 @@ class UseJavaGenerator(val clazz: Class) {
                                     .build()
                             }
                     )
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(INDENT)
             .build()
             .writeTo(File(clazz.srcPath(clazz.packageName())!!))
     }

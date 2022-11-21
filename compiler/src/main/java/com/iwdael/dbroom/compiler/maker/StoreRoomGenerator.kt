@@ -2,9 +2,11 @@ package com.iwdael.dbroom.compiler.maker
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.iwdael.dbroom.compiler.JavaClass.INDENT
 import com.iwdael.dbroom.compiler.JavaClass.STORE
 import com.iwdael.dbroom.compiler.JavaClass.STORE_ROOM
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.squareup.javapoet.*
 import org.jetbrains.annotations.NotNull
@@ -61,9 +63,11 @@ class StoreRoomGenerator : Generator {
                     .addAnnotation(Dao::class.java)
                     .addMethod(store())
                     .addMethod(obtain())
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(INDENT)
             .build()
             .write(filer)
 

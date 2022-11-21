@@ -1,8 +1,10 @@
 package com.iwdael.dbroom.compiler.maker
 
 import com.iwdael.annotationprocessorparser.Class
+import com.iwdael.dbroom.compiler.JavaClass
 import com.iwdael.dbroom.compiler.JavaClass.DB
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
+import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
 import com.iwdael.dbroom.compiler.roomFields
 import com.squareup.javapoet.FieldSpec
@@ -43,9 +45,11 @@ class DBGenerator(private val generator: List<Class>) : Generator {
                                 )
                             }
                     }
+                    .addJavadoc(TYPE_COMMENT)
                     .build()
             )
             .addFileComment(FILE_COMMENT)
+            .indent(JavaClass.INDENT)
             .build()
             .write(filer)
     }
