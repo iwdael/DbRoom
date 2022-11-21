@@ -1,8 +1,4 @@
-// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
-
-import java.lang.Boolean;
-import java.util.Arrays;
 
 /**
  * @author  : iwdael
@@ -10,23 +6,21 @@ import java.util.Arrays;
  * @project : https://github.com/iwdael/dbroom
  */
 public final class ConditionPackingBoolean<N, T, Q> extends Condition<N, T, Boolean, Q> {
-  public ConditionPackingBoolean(T target, PackingColumn<Boolean> column,
-      CallBack<Condition<N, T, ?, Q>> callBack, NextBuilder<N, T, Q> builder,
-      Creator<T, Q> creator) {
-    super(target, column, callBack, builder, creator);
-  }
+    public ConditionPackingBoolean(T target, PackingColumn<Boolean> column, CallBack<Condition<N, T, ?, Q>> callBack, NextBuilder<N, T, Q> builder, Creator<T, Q> creator) {
+        super(target, column, callBack, builder, creator);
+    }
 
-  public Operator<N, T, Boolean, Q> equal(Boolean value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = EQUAL;
-    return new Operator<N, T, Boolean, Q>(this);
-  }
+    public Operator<N, T, Boolean, Q> equal(Boolean value) {
+        this.value.add(value);
+        this.callBack.call(this);
+        this.assign = EQUAL;
+        return new Operator<N, T, Boolean, Q>(this);
+    }
 
-  public Operator<N, T, Boolean, Q> unequal(Boolean value) {
-    this.value.add(value);
-    this.callBack.call(this);
-    this.assign = UNEQUAL;
-    return new Operator<N, T, Boolean, Q>(this);
-  }
+    public Operator<N, T, Boolean, Q> unequal(Boolean value) {
+        this.value.add(value);
+        this.callBack.call(this);
+        this.assign = UNEQUAL;
+        return new Operator<N, T, Boolean, Q>(this);
+    }
 }

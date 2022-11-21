@@ -8,15 +8,15 @@ import androidx.databinding.Observable;
  * @project : https://github.com/iwdael/DbRoom
  */
 public interface Notifier extends Observable {
-  @Override
-  default void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-  }
+    @Override
+    default void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+    }
 
-  @Override
-  default void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-  }
+    @Override
+    default void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
+    }
 
-  default Notifier to() {
+    default Notifier to() {
         return this;
     }
 }

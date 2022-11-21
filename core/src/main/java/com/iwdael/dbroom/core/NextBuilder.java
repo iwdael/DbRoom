@@ -1,4 +1,3 @@
-// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 /**
@@ -7,6 +6,5 @@ package com.iwdael.dbroom.core;
  * @project : https://github.com/iwdael/dbroom
  */
 public interface NextBuilder<N, T, Q> {
-  N build(T target, CallBack<Condition<N, T, ?, Q>> callback, NextBuilder<N, T, Q> builder,
-      Creator<T, Q> creator);
+    N build(T target, CallBack<Condition<N, T, ?, Q>> callback, NextBuilder<N, T, Q> builder, Creator<T, Q> creator);
 }

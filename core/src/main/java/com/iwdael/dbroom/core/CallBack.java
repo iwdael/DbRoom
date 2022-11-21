@@ -1,4 +1,3 @@
-// Create by https://github.com/iwdael/dbroom
 package com.iwdael.dbroom.core;
 
 /**
@@ -7,5 +6,5 @@ package com.iwdael.dbroom.core;
  * @project : https://github.com/iwdael/dbroom
  */
 public interface CallBack<T> {
-  void call(T call);
+    void call(T call);
 }
