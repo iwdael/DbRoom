@@ -8,7 +8,7 @@ dependencies {
     implementation dep.roomCommon
     implementation dep.bindingCommon
     implementation dep.annotationprocessorparser
-    compileOnly project(":annotation")
+    api project(":annotation")
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
