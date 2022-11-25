@@ -37,10 +37,6 @@ fun String.bestGuessClassName(): TypeName {
     }
 }
 
-fun RoundEnvironment.packageName(): String {
-    val classNameBuildConfig = this.rootElements.map { it.toString() }.find { it.endsWith(".BuildConfig") }
-    return classNameBuildConfig?.replace(".BuildConfig", "") ?: MASTER_PACKAGE
-}
 
 const val FILE_COMMENT =
     "Create by https://github.com/iwdael/dbroom"

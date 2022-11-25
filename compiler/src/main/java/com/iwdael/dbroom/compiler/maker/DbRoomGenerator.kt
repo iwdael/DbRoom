@@ -60,7 +60,7 @@ class DbRoomGenerator(
                                 CodeBlock
                                     .builder()
                                     .add(
-                                        "instance = ${method.parent.className}.${method.name}(context, DbRoom.class)",
+                                        "instance = ${method.parent.className}.${method.name}(context, $simpleClassNameGen.class)",
                                         ClassName.get("androidx.room", "Room")
                                     )
                                     .build()

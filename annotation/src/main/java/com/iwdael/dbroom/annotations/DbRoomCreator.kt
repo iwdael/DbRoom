@@ -6,9 +6,7 @@ package com.iwdael.dbroom.annotations
  * @project : https://github.com/iwdael/dbroom
  */
 @Target(
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
+    AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER
 )
 @Retention(AnnotationRetention.BINARY)
-annotation class DbRoomCreator 
+annotation class DbRoomCreator(val value: String = "com.iwdael.dbroom.DbRoom")

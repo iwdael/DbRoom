@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.iwdael.dbroom.example.DbRoom
+import com.iwdael.dbroom.DbRoom
 import com.iwdael.dbroom.example.databinding.ActivityMainBindingImpl
 import com.iwdael.dbroom.example.entity.AirTechColumn
 import com.iwdael.dbroom.example.entity.AirTechSQL
