@@ -1,7 +1,9 @@
 package com.iwdael.dbroom.compiler.compat
 
+import com.iwdael.dbroom.compiler.JavaClass.MASTER_PACKAGE
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.TypeName
+import javax.annotation.processing.RoundEnvironment
 
 /**
  * @author  : iwdael
@@ -35,6 +37,11 @@ fun String.bestGuessClassName(): TypeName {
     }
 }
 
+fun RoundEnvironment.packageName(): String {
+    val classNameBuildConfig = this.rootElements.map { it.toString() }.find { it.endsWith(".BuildConfig") }
+    return classNameBuildConfig?.replace(".BuildConfig", "") ?: MASTER_PACKAGE
+}
+
 const val FILE_COMMENT =
     "Create by https://github.com/iwdael/dbroom"
 
@@ -42,3 +49,16 @@ const val TYPE_COMMENT =
     "@author  : iwdael\n" +
             "@mail    : iwdael@outlook.com\n" +
             "@project : https://github.com/iwdael/dbroom"
+
+
+const val CREATOR_EXAMPLE = "\n" +
+        "kotlin example:\n\n" +
+        "\nfun <T : RoomDatabase> create(context: Context, room: Class<T>): T {\n" +
+        "    return Room.databaseBuilder(context, room, \"DbRoom.db\").build()\n" +
+        "}\n" +
+        "\n\n" +
+        "java example:\n\n" +
+        "public static <T extends RoomDatabase> T createRoomDatabase(Context context, Class<T> room) {\n" +
+        "    return Room.databaseBuilder(context, room, \"DbRoom.db\").build();\n" +
+        "}" +
+        "\n\n"

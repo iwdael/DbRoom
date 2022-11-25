@@ -10,6 +10,7 @@ import com.squareup.javapoet.TypeName
  */
 object JavaClass {
     const val DEBUG = false
+    var MASTER_PACKAGE = "com.iwdael.dbroom"
     val BASE_NOTIFIER: ClassName = ClassName.get("com.iwdael.dbroom.core", "Notifier")
     val ROOM_DATABASE: ClassName = ClassName.get("androidx.room", "RoomDatabase")
     val CONTEXT: ClassName = ClassName.get("android.content", "Context")
@@ -114,14 +115,15 @@ object JavaClass {
     val STRING: ClassName = ClassName.get(String::class.java)
 
     val STORE_ROOM: ClassName = ClassName.get("com.iwdael.dbroom.core", "StoreRoom")
-    val CONVERTER: ClassName = ClassName.get("com.iwdael.dbroom.core", "Converter")
-    val DB_ROOM: ClassName = ClassName.get("com.iwdael.dbroom", "DbRoom")
+    val CONVERTER: ClassName get()= ClassName.get(MASTER_PACKAGE, "Converter")
+    val DB_ROOM: ClassName get()= ClassName.get(MASTER_PACKAGE, "DbRoom")
     val STORE: ClassName = ClassName.get("com.iwdael.dbroom.core", "Store")
     val ROOM_NOTIFIER: ClassName = ClassName.get("com.iwdael.dbroom.core", "RoomNotifier")
     val ROOM_NOTIFIER_NOTIFIER: ClassName =
         ClassName.get("${ROOM_NOTIFIER.packageName()}.${ROOM_NOTIFIER.simpleName()}", "Notifier")
 
     val BR: ClassName = ClassName.get("androidx.databinding.library.baseAdapters", "BR")
-    val DB :ClassName= ClassName.get("com.iwdael.dbroom","DB")
+    val DB: ClassName get() = ClassName.get(MASTER_PACKAGE, "DB")
+
     const val INDENT = "    "
 }

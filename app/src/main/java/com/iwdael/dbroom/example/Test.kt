@@ -1,6 +1,6 @@
 package com.iwdael.dbroom.example
 
-import com.iwdael.dbroom.DbRoom
+import com.iwdael.dbroom.example.DbRoom
 
 
 /**
