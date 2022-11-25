@@ -5,4 +5,6 @@ package com.iwdael.dbroom.annotations
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
 annotation class UseGenerator 

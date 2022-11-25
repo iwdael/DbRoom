@@ -3,7 +3,6 @@ package com.iwdael.dbroom.example.entity
 import androidx.databinding.Bindable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.iwdael.dbroom.annotations.Find
 import com.iwdael.dbroom.annotations.UseDataBinding
 import com.iwdael.dbroom.annotations.UseNotifier
 import com.iwdael.dbroom.annotations.UseRoom
@@ -20,7 +19,6 @@ open class Music : Notifier {
   @Bindable
   open var id: Long? = null
 
-  @Find(value = ["findByName"])
   @Bindable
   open var name: String? = null
 
