@@ -80,7 +80,7 @@ class DbRoomGenerator(
             .addStatement("return instance")
             .build()
 
-        val store = MethodSpec.methodBuilder("store")
+        val keep = MethodSpec.methodBuilder("keep")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(
                 ParameterSpec.builder(String::class.java, "name")
@@ -88,10 +88,10 @@ class DbRoomGenerator(
                     .build()
             )
             .addParameter(Object::class.java, "value")
-            .addStatement("instance().store().store(name, \$T.toString(value))", CONVERTER)
+            .addStatement("instance().store().keep(name, \$T.toString(value))", CONVERTER)
             .build()
 
-        val obtain = MethodSpec.methodBuilder("obtain")
+        val acquire = MethodSpec.methodBuilder("acquire")
             .addAnnotation(NotNull::class.java)
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(
@@ -109,14 +109,14 @@ class DbRoomGenerator(
                 "_default"
             )
             .returns(TypeVariableName.get("T"))
-            .addStatement("Store store = instance().store().obtain(name)")
+            .addStatement("Store store = instance().store().acquire(name)")
             .addStatement("if (store == null) return _default")
             .addStatement("T val = (T)\$T.toObject(store.value, _default.getClass())", CONVERTER)
             .addStatement("if (val == null) return _default")
             .addStatement("return val")
             .build()
 
-        val obtain2 = MethodSpec.methodBuilder("obtain")
+        val acquire2 = MethodSpec.methodBuilder("acquire")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(
                 ParameterSpec.builder(String::class.java, "name")
@@ -133,7 +133,7 @@ class DbRoomGenerator(
                 "clazz"
             )
             .returns(TypeVariableName.get("T"))
-            .addStatement("Store store = instance().store().obtain(name)")
+            .addStatement("Store store = instance().store().acquire(name)")
             .addStatement("if (store == null) return null")
             .addStatement("T val = (T)\$T.toObject(store.value, clazz)", CONVERTER)
             .addStatement("if (val == null) return null")
@@ -173,9 +173,9 @@ class DbRoomGenerator(
             .superclass(ROOM_DATABASE)
             .addMethod(init)
             .addMethod(instance)
-            .addMethod(store)
-            .addMethod(obtain)
-            .addMethod(obtain2)
+            .addMethod(keep)
+            .addMethod(acquire)
+            .addMethod(acquire2)
             .apply {
                 entities.forEach {
                     addMethod(

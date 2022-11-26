@@ -22,7 +22,7 @@ class StoreRoomGenerator : Generator {
     override val simpleClassNameGen: String = STORE_ROOM.simpleName()
     override val packageNameGen: String = STORE_ROOM.packageName()
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
-    private fun store() = MethodSpec.methodBuilder("store")
+    private fun keep() = MethodSpec.methodBuilder("keep")
         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
         .addParameter(String::class.java, "name")
         .addParameter(String::class.java, "value")
@@ -36,7 +36,7 @@ class StoreRoomGenerator : Generator {
         )
         .build()
 
-    private fun obtain() = MethodSpec.methodBuilder("obtain")
+    private fun acquire() = MethodSpec.methodBuilder("acquire")
         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
         .addParameter(
             ParameterSpec.builder(String::class.java, "name")
@@ -61,8 +61,8 @@ class StoreRoomGenerator : Generator {
                 TypeSpec.interfaceBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Dao::class.java)
-                    .addMethod(store())
-                    .addMethod(obtain())
+                    .addMethod(keep())
+                    .addMethod(acquire())
                     .addJavadoc(TYPE_COMMENT)
                     .build()
             )
