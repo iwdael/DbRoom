@@ -47,9 +47,7 @@ class AnnotationProcessor : AbstractProcessor() {
             MASTER_PACKAGE = className.packageName()
             DB_ROOM_SIMPLE_NAME = className.simpleName()
         }
-        System.out.println(MASTER_PACKAGE)
-        System.out.println(DB_ROOM_SIMPLE_NAME)
-        StoreRoomGenerator().generate(processingEnv.filer)
+        PersistenceRoomGenerator().generate(processingEnv.filer)
         (env.getElementsAnnotatedWith(TypeConverter::class.java) ?: arrayListOf()).map { Method(it) }.apply {
             ConverterGenerator(this).generate(processingEnv.filer)
         }

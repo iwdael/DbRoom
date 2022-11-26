@@ -3,8 +3,8 @@ package com.iwdael.dbroom.compiler.maker
 import androidx.room.Dao
 import androidx.room.Query
 import com.iwdael.dbroom.compiler.JavaClass.INDENT
-import com.iwdael.dbroom.compiler.JavaClass.STORE
-import com.iwdael.dbroom.compiler.JavaClass.STORE_ROOM
+import com.iwdael.dbroom.compiler.JavaClass.PERSISTENCE
+import com.iwdael.dbroom.compiler.JavaClass.PERSISTENCE_ROOM
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
 import com.iwdael.dbroom.compiler.compat.write
@@ -18,11 +18,11 @@ import javax.lang.model.element.Modifier
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-class StoreRoomGenerator : Generator {
-    override val simpleClassNameGen: String = STORE_ROOM.simpleName()
-    override val packageNameGen: String = STORE_ROOM.packageName()
+class PersistenceRoomGenerator : Generator {
+    override val simpleClassNameGen: String = PERSISTENCE_ROOM.simpleName()
+    override val packageNameGen: String = PERSISTENCE_ROOM.packageName()
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
-    private fun store() = MethodSpec.methodBuilder("store")
+    private fun keep() = MethodSpec.methodBuilder("keep")
         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
         .addParameter(String::class.java, "name")
         .addParameter(String::class.java, "value")
@@ -30,13 +30,13 @@ class StoreRoomGenerator : Generator {
             AnnotationSpec.builder(Query::class.java)
                 .addMember(
                     "value",
-                    "\"REPLACE INTO db_store (store_name , store_value) VALUES(:name , :value)\""
+                    "\"REPLACE INTO persistence (persistence_name , persistence_value) VALUES(:name , :value)\""
                 )
                 .build()
         )
         .build()
 
-    private fun obtain() = MethodSpec.methodBuilder("obtain")
+    private fun acquire() = MethodSpec.methodBuilder("acquire")
         .addModifiers(Modifier.ABSTRACT, Modifier.PUBLIC)
         .addParameter(
             ParameterSpec.builder(String::class.java, "name")
@@ -47,11 +47,11 @@ class StoreRoomGenerator : Generator {
             AnnotationSpec.builder(Query::class.java)
                 .addMember(
                     "value",
-                    "\"SELECT * FROM db_store WHERE store_name = :name LIMIT 1\""
+                    "\"SELECT * FROM persistence WHERE persistence_name = :name LIMIT 1\""
                 )
                 .build()
         )
-        .returns(STORE)
+        .returns(PERSISTENCE)
         .build()
 
     override fun generate(filer: Filer) {
@@ -61,8 +61,8 @@ class StoreRoomGenerator : Generator {
                 TypeSpec.interfaceBuilder(simpleClassNameGen)
                     .addModifiers(Modifier.PUBLIC)
                     .addAnnotation(Dao::class.java)
-                    .addMethod(store())
-                    .addMethod(obtain())
+                    .addMethod(keep())
+                    .addMethod(acquire())
                     .addJavadoc(TYPE_COMMENT)
                     .build()
             )

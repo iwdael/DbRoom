@@ -13,18 +13,18 @@ import org.jetbrains.annotations.NotNull;
  * @project : https://github.com/iwdael/dbroom
  */
 @Entity(
-        tableName = "db_store"
+        tableName = "persistence"
 )
-public class Store {
+public class Persistence {
     @PrimaryKey
-    @ColumnInfo(name = "store_name")
+    @ColumnInfo(name = "persistence_name")
     @NotNull
     public String name;
 
-    @ColumnInfo(name = "store_value")
+    @ColumnInfo(name = "persistence_value")
     public String value;
 
-    public Store(@NonNull String name, String value) {
+    public Persistence(@NonNull String name, String value) {
         this.name = name;
         this.value = value;
     }

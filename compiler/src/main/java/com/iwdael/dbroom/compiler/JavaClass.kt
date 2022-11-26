@@ -115,10 +115,10 @@ object JavaClass {
 
     val STRING: ClassName = ClassName.get(String::class.java)
 
-    val STORE_ROOM: ClassName get() = ClassName.get(MASTER_PACKAGE, "StoreRoom")
+    val PERSISTENCE_ROOM: ClassName get() = ClassName.get(MASTER_PACKAGE, "PersistenceRoom")
     val CONVERTER: ClassName get() = ClassName.get(MASTER_PACKAGE, "Converter")
     val DB_ROOM: ClassName get() = ClassName.get(MASTER_PACKAGE, DB_ROOM_SIMPLE_NAME)
-    val STORE: ClassName = ClassName.get("com.iwdael.dbroom.core", "Store")
+    val PERSISTENCE: ClassName = ClassName.get("com.iwdael.dbroom.core", "Persistence")
     val ROOM_NOTIFIER: ClassName = ClassName.get("com.iwdael.dbroom.core", "RoomNotifier")
     val ROOM_NOTIFIER_NOTIFIER: ClassName =
         ClassName.get("${ROOM_NOTIFIER.packageName()}.${ROOM_NOTIFIER.simpleName()}", "Notifier")
