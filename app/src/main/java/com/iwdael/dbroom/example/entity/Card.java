@@ -1,20 +1,19 @@
 
 package com.iwdael.dbroom.example.entity;
 
-import androidx.databinding.Bindable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
+import com.iwdael.dbroom.example.util.TypeConvert;
+
+@TypeConverters({TypeConvert.class})
 @Entity
-public class Movie  {
+public class Card {
   @PrimaryKey
   private Long id;
-
   private String name;
-
-  private String author;
-
-  private String duration;
+  private Title t;
 
   public void setId(Long id) {
     this.id = id;
@@ -24,13 +23,6 @@ public class Movie  {
     this.name = name;
   }
 
-  public void setAuthor(String author) {
-    this.author = author;
-  }
-
-  public void setDuration(String duration) {
-    this.duration = duration;
-  }
 
   public Long getId() {
     return this.id;
@@ -40,11 +32,11 @@ public class Movie  {
     return this.name;
   }
 
-  public String getAuthor() {
-    return this.author;
+  public Title getT() {
+    return t;
   }
 
-  public String getDuration() {
-    return this.duration;
+  public void setT(Title t) {
+    this.t = t;
   }
 }
