@@ -1,35 +1,29 @@
-package com.iwdael.dbroom.core;
+package com.iwdael.dbroom.core
 
-import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import org.jetbrains.annotations.NotNull;
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * @author  : iwdael
  * @mail    : iwdael@outlook.com
  * @project : https://github.com/iwdael/dbroom
  */
-@Entity(
-        tableName = "persistence"
-)
-public class Persistence {
+@Entity("persistence")
+class Persistence {
     @PrimaryKey
     @ColumnInfo(name = "persistence_name")
-    @NotNull
-    public String name;
+    var name: String
 
     @ColumnInfo(name = "persistence_value")
-    public String value;
+    var value: String? = null
 
-    public Persistence(@NonNull String name, String value) {
-        this.name = name;
-        this.value = value;
+    constructor(name: String, value: String?) {
+        this.name = name
+        this.value = value
     }
 
-    public Persistence() {
-        this.name = "";
+    constructor() {
+        this.name = ""
     }
 }
