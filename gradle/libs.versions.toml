@@ -1,0 +1,34 @@
+[versions]
+applicationId = "com.iwdael.dbroom"
+compileSdk = "34"
+targetSdk = "35"
+minSdk = "24"
+versionName = "0.0.1"
+versionCode = "1"
+agp = "8.5.1"
+kotlin = "1.9.0"
+jetbrainsKotlinJvm = "1.9.0"
+kotlinsymbolprocessor = "0.0.4"
+ksp = "1.9.0-1.0.11"
+coreKtx = "1.13.0"
+appcompat = "1.7.0"
+symbolProcessingApi = "2.0.10-1.0.24"
+room = "2.5.1"
+databinding = "8.5.2"
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlin-symbol-processor = { module = "com.iwdael:kotlinsymbolprocessor", version.ref = "kotlinsymbolprocessor" }
+symbol-processing-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "symbolProcessingApi" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-common = { module = "androidx.room:room-common", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-databinding-common = { module = "androidx.databinding:databinding-common", version.ref = "databinding" }
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+jetbrains-kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+
