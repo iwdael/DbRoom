@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import com.iwdael.dbroom.annotations.DbRoomCreator
+import com.iwdael.dbroom.annotations.EnableCoroutines
 import com.iwdael.dbroom.example.entity.Music
 
 /**
@@ -23,7 +24,8 @@ object RoomUtils {
         return null
     }
 
-    @DbRoomCreator(version = 3, exportSchema = false)
+    @DbRoomCreator(value = "room.AppBase", version = 3, exportSchema = false)
+    @EnableCoroutines(true)
     fun <T : RoomDatabase> create(context: Context, room: Class<T>): T {
         return Room.databaseBuilder(context, room, "DbRoom.db").build()
     }

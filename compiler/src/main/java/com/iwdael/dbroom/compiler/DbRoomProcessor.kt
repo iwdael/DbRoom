@@ -9,9 +9,11 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.iwdael.dbroom.annotations.DbRoomCreator
+import com.iwdael.dbroom.annotations.EnableCoroutines
 import com.iwdael.dbroom.compiler.compat.DB_ROOM_SIMPLE_NAME
 import com.iwdael.dbroom.compiler.compat.MASTER_PACKAGE
 import com.iwdael.dbroom.compiler.compat.CREATOR_EXAMPLE
+import com.iwdael.dbroom.compiler.compat.ENABLED_COROUTINES
 import com.iwdael.dbroom.compiler.generator.ConverterGenerator
 import com.iwdael.dbroom.compiler.generator.DbRoomGenerator
 import com.iwdael.dbroom.compiler.generator.EntityRoomGenerator
@@ -21,22 +23,6 @@ import com.iwdael.kotlinsymbolprocessor.asKspFunction
 import com.squareup.kotlinpoet.ClassName
 
 class DbRoomProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
-    //    private var roomCreator: MutableList<KSAnnotated> = mutableListOf()
-//    private var typeConverters: MutableList<KSAnnotated> = mutableListOf()
-//    private var entities: MutableList<KSAnnotated> = mutableListOf()
-//    private var daos: MutableList<KSAnnotated> = mutableListOf()
-//    override fun process(resolver: Resolver): List<KSAnnotated> {
-//        resolver.getSymbolsWithAnnotation(DbRoomCreator::class.java.name)
-//            .apply { roomCreator.addAll(this) }
-//        resolver.getSymbolsWithAnnotation(TypeConverter::class.java.name)
-//            .apply { typeConverters.addAll(this) }
-//        resolver.getSymbolsWithAnnotation(Entity::class.java.name)
-//            .apply { entities.addAll(this) }
-//        resolver.getSymbolsWithAnnotation(Dao::class.java.name)
-//            .apply { daos.addAll(this) }
-//        process()
-//        return emptyList()
-//    }
     private var processed = false
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (processed) return emptyList()
@@ -51,6 +37,7 @@ class DbRoomProcessor(private val env: SymbolProcessorEnvironment) : SymbolProce
         if (roomCreator.isNotEmpty()) {
             val dbRoomClassName = roomCreator.first().asKspFunction.annotation(DbRoomCreator::class)!!.value
             val className = ClassName.bestGuess(dbRoomClassName)
+            ENABLED_COROUTINES = roomCreator.first().asKspFunction.annotation(EnableCoroutines::class)?.enabled ?: false
             MASTER_PACKAGE = className.packageName
             DB_ROOM_SIMPLE_NAME = className.simpleName
         }
