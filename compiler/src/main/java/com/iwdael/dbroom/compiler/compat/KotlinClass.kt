@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.ClassName
  */
 
 var MASTER_PACKAGE = "com.iwdael.dbroom"
+var ENABLED_COROUTINES = false
 var DB_ROOM_SIMPLE_NAME = "DbRoom"
 val ROOM_DATABASE = ClassName("androidx.room", "RoomDatabase")
 val CONTEXT = ClassName("android.content", "Context")

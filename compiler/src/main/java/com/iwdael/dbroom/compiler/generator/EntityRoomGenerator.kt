@@ -14,6 +14,7 @@ import com.iwdael.dbroom.compiler.compat.colName
 import com.iwdael.dbroom.compiler.compat.getUpdateFiled
 import com.iwdael.dbroom.compiler.compat.primaryKey
 import com.iwdael.dbroom.compiler.compat.columns
+import com.iwdael.dbroom.compiler.compat.coroutinesFunModifierCompatible
 import com.iwdael.dbroom.compiler.compat.tableName
 import com.iwdael.kotlinsymbolprocessor.KSPClass
 import com.iwdael.kotlinsymbolprocessor.asTypeName
@@ -40,6 +41,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
     override val packageNameGen: String = clazz.kspPackage.name
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     private fun replaceArray() = FunSpec.builder("replace")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Insert::class)
@@ -61,6 +63,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
     private fun replaceProperty(): FunSpec {
         return FunSpec.builder("replace")
+            .coroutinesFunModifierCompatible()
             .addModifiers(KModifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class)
@@ -90,6 +93,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
 
     private fun insertArray() = FunSpec.builder("insert")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Insert::class)
@@ -105,6 +109,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
     private fun insertProperty(): FunSpec {
         return FunSpec.builder("insert")
+            .coroutinesFunModifierCompatible()
             .addModifiers(KModifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class)
@@ -136,6 +141,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
 
     private fun deleteArray() = FunSpec.builder("delete")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT)
         .addKdoc("return the number of deleted rows")
         .addAnnotation(
@@ -151,6 +157,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
         .build()
 
     private fun deleteAll() = FunSpec.builder("deleteAll")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT)
         .addKdoc("return the number of deleted rows")
         .addAnnotation(
@@ -166,6 +173,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
     private fun deleteField() = clazz.columns().map {
         FunSpec.builder("delete${it.name.bigHump()}")
+            .coroutinesFunModifierCompatible()
             .addKdoc("return the number of deleted rows")
             .addModifiers(KModifier.ABSTRACT)
             .addParameter(it.name, it.type.asTypeName())
@@ -183,6 +191,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
 
     private fun updateArray() = FunSpec.builder("update")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT)
         .addKdoc("return the number of updated rows")
         .addAnnotation(
@@ -201,6 +210,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
     private fun updateFiled() = clazz.getUpdateFiled().second.map { field ->
         val primary = clazz.getUpdateFiled().first
         FunSpec.builder("update${field.name.bigHump()}")
+            .coroutinesFunModifierCompatible()
             .addModifiers(KModifier.ABSTRACT)
             .addKdoc("return the number of updated rows")
             .addAnnotation(
@@ -229,37 +239,8 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
             .build()
     }
 
-//    private fun replaceFiled() = clazz.getUpdateFiled().second.map { field ->
-//        val primary = clazz.getUpdateFiled().first
-//        FunSpec.builder("replace${field.name.charUpper()}")
-//            .addModifiers(KModifier.ABSTRACT)
-//            .addAnnotation(
-//                AnnotationSpec.builder(Query::class)
-//                    .addMember(
-//                        "%L = %S",
-//                        "value",
-//                        "REPLACE INTO ${clazz.roomTableName()} (${clazz.primaryKey().colName()} , ${field.colName()}) VALUES (:${clazz.primaryKey().name} , :${field.name})"
-//                    )
-//                    .build()
-//            )
-//            .addParameter(
-//                ParameterSpec.builder(
-//                    primary.name,
-//                    primary.type.asTypeName(),
-//                ).build()
-//            )
-//            .addParameter(
-//                ParameterSpec.builder(
-//                    field.name,
-//                    field.type.asTypeName()
-//                ).build()
-//            )
-//            .returns(LONG)
-//            .build()
-//    }
-
-
     private fun findAll() = FunSpec.builder("findAll")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Query::class)
@@ -274,6 +255,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
     private fun findField() = clazz.columns().map {
         FunSpec.builder("find${it.name.bigHump()}")
+            .coroutinesFunModifierCompatible()
             .addModifiers(KModifier.ABSTRACT)
             .addAnnotation(
                 AnnotationSpec.builder(Query::class)
@@ -297,6 +279,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
 
     private fun countField() = clazz.columns().map {
         FunSpec.builder("count${it.name.bigHump()}")
+            .coroutinesFunModifierCompatible()
             .addModifiers(KModifier.ABSTRACT)
             .addParameter(it.name, it.type.asTypeName())
             .addAnnotation(
@@ -313,6 +296,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
     }
 
     private fun count() = FunSpec.builder("count")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT)
         .addAnnotation(
             AnnotationSpec.builder(Query::class)
