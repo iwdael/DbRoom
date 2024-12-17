@@ -10,6 +10,12 @@ import com.iwdael.dbroom.compiler.compat.PERSISTENCE_ROOM
 import com.iwdael.dbroom.compiler.compat.ROOM_DATABASE
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
+import com.iwdael.dbroom.compiler.compat.beginControlFlowCoroutinesDbRoomCompatible
+import com.iwdael.dbroom.compiler.compat.coroutinesFunModifierCompatible
+import com.iwdael.dbroom.compiler.compat.coroutinesImportCompatible
+import com.iwdael.dbroom.compiler.compat.coroutinesInstanceFunCompatible
+import com.iwdael.dbroom.compiler.compat.coroutinesPropertyCompatible
+import com.iwdael.dbroom.compiler.compat.endControlFlowCoroutinesDbRoomCompatible
 import com.iwdael.dbroom.compiler.compat.smallHump
 import com.iwdael.dbroom.compiler.compat.roomClassName
 import com.iwdael.kotlinsymbolprocessor.KSPClass
@@ -44,12 +50,13 @@ class DbRoomGenerator(
     override fun createFileSpec(): FileSpec {
         val init = FunSpec.builder("init")
             .addModifiers(KModifier.PUBLIC)
+            .coroutinesFunModifierCompatible()
             .returns(Void.TYPE)
             .addParameter("context", CONTEXT)
             .addStatement("if (instance != null) return")
             .addCode(
                 CodeBlock.builder()
-                    .beginControlFlow("synchronized ($simpleClassNameGen::class)")
+                    .beginControlFlowCoroutinesDbRoomCompatible(simpleClassNameGen)
                     .addStatement("if (instance != null) return")
                     .apply {
                         if (creator == null)
@@ -63,8 +70,7 @@ class DbRoomGenerator(
                                 ClassName("androidx.room", "Room")
                             )
                     }
-
-                    .endControlFlow()
+                    .endControlFlowCoroutinesDbRoomCompatible()
                     .build()
             )
             .build()
@@ -72,13 +78,14 @@ class DbRoomGenerator(
 
         val instance = FunSpec.builder("instance")
             .addModifiers(KModifier.PRIVATE)
+            .coroutinesFunModifierCompatible()
             .returns(ClassName(packageNameGen, simpleClassNameGen))
-            .addStatement("if (instance == null) throw RuntimeException(\"Please initialize DbRoom first\")")
-            .addStatement("return instance!!")
+            .coroutinesInstanceFunCompatible()
             .build()
 
         val keep = FunSpec.builder("keep")
             .addModifiers(KModifier.PUBLIC)
+            .coroutinesFunModifierCompatible()
             .addParameter(
                 ParameterSpec.builder("name", String::class)
                     .addAnnotation(NotNull::class)
@@ -91,6 +98,7 @@ class DbRoomGenerator(
         val acquire = FunSpec.builder("acquire")
             .addAnnotation(NotNull::class)
             .addModifiers(KModifier.PUBLIC)
+            .coroutinesFunModifierCompatible()
             .addParameter("name", String::class)
             .addTypeVariable(TypeVariableName("T : Any"))
             .addParameter("_default", TypeVariableName("T"))
@@ -104,6 +112,7 @@ class DbRoomGenerator(
 
         val acquire2 = FunSpec.builder("acquire")
             .addModifiers(KModifier.PUBLIC)
+            .coroutinesFunModifierCompatible()
             .addParameter("name", String::class)
             .addTypeVariable(TypeVariableName("T : Any"))
             .addParameter("clazz", TypeVariableName("kotlin.reflect.KClass<T>"))
@@ -124,6 +133,7 @@ class DbRoomGenerator(
                     .initializer("null")
                     .build()
             )
+            .coroutinesPropertyCompatible()
             .addFunction(init)
             .addFunction(instance)
             .addFunction(keep)
@@ -133,6 +143,7 @@ class DbRoomGenerator(
                 entities.forEach {
                     addFunction(
                         FunSpec.builder(it.simpleName.smallHump())
+                            .coroutinesFunModifierCompatible()
                             .returns(ClassName.bestGuess(it.roomClassName()))
                             .addStatement("return instance()._${it.simpleName.smallHump()}()")
                             .build()
@@ -141,6 +152,7 @@ class DbRoomGenerator(
                 dao.forEach {
                     addFunction(
                         FunSpec.builder(it.simpleName.smallHump())
+                            .coroutinesFunModifierCompatible()
                             .returns(it.asTypeName())
                             .addStatement("return instance()._${it.simpleName.smallHump()}()")
                             .build()
@@ -206,6 +218,7 @@ class DbRoomGenerator(
         return FileSpec
             .builder(ClassName.bestGuess(classNameGen))
             .addFileComment(FILE_COMMENT)
+            .coroutinesImportCompatible()
             .addType(classTypeSpec)
             .build()
     }

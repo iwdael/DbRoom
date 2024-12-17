@@ -5,6 +5,7 @@ import androidx.room.Query
 import com.iwdael.dbroom.compiler.compat.PERSISTENCE_ROOM
 import com.iwdael.dbroom.compiler.compat.FILE_COMMENT
 import com.iwdael.dbroom.compiler.compat.TYPE_COMMENT
+import com.iwdael.dbroom.compiler.compat.coroutinesFunModifierCompatible
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
@@ -25,6 +26,7 @@ class PersistenceRoomGenerator : KotlinGenerator {
     override val packageNameGen: String = PERSISTENCE_ROOM.packageName
     override val classNameGen: String = "${packageNameGen}.${simpleClassNameGen}"
     private fun keep() = FunSpec.builder("keep")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT, KModifier.PUBLIC)
         .addParameter("name", String::class)
         .addParameter("value", String::class.asTypeName().copy(true))
@@ -40,6 +42,7 @@ class PersistenceRoomGenerator : KotlinGenerator {
         .build()
 
     private fun acquire() = FunSpec.builder("acquire")
+        .coroutinesFunModifierCompatible()
         .addModifiers(KModifier.ABSTRACT, KModifier.PUBLIC)
         .addParameter(
             ParameterSpec.builder("name", String::class)
