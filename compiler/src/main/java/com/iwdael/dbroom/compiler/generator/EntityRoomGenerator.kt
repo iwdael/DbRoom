@@ -269,7 +269,7 @@ class EntityRoomGenerator(private val clazz: KSPClass) : KotlinGenerator {
             .addParameter(it.name.smallHump(), it.type.asTypeName())
             .apply {
                 if (it == clazz.primaryKey()) {
-                    returns(clazz.asTypeName())
+                    returns(clazz.asTypeName().copy(true))
                 } else {
                     returns(List::class.asClassName().parameterizedBy(clazz.asTypeName()))
                 }
